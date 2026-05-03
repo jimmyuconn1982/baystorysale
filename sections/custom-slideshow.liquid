@@ -1,0 +1,478 @@
+{% comment %}
+  自定义轮播 Section - 支持图片点击跳转 + 高度锁定
+{% endcomment %}
+
+<div class="custom-slideshow-wrapper fp-scroll-section" data-fp-bg-image="default">
+  <div class="custom-slideshow" data-autoplay="{{ section.settings.autoplay }}" data-speed="{{ section.settings.autoplay_speed }}">
+    <div class="slideshow-container" 
+         data-height="{{ section.settings.slide_height }}"
+         style="{% if section.settings.slide_height == 'custom' %}--custom-height: {{ section.settings.custom_height }}px;{% endif %}">
+      {% for block in section.blocks %}
+        <div class="slide fade">
+          {% if block.settings.link != blank %}
+            <a href="{{ block.settings.link }}" class="slide-link">
+              {% if block.settings.image != blank %}
+                <img src="{{ block.settings.image | img_url: '1920x' }}" alt="{{ block.settings.image.alt | escape }}">
+              {% else %}
+                <div class="slide-placeholder">{{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+              {% endif %}
+              
+              {% if block.settings.heading != blank or block.settings.subheading != blank %}
+                <div class="slide-content">
+                  {% if block.settings.heading != blank %}
+                    <h2>{{ block.settings.heading }}</h2>
+                  {% endif %}
+                  {% if block.settings.subheading != blank %}
+                    <p>{{ block.settings.subheading }}</p>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </a>
+          {% else %}
+            {% if block.settings.image != blank %}
+              <img src="{{ block.settings.image | img_url: '1920x' }}" alt="{{ block.settings.image.alt | escape }}">
+            {% else %}
+              <div class="slide-placeholder">{{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+            {% endif %}
+            
+            {% if block.settings.heading != blank or block.settings.subheading != blank %}
+              <div class="slide-content">
+                {% if block.settings.heading != blank %}
+                  <h2>{{ block.settings.heading }}</h2>
+                {% endif %}
+                {% if block.settings.subheading != blank %}
+                  <p>{{ block.settings.subheading }}</p>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <!-- 左右切换按钮 -->
+      {% if section.settings.show_arrows %}
+        <a class="prev" onclick="changeSlide(-1)">&#10094;</a>
+        <a class="next" onclick="changeSlide(1)">&#10095;</a>
+      {% endif %}
+
+      <!-- 指示器 -->
+      {% if section.settings.show_dots %}
+        <div class="dots-container">
+          {% for block in section.blocks %}
+            <span class="dot" onclick="currentSlide({{ forloop.index }})"></span>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .custom-slideshow-wrapper {
+    width: 100%;
+    overflow: hidden;
+    min-height: 400px;
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  .custom-slideshow {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  .slideshow-container {
+    position: relative;
+    max-width: 100%;
+    margin: auto;
+  }
+
+  .slide {
+    display: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide.active {
+    display: block;
+  }
+
+  /* 高度控制 */
+  .slideshow-container[data-height="auto"] .slide {
+    height: auto;
+  }
+
+  .slideshow-container[data-height="small"] .slide {
+    height: 400px;
+  }
+
+  .slideshow-container[data-height="medium"] .slide {
+    height: 550px;
+  }
+
+  .slideshow-container[data-height="large"] .slide {
+    height: 700px;
+  }
+
+  .slideshow-container[data-height="custom"] .slide {
+    height: var(--custom-height);
+  }
+
+  .slideshow-container[data-height="fullscreen"] .slide {
+    height: 1080px;
+  }
+
+  .slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 保持图片比例并填充容器 */
+    object-position: center; /* 图片居中显示 */
+    display: block;
+  }
+
+  .slide-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    height: 100%;
+  }
+
+  .slide-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slide-content {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px 40px;
+    border-radius: 8px;
+    z-index: 2;
+  }
+
+  .slide-content h2 {
+    margin: 0 0 10px 0;
+    font-size: 2em;
+  }
+
+  .slide-content p {
+    margin: 0;
+    font-size: 1.2em;
+  }
+
+  /* 左右切换按钮 */
+  .prev, .next {
+    cursor: pointer !important; /* 强制手型，覆盖 Dawn 主题空 a 标签的禁止点击样式 */
+    position: absolute;
+    top: 50%;
+    width: auto;
+    margin-top: -22px;
+    padding: 16px;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.3s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    background-color: rgba(0, 0, 0, 0.5);
+    text-decoration: none;
+    z-index: 3;
+  }
+
+  .next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+  }
+
+  .prev:hover, .next:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  /* 指示器 */
+  .dots-container {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 0;
+    z-index: 4;
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  .dot {
+    cursor: pointer;
+    height: 15px;
+    width: 15px;
+    margin: 0 5px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+  }
+
+  .dot.active, .dot:hover {
+    background-color: #717171;
+  }
+
+  /* 淡入淡出效果 */
+  .fade {
+    animation-name: fade;
+    animation-duration: 1s;
+  }
+
+  @keyframes fade {
+    from { opacity: 0.4; }
+    to { opacity: 1; }
+  }
+
+  /* 响应式设计 */
+  @media screen and (max-width: 768px) {
+    .slideshow-container[data-height="small"] .slide {
+      height: 300px;
+    }
+
+    .slideshow-container[data-height="medium"] .slide {
+      height: 400px;
+    }
+
+    .slideshow-container[data-height="large"] .slide {
+      height: 500px;
+    }
+
+    .slideshow-container[data-height="fullscreen"] .slide {
+      height: 100vh;
+    }
+
+    .slide-content h2 {
+      font-size: 1.5em;
+    }
+    
+    .slide-content p {
+      font-size: 1em;
+    }
+
+    .slide-content {
+      padding: 15px 25px;
+    }
+  }
+</style>
+
+<script>
+  let slideIndex = 1;
+  let autoplayTimer;
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const slideshow = document.querySelector('.custom-slideshow');
+    if (!slideshow) return;
+    
+    const autoplay = slideshow.dataset.autoplay === 'true';
+    const speed = parseInt(slideshow.dataset.speed) || 5000;
+
+    showSlide(slideIndex);
+
+    if (autoplay) {
+      startAutoplay(speed);
+    }
+  });
+
+  function changeSlide(n) {
+    clearTimeout(autoplayTimer);
+    showSlide(slideIndex += n);
+    
+    const slideshow = document.querySelector('.custom-slideshow');
+    if (!slideshow) return;
+    
+    const autoplay = slideshow.dataset.autoplay === 'true';
+    const speed = parseInt(slideshow.dataset.speed) || 5000;
+    
+    if (autoplay) {
+      startAutoplay(speed);
+    }
+  }
+
+  function currentSlide(n) {
+    clearTimeout(autoplayTimer);
+    showSlide(slideIndex = n);
+    
+    const slideshow = document.querySelector('.custom-slideshow');
+    if (!slideshow) return;
+    
+    const autoplay = slideshow.dataset.autoplay === 'true';
+    const speed = parseInt(slideshow.dataset.speed) || 5000;
+    
+    if (autoplay) {
+      startAutoplay(speed);
+    }
+  }
+
+  function showSlide(n) {
+    let slides = document.getElementsByClassName("slide");
+    let dots = document.getElementsByClassName("dot");
+    
+    if (slides.length === 0) return;
+    
+    if (n > slides.length) { slideIndex = 1 }
+    if (n < 1) { slideIndex = slides.length }
+    
+    for (let i = 0; i < slides.length; i++) {
+      slides[i].classList.remove("active");
+    }
+    
+    for (let i = 0; i < dots.length; i++) {
+      dots[i].classList.remove("active");
+    }
+    
+    if (slides[slideIndex - 1]) {
+      slides[slideIndex - 1].classList.add("active");
+    }
+    
+    if (dots[slideIndex - 1]) {
+      dots[slideIndex - 1].classList.add("active");
+    }
+  }
+
+  function startAutoplay(speed) {
+    autoplayTimer = setTimeout(function() {
+      slideIndex++;
+      showSlide(slideIndex);
+      startAutoplay(speed);
+    }, speed);
+  }
+</script>
+
+{% schema %}
+{
+  "name": "自定义轮播",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "自动播放",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 2000,
+      "max": 9000,
+      "step": 1000,
+      "unit": "ms",
+      "label": "自动播放速度",
+      "default": 5000
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "显示左右箭头",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "显示指示器",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "slide_height",
+      "label": "幻灯片高度",
+      "options": [
+        {
+          "value": "auto",
+          "label": "自适应（根据图片）"
+        },
+        {
+          "value": "small",
+          "label": "小 (400px)"
+        },
+        {
+          "value": "medium",
+          "label": "中 (550px)"
+        },
+        {
+          "value": "large",
+          "label": "大 (700px)"
+        },
+        {
+          "value": "custom",
+          "label": "自定义"
+        },
+        {
+          "value": "fullscreen",
+          "label": "全屏 (1080px)"
+        }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "range",
+      "id": "custom_height",
+      "min": 300,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "label": "自定义高度",
+      "default": 600
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "幻灯片",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "点击图片跳转链接"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "标题",
+          "default": "幻灯片标题"
+        },
+        {
+          "type": "textarea",
+          "id": "subheading",
+          "label": "副标题",
+          "default": "在这里添加描述文字"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "自定义轮播",
+      "blocks": [
+        {
+          "type": "slide"
+        },
+        {
+          "type": "slide"
+        },
+        {
+          "type": "slide"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

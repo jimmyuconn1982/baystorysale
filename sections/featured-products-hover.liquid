@@ -1,0 +1,277 @@
+{%- comment -%}
+  主推产品(Featured Collection)
+  - 样机风格:顶部左大标题 FEATURED COLLECTION + 顶部右箭头链接
+  - 网格 3 列 × 2 行,每卡:产品主图(悬停模糊切到第 2 张) + FASHIONABLE BAG 文案 + 色点列表
+  - 底部居中链接 VIEW THE FULL COLLECTION(带下划线)
+  - 所有内容后台可配
+{%- endcomment -%}
+
+<style>
+  #shopify-section-{{ section.id }} .fp-hover {
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.bg_color | default: '#ffffff' }};
+    color: {{ section.settings.text_color | default: '#111' }};
+  }
+  #shopify-section-{{ section.id }} .fp-hover__inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+  #shopify-section-{{ section.id }} .fp-hover__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    gap: 24px;
+  }
+  #shopify-section-{{ section.id }} .fp-hover__title {
+    font-size: {{ section.settings.heading_size }}px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  #shopify-section-{{ section.id }} .fp-hover__top-link {
+    color: inherit;
+    text-decoration: none;
+    font-size: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform .2s ease;
+  }
+  #shopify-section-{{ section.id }} .fp-hover__top-link:hover { transform: translateX(4px); }
+  #shopify-section-{{ section.id }} .fp-hover__grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);
+    gap: {{ section.settings.grid_gap }}px;
+  }
+  @media (max-width: 990px) {
+    #shopify-section-{{ section.id }} .fp-hover__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 640px) {
+    #shopify-section-{{ section.id }} .fp-hover__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .fp-hover__card { display: block; text-decoration: none; color: inherit; }
+  .fp-hover__img {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: #f5f2ed;
+  }
+  .fp-hover__img img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: contain;
+    transition: opacity .5s ease, filter .5s ease, transform .5s ease;
+  }
+  .fp-hover__img img.fp-hover__img--primary { opacity: 1; z-index: 1; }
+  .fp-hover__img img.fp-hover__img--secondary { opacity: 0; z-index: 2; filter: blur(12px); }
+  .fp-hover__card:hover .fp-hover__img--primary {
+    opacity: 0;
+    filter: blur(12px);
+  }
+  .fp-hover__card:hover .fp-hover__img--secondary {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1.02);
+  }
+  .fp-hover__meta {
+    margin-top: 16px;
+    text-align: left;
+  }
+  .fp-hover__name {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    margin: 0 0 10px;
+    text-transform: uppercase;
+  }
+  .fp-hover__dots {
+    display: flex;
+    gap: 8px;
+  }
+  .fp-hover__dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    background: #111;
+    border: 1px solid rgba(0,0,0,.08);
+  }
+  .fp-hover__bottom {
+    margin-top: 56px;
+    text-align: center;
+  }
+  .fp-hover__bottom-link {
+    display: inline-block;
+    text-decoration: none;
+    color: inherit;
+    font-size: 16px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    padding-bottom: 4px;
+    border-bottom: 1px solid currentColor;
+    transition: opacity .2s ease;
+  }
+  .fp-hover__bottom-link:hover { opacity: .7; }
+</style>
+
+<section class="fp-hover">
+  <div class="fp-hover__inner">
+    <div class="fp-hover__head">
+      {%- if section.settings.title != blank -%}
+        <h2 class="fp-hover__title">{{ section.settings.title | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.top_link != blank -%}
+        <a class="fp-hover__top-link" href="{{ section.settings.top_link }}" aria-label="View collection">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="14" viewBox="0 0 28 14" fill="none" aria-hidden="true">
+            <path d="M0 7h26M20 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      {%- endif -%}
+    </div>
+
+    <div class="fp-hover__grid">
+      {%- comment -%} Products from a collection OR manual blocks {%- endcomment -%}
+      {%- if section.settings.collection != blank and section.blocks.size == 0 -%}
+        {%- for product in section.settings.collection.products limit: section.settings.products_to_show -%}
+          {%- assign primary_img = product.featured_image -%}
+          {%- assign secondary_img = product.images[1] | default: primary_img -%}
+          <a class="fp-hover__card" href="{{ product.url }}">
+            <div class="fp-hover__img">
+              {%- if primary_img != blank -%}
+                {{ primary_img | image_url: width: 800 | image_tag: class: 'fp-hover__img--primary', loading: 'lazy', widths: '400,600,800,1000', alt: product.title }}
+              {%- endif -%}
+              {%- if secondary_img != blank -%}
+                {{ secondary_img | image_url: width: 800 | image_tag: class: 'fp-hover__img--secondary', loading: 'lazy', widths: '400,600,800,1000', alt: product.title }}
+              {%- endif -%}
+            </div>
+            <div class="fp-hover__meta">
+              <p class="fp-hover__name">{{ section.settings.product_label | default: 'FASHIONABLE BAG' | escape }}</p>
+              {%- if product.variants.size > 0 -%}
+                <div class="fp-hover__dots">
+                  {%- for variant in product.variants limit: 6 -%}
+                    {%- assign color = variant.title | split: ' / ' | first -%}
+                    <span class="fp-hover__dot" style="background: {{ color | downcase }};"></span>
+                  {%- endfor -%}
+                </div>
+              {%- endif -%}
+            </div>
+          </a>
+        {%- endfor -%}
+      {%- endif -%}
+
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign primary = block.settings.primary_image
+          assign secondary = block.settings.secondary_image
+          assign name = block.settings.name | default: section.settings.product_label | default: 'FASHIONABLE BAG'
+          assign url = block.settings.url
+        -%}
+        <a class="fp-hover__card" href="{{ url | default: '#' }}" {{ block.shopify_attributes }}>
+          <div class="fp-hover__img">
+            {%- if primary != blank -%}
+              {{ primary | image_url: width: 800 | image_tag: class: 'fp-hover__img--primary', loading: 'lazy', widths: '400,600,800,1000', alt: name }}
+            {%- endif -%}
+            {%- if secondary != blank -%}
+              {{ secondary | image_url: width: 800 | image_tag: class: 'fp-hover__img--secondary', loading: 'lazy', widths: '400,600,800,1000', alt: name }}
+            {%- elsif primary != blank -%}
+              {{ primary | image_url: width: 800 | image_tag: class: 'fp-hover__img--secondary', loading: 'lazy', widths: '400,600,800,1000', alt: name }}
+            {%- endif -%}
+          </div>
+          <div class="fp-hover__meta">
+            <p class="fp-hover__name">{{ name | escape }}</p>
+            {%- assign dots = '' -%}
+            {%- for i in (1..6) -%}
+              {%- assign dot_key = 'dot_' | append: i -%}
+              {%- assign dot_color = block.settings[dot_key] -%}
+              {%- if dot_color != blank -%}
+                {%- assign dots = dots | append: '1' -%}
+              {%- endif -%}
+            {%- endfor -%}
+            {%- if dots != '' -%}
+              <div class="fp-hover__dots">
+                {%- for i in (1..6) -%}
+                  {%- assign dot_key = 'dot_' | append: i -%}
+                  {%- assign dot_color = block.settings[dot_key] -%}
+                  {%- if dot_color != blank -%}
+                    <span class="fp-hover__dot" style="background: {{ dot_color }};"></span>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.bottom_link_label != blank -%}
+      <div class="fp-hover__bottom">
+        <a class="fp-hover__bottom-link" href="{{ section.settings.bottom_link_url | default: '#' }}">
+          {{ section.settings.bottom_link_label | escape }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "主推产品(悬停切换)",
+  "class": "section-featured-products-hover",
+  "max_blocks": 12,
+  "settings": [
+    { "type": "text", "id": "title", "label": "区块大标题", "default": "FEATURED COLLECTION" },
+    { "type": "url",  "id": "top_link", "label": "右上箭头链接" },
+    { "type": "text", "id": "product_label", "label": "产品默认标签文案", "default": "FASHIONABLE BAG" },
+    { "type": "collection", "id": "collection", "label": "关联商品分类(作为备用数据源)" },
+    { "type": "range", "id": "products_to_show", "label": "自动取商品数量", "min": 1, "max": 12, "step": 1, "default": 6 },
+    { "type": "color", "id": "bg_color", "label": "背景色", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "文字颜色", "default": "#111111" },
+    { "type": "range", "id": "heading_size", "label": "标题字号(px)", "min": 18, "max": 56, "step": 2, "default": 28 },
+    { "type": "range", "id": "columns_desktop", "label": "桌面端列数", "min": 2, "max": 4, "step": 1, "default": 3 },
+    { "type": "range", "id": "grid_gap", "label": "卡片间距(px)", "min": 8, "max": 48, "step": 4, "default": 24 },
+    { "type": "text", "id": "bottom_link_label", "label": "底部链接文案", "default": "VIEW THE FULL COLLECTION" },
+    { "type": "url",  "id": "bottom_link_url", "label": "底部链接地址" },
+    { "type": "range", "id": "padding_top", "label": "上内边距(px)", "min": 0, "max": 120, "step": 4, "default": 72 },
+    { "type": "range", "id": "padding_bottom", "label": "下内边距(px)", "min": 0, "max": 120, "step": 4, "default": 72 }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "手工产品卡片",
+      "settings": [
+        { "type": "image_picker", "id": "primary_image", "label": "主图" },
+        { "type": "image_picker", "id": "secondary_image", "label": "悬停第 2 张图" },
+        { "type": "text", "id": "name", "label": "产品文案", "default": "FASHIONABLE BAG" },
+        { "type": "url", "id": "url", "label": "跳转链接" },
+        { "type": "header", "content": "色点展示(最多 6 个,留空则不显示)" },
+        { "type": "color", "id": "dot_1", "label": "色点 1" },
+        { "type": "color", "id": "dot_2", "label": "色点 2" },
+        { "type": "color", "id": "dot_3", "label": "色点 3" },
+        { "type": "color", "id": "dot_4", "label": "色点 4" },
+        { "type": "color", "id": "dot_5", "label": "色点 5" },
+        { "type": "color", "id": "dot_6", "label": "色点 6" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "主推产品(悬停切换)",
+      "blocks": [
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" }
+      ]
+    }
+  ]
+}
+{% endschema %}

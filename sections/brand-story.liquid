@@ -1,0 +1,143 @@
+{%- comment -%}
+  品牌故事版块(Brand Story)
+  - 左右结构: refresh 2026-04-22
+      · 左:品牌形象图
+      · 右:顶部 logo 区域 + 中间 1 大标题 + 中间 2 段落文本 + 底部 more 按钮
+{%- endcomment -%}
+
+<style>
+  #shopify-section-{{ section.id }} .brand-story {
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.bg_color | default: '#ffffff' }};
+    color: {{ section.settings.text_color | default: '#111' }};
+  }
+  #shopify-section-{{ section.id }} .brand-story__inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+  @media (max-width: 990px) {
+    #shopify-section-{{ section.id }} .brand-story__inner {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      padding: 0 24px;
+    }
+  }
+  #shopify-section-{{ section.id }} .brand-story__media {
+    width: 100%;
+    aspect-ratio: {{ section.settings.image_ratio | default: '4 / 5' }};
+    background: #eee;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+  #shopify-section-{{ section.id }} .brand-story__media img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  #shopify-section-{{ section.id }} .brand-story__logo {
+    max-width: {{ section.settings.logo_width }}px;
+    margin-bottom: 24px;
+  }
+  #shopify-section-{{ section.id }} .brand-story__logo img {
+    max-width: 100%;
+    height: auto;
+  }
+  #shopify-section-{{ section.id }} .brand-story__title {
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: .04em;
+    margin: 0 0 24px;
+    text-transform: uppercase;
+  }
+  #shopify-section-{{ section.id }} .brand-story__desc {
+    font-size: 15px;
+    line-height: 1.8;
+    opacity: .9;
+    margin: 0 0 36px;
+  }
+  #shopify-section-{{ section.id }} .brand-story__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 40px;
+    min-width: 160px;
+    justify-content: center;
+    border: 1px solid currentColor;
+    border-radius: 0;
+    text-decoration: none;
+    color: inherit;
+    font-size: 14px;
+    letter-spacing: .08em;
+    transition: all .2s ease;
+    background: transparent;
+  }
+  #shopify-section-{{ section.id }} .brand-story__btn:hover {
+    background: currentColor;
+  }
+  #shopify-section-{{ section.id }} .brand-story__btn:hover span,
+  #shopify-section-{{ section.id }} .brand-story__btn:hover svg {
+    color: {{ section.settings.bg_color | default: '#ffffff' }};
+  }
+</style>
+
+<section class="brand-story">
+  <div class="brand-story__inner">
+    <div class="brand-story__media">
+      {%- if section.settings.image != blank -%}
+        {{ section.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '400,600,800,1000,1200,1400', alt: section.settings.title }}
+      {%- endif -%}
+    </div>
+    <div class="brand-story__content">
+      {%- if section.settings.logo != blank -%}
+        <div class="brand-story__logo">
+          {{ section.settings.logo | image_url: width: 400 | image_tag: loading: 'lazy', widths: '200,300,400', alt: 'Brand Logo' }}
+        </div>
+      {%- endif -%}
+      {%- if section.settings.title != blank -%}
+        <h2 class="brand-story__title">{{ section.settings.title | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.description != blank -%}
+        <div class="brand-story__desc">{{ section.settings.description }}</div>
+      {%- endif -%}
+      {%- if section.settings.btn_label != blank -%}
+        <a class="brand-story__btn" href="{{ section.settings.btn_link | default: '#' }}">
+          <span>{{ section.settings.btn_label | escape }}</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true">
+            <path d="M0 5h12M8 1l4 4-4 4" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "品牌故事",
+  "class": "section-brand-story",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "左侧图片" },
+    { "type": "select", "id": "image_ratio", "label": "图片比例", "options": [
+      { "value": "1 / 1", "label": "1:1" },
+      { "value": "4 / 5", "label": "4:5" },
+      { "value": "3 / 4", "label": "3:4" },
+      { "value": "16 / 9", "label": "16:9" }
+    ], "default": "4 / 5" },
+    { "type": "image_picker", "id": "logo", "label": "右上 LOGO" },
+    { "type": "range", "id": "logo_width", "label": "LOGO 最大宽度(px)", "min": 60, "max": 260, "step": 10, "default": 120 },
+    { "type": "text", "id": "title", "label": "大标题", "default": "BAYSTORY" },
+    { "type": "richtext", "id": "description", "label": "段落文本", "default": "<p>Your bag is more than an accessory.<br>it is the keeper of your journey. From stylish chest bags to elegant wallets. Baystory empowers modern women to carry their confidence, embrace their freedom, and write their own beautiful stories everywhere</p>" },
+    { "type": "text", "id": "btn_label", "label": "按钮文字", "default": "more  >" },
+    { "type": "url", "id": "btn_link", "label": "按钮链接" },
+    { "type": "color", "id": "bg_color", "label": "背景色", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "文字颜色", "default": "#111111" },
+    { "type": "range", "id": "padding_top", "label": "上内边距(px)", "min": 0, "max": 160, "step": 4, "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "下内边距(px)", "min": 0, "max": 160, "step": 4, "default": 80 }
+  ],
+  "presets": [ { "name": "品牌故事" } ]
+}
+{% endschema %}

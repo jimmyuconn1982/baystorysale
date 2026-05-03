@@ -1,0 +1,357 @@
+{% comment %}
+  ============================================================
+  Fullpage Scroll Background Section（全局背景管理器）
+  ----------------------------------------------------------
+  功能：
+  1. 提供一个 fixed 全屏背景层
+  2. 第一个 block 的背景图 = 默认首屏背景（对应轮播区）
+  3. 后续 block 的背景图 = 对应各个 Featured Product 的专属背景
+  4. JavaScript 监听页面上所有 .fp-scroll-section 元素
+     滚到哪个区域，就切换到对应的背景图
+  ============================================================
+{% endcomment %}
+
+{%- comment -%} ========== 固定背景层 ========== {%- endcomment -%}
+<div id="fullpage-bg-layer" class="fp-bg-layer" aria-hidden="true">
+  {%- for block in section.blocks -%}
+    {%- if block.settings.bg_image != blank -%}
+      <div
+        class="fp-bg-image{% if forloop.first %} fp-bg-active{% endif %}"
+        data-bg-index="{{ forloop.index0 }}"
+        style="background-image: url('{{ block.settings.bg_image | image_url: width: 1920 }}'); background-color: {{ block.settings.bg_color | default: '#1a1a2e' }};"
+        {{ block.shopify_attributes }}
+      ></div>
+    {%- else -%}
+      <div
+        class="fp-bg-image fp-bg-placeholder{% if forloop.first %} fp-bg-active{% endif %}"
+        data-bg-index="{{ forloop.index0 }}"
+        style="background-color: {{ block.settings.bg_color }};"
+        {{ block.shopify_attributes }}
+      ></div>
+    {%- endif -%}
+  {%- endfor -%}
+  <div class="fp-bg-overlay" style="opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"></div>
+</div>
+
+<style>
+  /* 背景容器：固定定位，全屏铺满，最小高度 1080px */
+  .fp-bg-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    min-height: 1080px;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* 每一张背景图：默认不可见 */
+  .fp-bg-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity {{ section.settings.transition_speed }}ms ease-in-out;
+    will-change: opacity;
+  }
+
+  /* 激活态：可见 */
+  .fp-bg-image.fp-bg-active {
+    opacity: 1;
+  }
+
+  /* 占位背景色（没配图片时的兜底） */
+  .fp-bg-placeholder {
+    background-color: #1a1a2e;
+  }
+
+  /* 遮罩层（让前景文字更清晰） */
+  .fp-bg-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.3) 0%,
+      rgba(0, 0, 0, 0.1) 50%,
+      rgba(0, 0, 0, 0.4) 100%
+    );
+    z-index: 1;
+  }
+
+  /* 确保页面其他 section 的内容在背景层之上 */
+  .fp-scroll-section {
+    position: relative;
+    z-index: 1;
+  }
+
+  /*
+   * 覆盖 Dawn 主题 base.css 中的不透明背景
+   * .gradient 和 .color-background-* 会给元素设置不透明背景色，
+   * 把我们的 fixed 背景完全盖住，所以必须强制透明
+   */
+  .fp-scroll-section,
+  .fp-scroll-section.gradient,
+  .fp-scroll-section.color-background-1,
+  .fp-scroll-section.color-background-2,
+  .fp-scroll-section.color-accent-1,
+  .fp-scroll-section.color-accent-2,
+  .fp-scroll-section.color-inverse {
+    background: transparent !important;
+    background-color: transparent !important;
+    --gradient-background: transparent !important;
+    --color-background: 0, 0, 0 !important;
+  }
+
+  /* featured-collection 内层的 .isolate.gradient 也需要透明 */
+  .fp-scroll-section .isolate.gradient,
+  .fp-scroll-section .gradient,
+  .fp-scroll-section .color-background-1,
+  .fp-scroll-section .color-background-2 {
+    background: transparent !important;
+    background-color: transparent !important;
+    --gradient-background: transparent !important;
+  }
+
+  /* 在深色背景上确保文字可见 */
+  .fp-scroll-section,
+  .fp-scroll-section .collection__title,
+  .fp-scroll-section .card__heading,
+  .fp-scroll-section .card-information,
+  .fp-scroll-section .price,
+  .fp-scroll-section .card__content,
+  .fp-scroll-section h2,
+  .fp-scroll-section .title,
+  .fp-scroll-section a {
+    color: #ffffff;
+  }
+
+  .fp-scroll-section .card-wrapper {
+    color: #ffffff;
+  }
+
+  .fp-scroll-section .button--link,
+  .fp-scroll-section .underlined-link {
+    color: #ffffff;
+  }
+</style>
+
+<script>
+  (function () {
+    'use strict';
+
+    var bgLayer = document.getElementById('fullpage-bg-layer');
+    var scrollSections = document.querySelectorAll('.fp-scroll-section');
+    var currentIndex = -1;
+
+    /*
+     * 背景映射策略：
+     * - 第 0 个 .fp-scroll-section（轮播区，data-fp-bg-image="default"）→ 使用 block 0（首屏默认背景）
+     * - 第 N 个 .fp-scroll-section（featured-collection）→
+     *     如果该 section 配置了 data-fp-bg-image（非空非 default），动态创建背景 div
+     *     否则 fallback 到 block N 的预定义背景（如果存在）
+     */
+    scrollSections.forEach(function (section, index) {
+      var sectionBgUrl = section.dataset.fpBgImage;
+
+      /* 为每个 section 分配 data-bg-index */
+      section.setAttribute('data-bg-index', index);
+
+      /* 如果 section 自带背景图 URL（featured-collection 配置的专属背景） */
+      if (sectionBgUrl && sectionBgUrl !== 'default' && sectionBgUrl.trim() !== '') {
+        var existingBg = bgLayer.querySelector('.fp-bg-image[data-bg-index="' + index + '"]');
+
+        if (!existingBg) {
+          /* 动态创建背景 div，插入到 overlay 之前 */
+          var newBgDiv = document.createElement('div');
+          newBgDiv.className = 'fp-bg-image';
+          newBgDiv.setAttribute('data-bg-index', index);
+          newBgDiv.style.backgroundImage = "url('" + sectionBgUrl + "')";
+          var overlay = bgLayer.querySelector('.fp-bg-overlay');
+          bgLayer.insertBefore(newBgDiv, overlay);
+        } else {
+          existingBg.style.backgroundImage = "url('" + sectionBgUrl + "')";
+        }
+      } else if (sectionBgUrl === 'default' || !sectionBgUrl || sectionBgUrl.trim() === '') {
+        /*
+         * 没有专属背景的 section，尝试复用预定义 block 背景
+         * block 0 = 首屏默认背景，block 1+ = 后续背景
+         * 将预定义 block 的 data-bg-index 重新映射到当前 section index
+         */
+        var presetBg = bgLayer.querySelector('.fp-bg-image[data-bg-index="' + index + '"]');
+        if (!presetBg) {
+          /* 查找还未被映射的预定义 block 背景，按顺序分配 */
+          var unmapped = bgLayer.querySelectorAll('.fp-bg-image:not([data-bg-mapped])');
+          if (unmapped.length > 0) {
+            /* 找到第一个未映射且 index 匹配的，或者按顺序取下一个 */
+            var candidate = null;
+            for (var i = 0; i < unmapped.length; i++) {
+              var origIndex = parseInt(unmapped[i].getAttribute('data-bg-index'), 10);
+              if (origIndex === index) {
+                candidate = unmapped[i];
+                break;
+              }
+            }
+            if (!candidate && index < unmapped.length) {
+              candidate = unmapped[index];
+            }
+            if (candidate) {
+              candidate.setAttribute('data-bg-index', index);
+              candidate.setAttribute('data-bg-mapped', 'true');
+            }
+          }
+        }
+      }
+    });
+
+    /* 标记所有已正确映射的预定义背景 */
+    bgLayer.querySelectorAll('.fp-bg-image').forEach(function (bg) {
+      bg.setAttribute('data-bg-mapped', 'true');
+    });
+
+    function switchBackground(index) {
+      if (index === currentIndex) return;
+      currentIndex = index;
+
+      var allBgs = bgLayer.querySelectorAll('.fp-bg-image');
+      allBgs.forEach(function (img) {
+        img.classList.remove('fp-bg-active');
+      });
+
+      var targetBg = bgLayer.querySelector('.fp-bg-image[data-bg-index="' + index + '"]');
+      if (targetBg) {
+        targetBg.classList.add('fp-bg-active');
+      }
+    }
+
+    function handleIntersection(entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var bgIndex = parseInt(entry.target.getAttribute('data-bg-index'), 10);
+          if (!isNaN(bgIndex)) {
+            switchBackground(bgIndex);
+          }
+        }
+      });
+    }
+
+    function initObserver() {
+      var options = {
+        root: null,
+        rootMargin: '-10% 0px -10% 0px',
+        threshold: {{ section.settings.observer_threshold | divided_by: 100.0 }}
+      };
+
+      var observer = new IntersectionObserver(handleIntersection, options);
+
+      scrollSections.forEach(function (section) {
+        observer.observe(section);
+      });
+    }
+
+    function init() {
+      switchBackground(0);
+      initObserver();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "全屏滚动背景",
+  "tag": "div",
+  "class": "fullpage-scroll-bg-section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "transition_speed",
+      "label": "背景切换速度 (ms)",
+      "min": 200,
+      "max": 2000,
+      "step": 100,
+      "default": 600,
+      "unit": "ms"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "遮罩透明度 (%)",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "default": 30,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "observer_threshold",
+      "label": "滚动触发阈值 (%)",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "default": 35,
+      "unit": "%",
+      "info": "Section 多少比例可见时触发背景切换"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "bg_slide",
+      "name": "背景图片",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "bg_image",
+          "label": "背景图片"
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "备用背景色（无图片时显示）",
+          "default": "#1a1a2e"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "备注标签（仅后台显示，方便识别）",
+          "default": "背景图"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "全屏滚动背景",
+      "blocks": [
+        {
+          "type": "bg_slide",
+          "settings": {
+            "label": "首屏默认背景 (a.jpg)"
+          }
+        },
+        {
+          "type": "bg_slide",
+          "settings": {
+            "label": "第1个商品系列背景 (b.jpg)"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,230 @@
+{%- comment -%}
+  通知栏(Announcement Bar)
+  - 支持后台更换文本、文本超链接、字体样式,以及通知栏背景底色(默认黑色)。
+  - 每条通知是一个 block,可配置:文本、链接、字体、字号、字重、是否斜体、下划线、字母间距、文字颜色、背景色、内边距。
+{%- endcomment -%}
+
+{%- liquid
+  assign bar_bg = section.settings.bar_bg_color | default: '#000000'
+  assign bar_padding_y = section.settings.bar_padding_y | default: 10
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} .announcement-bar-wrapper {
+    background-color: {{ bar_bg }} !important;
+    padding-top: {{ bar_padding_y }}px;
+    padding-bottom: {{ bar_padding_y }}px;
+  }
+  #shopify-section-{{ section.id }} .announcement-bar {
+    background-color: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+  #shopify-section-{{ section.id }} .announcement-bar .gradient {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'announcement' -%}
+#shopify-section-{{ section.id }} .announcement-bar__message--{{ block.id }} p {
+  color: {{ block.settings.text_color | default: '#ffffff' }} !important;
+  font-family: {{ block.settings.font_family | default: 'inherit' }} !important;
+  font-size: {{ block.settings.font_size | default: 14 }}px !important;
+  font-weight: {{ block.settings.font_weight | default: 400 }} !important;
+  font-style: {% if block.settings.italic %}italic{% else %}normal{% endif %} !important;
+  letter-spacing: {{ block.settings.letter_spacing | default: 0 }}px !important;
+  text-decoration: {% if block.settings.underline %}underline{% else %}none{% endif %} !important;
+  text-align: {{ block.settings.alignment | default: 'center' }} !important;
+  line-height: 1.4 !important;
+  margin: 0 !important;
+}
+
+
+      #shopify-section-{{ section.id }} .announcement-bar__link--{{ block.id }} {
+        text-decoration: none;
+        color: inherit;
+      }
+    {%- endif -%}
+  {%- endfor -%}
+</style>
+
+<div class="announcement-bar-wrapper" role="region" aria-label="{{ 'sections.header.announcement' | t }}">
+  {%- if section.blocks.size > 1 -%}
+    <slideshow-component class="announcement-bar-slideshow" role="region" aria-roledescription="Carousel">
+  {%- endif -%}
+
+  {%- for block in section.blocks -%}
+    {%- case block.type -%}
+      {%- when 'announcement' -%}
+        <div class="announcement-bar announcement-bar--{{ block.id }}" {{ block.shopify_attributes }}>
+          {%- if block.settings.text != blank -%}
+            {%- if block.settings.link != blank -%}
+              <a href="{{ block.settings.link }}"
+                 class="announcement-bar__link announcement-bar__link--{{ block.id }} focus-inset"
+                 {% if block.settings.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
+            {%- endif -%}
+              
+<div class="announcement-bar__message announcement-bar__message--{{ block.id }}">
+  {{ block.settings.text }}
+</div>
+            {%- if block.settings.link != blank -%}
+              </a>
+            {%- endif -%}
+          {%- endif -%}
+        </div>
+    {%- endcase -%}
+  {%- endfor -%}
+
+  {%- if section.blocks.size > 1 -%}
+    </slideshow-component>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "通知栏",
+  "class": "section-announcement-bar",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "header",
+      "content": "通知栏全局样式"
+    },
+    {
+      "type": "color",
+      "id": "bar_bg_color",
+      "label": "通知栏背景底色",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "bar_padding_y",
+      "label": "上下内边距(px)",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 10
+    }
+  ],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "通知文本",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "文本内容",
+          "default": "<p>NEW ARRIVALS!!!</p>"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "超链接"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_in_new_tab",
+          "label": "新标签页打开",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "字体样式"
+        },
+        {
+          "type": "select",
+          "id": "font_family",
+          "label": "字体",
+          "options": [
+            { "value": "inherit", "label": "跟随主题" },
+            { "value": "'Helvetica Neue', Helvetica, Arial, sans-serif", "label": "Helvetica" },
+            { "value": "'Georgia', serif", "label": "Georgia" },
+            { "value": "'Times New Roman', Times, serif", "label": "Times New Roman" },
+            { "value": "'Courier New', Courier, monospace", "label": "Courier New" },
+            { "value": "'Playfair Display', serif", "label": "Playfair Display" },
+            { "value": "'Montserrat', sans-serif", "label": "Montserrat" }
+          ],
+          "default": "inherit"
+        },
+        {
+          "type": "range",
+          "id": "font_size",
+          "label": "字号(px)",
+          "min": 10,
+          "max": 28,
+          "step": 1,
+          "default": 14
+        },
+        {
+          "type": "select",
+          "id": "font_weight",
+          "label": "字重",
+          "options": [
+            { "value": "300", "label": "细体 300" },
+            { "value": "400", "label": "常规 400" },
+            { "value": "500", "label": "中等 500" },
+            { "value": "600", "label": "半粗 600" },
+            { "value": "700", "label": "粗体 700" }
+          ],
+          "default": "400"
+        },
+        {
+          "type": "checkbox",
+          "id": "italic",
+          "label": "斜体",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "underline",
+          "label": "下划线",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "letter_spacing",
+          "label": "字间距(px)",
+          "min": -2,
+          "max": 10,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "文字颜色",
+          "default": "#ffffff"
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "对齐方式",
+          "options": [
+            { "value": "left", "label": "左对齐" },
+            { "value": "center", "label": "居中" },
+            { "value": "right", "label": "右对齐" }
+          ],
+          "default": "center"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "settings": {
+      "bar_bg_color": "#000000",
+      "bar_padding_y": 10
+    },
+    "blocks": [
+      {
+        "type": "announcement",
+        "settings": {
+          "text": "<p>欢迎光临 · 全场免邮</p>",
+          "text_color": "#ffffff"
+        }
+      }
+    ]
+  }
+}
+{% endschema %}

@@ -1,0 +1,434 @@
+{%- comment -%}
+  导航二级菜单(Mega Menu Pro)
+  - 与导航菜单联动的二级全屏横幅 mega 菜单面板。
+  - 每个 block 对应一个顶部类别:
+      · 触发菜单项标题:与 header 主菜单顶级链接文本完全一致(如"包包"),用于精确匹配 hover 触发。
+      · 左侧:类别大标题、副标题、子类目链接列表(1-8 条)
+      · 右侧:最多 4 张子类目商品展示图(可配置图片 + 链接 + 标题)
+  - 当鼠标移到对应主菜单项时,会弹出 全屏宽度 的二级菜单面板;鼠标离开后自动隐藏。
+{%- endcomment -%}
+
+<link rel="stylesheet" href="{{ 'component-mega-menu-pro.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript>{{ 'component-mega-menu-pro.css' | asset_url | stylesheet_tag }}</noscript>
+
+<style>
+  .mega-menu-pro {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    width: 100%;
+    background: {{ section.settings.panel_bg | default: '#ffffff' }};
+    color: {{ section.settings.panel_text_color | default: '#111' }};
+    border-top: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+    z-index: 50;
+    display: none;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity .25s ease, transform .25s ease;
+    padding: 40px 0;
+  }
+  .mega-menu-pro.is-visible {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .mega-menu-pro__inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .mega-menu-pro__row {
+    display: grid;
+    grid-template-columns: minmax(220px, 320px) 1fr;
+    gap: 48px;
+    align-items: flex-start;
+    padding: 20px 0;
+    border-top: 1px solid rgba(0,0,0,.06);
+  }
+  .mega-menu-pro__row:first-child { border-top: none; padding-top: 0; }
+  .mega-menu-pro__left h3 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 16px;
+  }
+  .mega-menu-pro__subtitle {
+    font-size: 13px;
+    opacity: .6;
+    margin: 0 0 24px;
+  }
+  .mega-menu-pro__links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .mega-menu-pro__links a {
+    color: inherit;
+    text-decoration: none;
+    font-size: 15px;
+    line-height: 1.5;
+    transition: color .2s ease;
+  }
+  .mega-menu-pro__links a:hover {
+    color: {{ section.settings.link_hover_color | default: '#c87979' }};
+    text-decoration: underline;
+  }
+  .mega-menu-pro__right {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 140px));
+    gap: 20px;
+    justify-content: flex-start;
+  }
+  .mega-menu-pro__card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+  .mega-menu-pro__card-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #f7f4ef;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+  .mega-menu-pro__card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .4s ease;
+  }
+  .mega-menu-pro__card:hover .mega-menu-pro__card-img img {
+    transform: scale(1.05);
+  }
+  .mega-menu-pro__card-title {
+    margin-top: 10px;
+    font-size: 14px;
+    text-align: center;
+  }
+  .mega-menu-pro-anchor {
+    position: relative;
+  }
+  @media (max-width: 990px) {
+    .mega-menu-pro { display: none !important; }
+  }
+</style>
+
+{%- if section.blocks.size > 0 -%}
+  <div class="mega-menu-pro-host" data-mega-menu-host>
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign trigger = block.settings.trigger_title | strip | downcase
+        assign panel_id = 'mega-panel-' | append: block.id
+      -%}
+      <div id="{{ panel_id }}"
+           class="mega-menu-pro"
+           data-mega-panel
+           data-trigger="{{ trigger }}"
+           {{ block.shopify_attributes }}>
+        <div class="mega-menu-pro__inner">
+          <div class="mega-menu-pro__left">
+            {%- if block.settings.heading != blank -%}
+              <h3>{{ block.settings.heading }}</h3>
+            {%- endif -%}
+            {%- if block.settings.subheading != blank -%}
+              <p class="mega-menu-pro__subtitle">{{ block.settings.subheading }}</p>
+            {%- endif -%}
+            <ul class="mega-menu-pro__links">
+              {%- for i in (1..8) -%}
+                {%- assign link_label_key = 'link_label_' | append: i -%}
+                {%- assign link_url_key = 'link_url_' | append: i -%}
+                {%- assign label = block.settings[link_label_key] -%}
+                {%- assign url = block.settings[link_url_key] -%}
+                {%- if label != blank -%}
+                  <li><a href="{{ url | default: '#' }}">{{ label | escape }}</a></li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          </div>
+          <div class="mega-menu-pro__right">
+            {%- for i in (1..4) -%}
+              {%- assign img_key = 'card_image_' | append: i -%}
+              {%- assign title_key = 'card_title_' | append: i -%}
+              {%- assign url_key = 'card_url_' | append: i -%}
+              {%- assign img = block.settings[img_key] -%}
+              {%- assign ctitle = block.settings[title_key] -%}
+              {%- assign curl = block.settings[url_key] -%}
+              {%- if img != blank or ctitle != blank -%}
+                <a class="mega-menu-pro__card" href="{{ curl | default: '#' }}">
+                  <div class="mega-menu-pro__card-img">
+                    {%- if img != blank -%}
+                      {{ img | image_url: width: 400 | image_tag: loading: 'lazy', widths: '200,300,400,600', alt: ctitle }}
+                    {%- endif -%}
+                  </div>
+                  {%- if ctitle != blank -%}
+                    <div class="mega-menu-pro__card-title">{{ ctitle | escape }}</div>
+                  {%- endif -%}
+                </a>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+          </div>
+
+          {%- comment -%} Optional extra rows via category_row blocks with matching parent_trigger {%- endcomment -%}
+          {%- for extra in section.blocks -%}
+            {%- assign parent_trigger = extra.settings.parent_trigger | strip | downcase -%}
+            {%- if extra.type == 'category_row' and parent_trigger == trigger -%}
+              <div class="mega-menu-pro__row" {{ extra.shopify_attributes }}>
+                <div class="mega-menu-pro__left">
+                  <ul class="mega-menu-pro__links">
+                    {%- for i in (1..6) -%}
+                      {%- assign ll = 'link_label_' | append: i -%}
+                      {%- assign lu = 'link_url_' | append: i -%}
+                      {%- if extra.settings[ll] != blank -%}
+                        <li><a href="{{ extra.settings[lu] | default: '#' }}">{{ extra.settings[ll] | escape }}</a></li>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </ul>
+                </div>
+                <div class="mega-menu-pro__right">
+                  {%- for i in (1..4) -%}
+                    {%- assign ik = 'card_image_' | append: i -%}
+                    {%- assign tk = 'card_title_' | append: i -%}
+                    {%- assign uk = 'card_url_' | append: i -%}
+                    {%- assign eimg = extra.settings[ik] -%}
+                    {%- if eimg != blank or extra.settings[tk] != blank -%}
+                      <a class="mega-menu-pro__card" href="{{ extra.settings[uk] | default: '#' }}">
+                        <div class="mega-menu-pro__card-img">
+                          {%- if eimg != blank -%}
+                            {{ eimg | image_url: width: 400 | image_tag: loading: 'lazy', widths: '200,300,400,600', alt: extra.settings[tk] }}
+                          {%- endif -%}
+                        </div>
+                        {%- if extra.settings[tk] != blank -%}
+                          <div class="mega-menu-pro__card-title">{{ extra.settings[tk] | escape }}</div>
+                        {%- endif -%}
+                      </a>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+<script>
+(function(){
+  function norm(s){ return (s||'').trim().toLowerCase(); }
+
+  function init(){
+    var host = document.querySelector('[data-mega-menu-host]');
+    if(!host) return;
+    var panels = host.querySelectorAll('[data-mega-panel]');
+    if(!panels.length) return;
+
+    // Collect trigger map
+    var triggerMap = {};
+    panels.forEach(function(p){
+      triggerMap[p.getAttribute('data-trigger')] = p;
+    });
+
+    // Find header menu items (top-level links) from existing header
+    var headerMenuItems = document.querySelectorAll('.header__inline-menu > ul > li');
+
+    var hideTimer = null;
+    function hideAll(){
+      panels.forEach(function(p){ p.classList.remove('is-visible'); });
+    }
+    function showPanel(panel){
+      if(!panel) return;
+      clearTimeout(hideTimer);
+      hideAll();
+      panel.classList.add('is-visible');
+      // Anchor the panel to the header-wrapper for full-width positioning
+      var header = document.querySelector('.section-header, .header-wrapper');
+      if(header && panel.parentElement !== document.body){
+        // move panel into header for proper absolute positioning
+      }
+    }
+    function scheduleHide(){
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(hideAll, 180);
+    }
+
+    // Position: relative to section-header so we attach one anchor wrapper
+    // Simpler: fix it below header-wrapper
+    var headerWrapper = document.querySelector('.section-header');
+    if(headerWrapper){
+      headerWrapper.style.position = headerWrapper.style.position || 'relative';
+    }
+
+    headerMenuItems.forEach(function(li){
+      var trigger = li.querySelector('summary, a');
+      if(!trigger) return;
+      var label = norm(trigger.textContent);
+      var panel = triggerMap[label];
+      if(!panel) return;
+      // Move panel into headerWrapper once
+      if(headerWrapper && panel.parentElement !== headerWrapper){
+        headerWrapper.appendChild(panel);
+      }
+      li.classList.add('mega-menu-pro-anchor');
+      li.addEventListener('mouseenter', function(){ showPanel(panel); });
+      li.addEventListener('mouseleave', scheduleHide);
+      panel.addEventListener('mouseenter', function(){ clearTimeout(hideTimer); });
+      panel.addEventListener('mouseleave', scheduleHide);
+      // Prevent native <details> toggle from blocking
+      if(trigger.tagName === 'SUMMARY'){
+        trigger.addEventListener('click', function(e){ e.preventDefault(); });
+      }
+    });
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "导航二级菜单",
+  "class": "section-mega-menu-pro",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "使用说明:每个 block 对应主导航一个顶级菜单项的二级面板。将 block 中 \"触发菜单项标题\" 设为与 Header 主菜单顶级链接文字完全一致即可。"
+    },
+    {
+      "type": "color",
+      "id": "panel_bg",
+      "label": "面板背景色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "panel_text_color",
+      "label": "面板文字颜色",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "link_hover_color",
+      "label": "链接悬停颜色",
+      "default": "#c87979"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category_panel",
+      "name": "类别面板",
+      "settings": [
+        {
+          "type": "text",
+          "id": "trigger_title",
+          "label": "触发菜单项标题",
+          "info": "与 Header 主菜单顶级链接文字完全一致(大小写与空格均会被忽略)"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "左侧大标题",
+          "default": "Category"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "左侧副标题"
+        },
+        { "type": "header", "content": "子类目链接(最多 8 条)" },
+        { "type": "text", "id": "link_label_1", "label": "链接 1 标题" },
+        { "type": "url",  "id": "link_url_1",   "label": "链接 1 地址" },
+        { "type": "text", "id": "link_label_2", "label": "链接 2 标题" },
+        { "type": "url",  "id": "link_url_2",   "label": "链接 2 地址" },
+        { "type": "text", "id": "link_label_3", "label": "链接 3 标题" },
+        { "type": "url",  "id": "link_url_3",   "label": "链接 3 地址" },
+        { "type": "text", "id": "link_label_4", "label": "链接 4 标题" },
+        { "type": "url",  "id": "link_url_4",   "label": "链接 4 地址" },
+        { "type": "text", "id": "link_label_5", "label": "链接 5 标题" },
+        { "type": "url",  "id": "link_url_5",   "label": "链接 5 地址" },
+        { "type": "text", "id": "link_label_6", "label": "链接 6 标题" },
+        { "type": "url",  "id": "link_url_6",   "label": "链接 6 地址" },
+        { "type": "text", "id": "link_label_7", "label": "链接 7 标题" },
+        { "type": "url",  "id": "link_url_7",   "label": "链接 7 地址" },
+        { "type": "text", "id": "link_label_8", "label": "链接 8 标题" },
+        { "type": "url",  "id": "link_url_8",   "label": "链接 8 地址" },
+        { "type": "header", "content": "右侧展示商品(最多 4 项)" },
+        { "type": "image_picker", "id": "card_image_1", "label": "商品 1 图片" },
+        { "type": "text",          "id": "card_title_1", "label": "商品 1 标题" },
+        { "type": "url",           "id": "card_url_1",   "label": "商品 1 链接" },
+        { "type": "image_picker", "id": "card_image_2", "label": "商品 2 图片" },
+        { "type": "text",          "id": "card_title_2", "label": "商品 2 标题" },
+        { "type": "url",           "id": "card_url_2",   "label": "商品 2 链接" },
+        { "type": "image_picker", "id": "card_image_3", "label": "商品 3 图片" },
+        { "type": "text",          "id": "card_title_3", "label": "商品 3 标题" },
+        { "type": "url",           "id": "card_url_3",   "label": "商品 3 链接" },
+        { "type": "image_picker", "id": "card_image_4", "label": "商品 4 图片" },
+        { "type": "text",          "id": "card_title_4", "label": "商品 4 标题" },
+        { "type": "url",           "id": "card_url_4",   "label": "商品 4 链接" }
+      ]
+    },
+    {
+      "type": "category_row",
+      "name": "同面板额外分组行",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "为某个已有的一级菜单面板再加一行展示(左侧文字链接 + 右侧 4 个商品卡)"
+        },
+        {
+          "type": "text",
+          "id": "parent_trigger",
+          "label": "关联的触发菜单标题",
+          "info": "与某个 「类别面板」 block 的 「触发菜单项标题」 保持一致"
+        },
+        { "type": "header", "content": "左侧文字链接(最多 6 条)" },
+        { "type": "text", "id": "link_label_1", "label": "链接 1 标题" },
+        { "type": "url",  "id": "link_url_1",   "label": "链接 1 地址" },
+        { "type": "text", "id": "link_label_2", "label": "链接 2 标题" },
+        { "type": "url",  "id": "link_url_2",   "label": "链接 2 地址" },
+        { "type": "text", "id": "link_label_3", "label": "链接 3 标题" },
+        { "type": "url",  "id": "link_url_3",   "label": "链接 3 地址" },
+        { "type": "text", "id": "link_label_4", "label": "链接 4 标题" },
+        { "type": "url",  "id": "link_url_4",   "label": "链接 4 地址" },
+        { "type": "text", "id": "link_label_5", "label": "链接 5 标题" },
+        { "type": "url",  "id": "link_url_5",   "label": "链接 5 地址" },
+        { "type": "text", "id": "link_label_6", "label": "链接 6 标题" },
+        { "type": "url",  "id": "link_url_6",   "label": "链接 6 地址" },
+        { "type": "header", "content": "右侧展示商品(最多 4 项)" },
+        { "type": "image_picker", "id": "card_image_1", "label": "商品 1 图片" },
+        { "type": "text",          "id": "card_title_1", "label": "商品 1 标题" },
+        { "type": "url",           "id": "card_url_1",   "label": "商品 1 链接" },
+        { "type": "image_picker", "id": "card_image_2", "label": "商品 2 图片" },
+        { "type": "text",          "id": "card_title_2", "label": "商品 2 标题" },
+        { "type": "url",           "id": "card_url_2",   "label": "商品 2 链接" },
+        { "type": "image_picker", "id": "card_image_3", "label": "商品 3 图片" },
+        { "type": "text",          "id": "card_title_3", "label": "商品 3 标题" },
+        { "type": "url",           "id": "card_url_3",   "label": "商品 3 链接" },
+        { "type": "image_picker", "id": "card_image_4", "label": "商品 4 图片" },
+        { "type": "text",          "id": "card_title_4", "label": "商品 4 标题" },
+        { "type": "url",           "id": "card_url_4",   "label": "商品 4 链接" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "导航二级菜单",
+      "blocks": [
+        { "type": "category_panel", "settings": { "trigger_title": "包包", "heading": "Bags" } },
+        { "type": "category_panel", "settings": { "trigger_title": "配饰", "heading": "Accessories" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

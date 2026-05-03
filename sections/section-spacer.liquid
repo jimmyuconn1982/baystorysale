@@ -1,0 +1,23 @@
+{%- comment -%} 空白占位 Section {%- endcomment -%}
+<style>
+  #shopify-section-{{ section.id }} .section-spacer {
+    width: 100%;
+    height: {{ section.settings.height }}px;
+    background: {{ section.settings.bg_color | default: 'transparent' }};
+    display: block !important;  /* ← 新增这行 */
+  }
+</style>
+<div class="section-spacer"></div>
+
+
+{% schema %}
+{
+  "name": "空白占位",
+  "class": "section-spacer-wrapper",
+  "settings": [
+    { "type": "range", "id": "height", "label": "高度(px)", "min": 0, "max": 400, "step": 4, "default": 80 },
+    { "type": "color", "id": "bg_color", "label": "背景色", "default": "#ffffff" }
+  ],
+  "presets": [ { "name": "空白占位" } ]
+}
+{% endschema %}

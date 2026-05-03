@@ -1,0 +1,230 @@
+{%- comment -%}
+  分类模块(Category Grid)
+  - 样机布局(COLLECTION OF OUR BAGS):
+      · 两侧满幅的模特形象图作为背景
+      · 顶部居中大标题
+      · 中间嵌一个白色卡片,内嵌 N 个分类小卡(如 4 个:CROSSBODY BAGS / TOTE BAGS / BACKPACKS / WALLETS&POUCHES)
+      · 底部左下 VIEW ALL + 右下箭头
+{%- endcomment -%}
+
+<style>
+  #shopify-section-{{ section.id }} .cat-grid {
+    position: relative;
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.bg_color | default: '#f4ecdf' }};
+    color: {{ section.settings.text_color | default: '#111' }};
+    overflow: hidden;
+  }
+  #shopify-section-{{ section.id }} .cat-grid__bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+  }
+  #shopify-section-{{ section.id }} .cat-grid__bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  #shopify-section-{{ section.id }} .cat-grid__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, {{ section.settings.bg_overlay_opacity | divided_by: 100.0 }});
+    pointer-events: none;
+  }
+  @media (max-width: 990px) {
+    #shopify-section-{{ section.id }} .cat-grid__bg { display: none; }
+  }
+  #shopify-section-{{ section.id }} .cat-grid__inner {
+    position: relative;
+    z-index: 3;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 24px;
+    text-align: center;
+  }
+  #shopify-section-{{ section.id }} .cat-grid__title {
+    font-size: clamp(22px, 2.8vw, 36px);
+    font-weight: 700;
+    margin: 0 0 28px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  #shopify-section-{{ section.id }} .cat-grid__card-wrap {
+    background: {{ section.settings.card_bg | default: '#ffffff' }};
+    padding: 48px 40px;
+    margin: 0 auto;
+    max-width: 1140px;
+  }
+  #shopify-section-{{ section.id }} .cat-grid__items {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);
+    gap: 20px;
+  }
+  @media (max-width: 990px) {
+    #shopify-section-{{ section.id }} .cat-grid__items { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 560px) {
+    #shopify-section-{{ section.id }} .cat-grid__items { grid-template-columns: 1fr; }
+  }
+  .cat-grid__card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+  .cat-grid__card-img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: #eee;
+  }
+  .cat-grid__card-img img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform .5s ease;
+  }
+  .cat-grid__card:hover .cat-grid__card-img img { transform: scale(1.05); }
+  .cat-grid__card-caption {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    margin-top: 18px;
+    text-transform: uppercase;
+  }
+  #shopify-section-{{ section.id }} .cat-grid__bottom {
+    max-width: 1140px;
+    margin: 20px auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+  }
+  .cat-grid__view-all {
+    color: inherit;
+    text-decoration: none;
+    font-size: 15px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    transition: opacity .2s;
+  }
+  .cat-grid__view-all:hover { opacity: .7; }
+  .cat-grid__arrow {
+    color: inherit;
+    display: inline-flex;
+    align-items: center;
+    transition: transform .2s;
+  }
+  .cat-grid__arrow:hover { transform: translateX(4px); }
+</style>
+
+<section class="cat-grid">
+  {%- if section.settings.bg_image != blank -%}
+    <div class="cat-grid__bg">
+      {{ section.settings.bg_image | image_url: width: 2000 | image_tag: loading: 'lazy', widths: '600,800,1200,1600,2000', alt: 'background' }}
+      <div class="cat-grid__overlay"></div>
+    </div>
+  {%- endif -%}
+
+  <div class="cat-grid__inner">
+    {%- if section.settings.title != blank -%}
+      <h2 class="cat-grid__title">{{ section.settings.title | escape }}</h2>
+    {%- endif -%}
+    <div class="cat-grid__card-wrap">
+      <div class="cat-grid__items">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign img = block.settings.image
+            assign label = block.settings.label
+            assign url = block.settings.url
+            if block.settings.collection != blank
+              if img == blank
+                assign img = block.settings.collection.image | default: block.settings.collection.products.first.featured_image
+              endif
+              if label == blank
+                assign label = block.settings.collection.title
+              endif
+              if url == blank
+                assign url = block.settings.collection.url
+              endif
+            endif
+          -%}
+          <a class="cat-grid__card" href="{{ url | default: '#' }}" {{ block.shopify_attributes }}>
+            <div class="cat-grid__card-img">
+              {%- if img != blank -%}
+                {{ img | image_url: width: 800 | image_tag: loading: 'lazy', widths: '300,500,700,900', alt: label }}
+              {%- endif -%}
+            </div>
+            {%- if label != blank -%}
+              <div class="cat-grid__card-caption">{{ label | escape }}</div>
+            {%- endif -%}
+          </a>
+        {%- endfor -%}
+      </div>
+    </div>
+    {%- if section.settings.bottom_link_label != blank -%}
+      <div class="cat-grid__bottom">
+        <a class="cat-grid__view-all" href="{{ section.settings.bottom_link_url | default: '#' }}">
+          {{ section.settings.bottom_link_label | escape }}
+        </a>
+        <a class="cat-grid__arrow" href="{{ section.settings.bottom_link_url | default: '#' }}" aria-label="view all">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="14" viewBox="0 0 28 14" fill="none" aria-hidden="true">
+            <path d="M0 7h26M20 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "分类模块",
+  "class": "section-category-grid",
+  "max_blocks": 8,
+  "settings": [
+    { "type": "text", "id": "title", "label": "顶部大标题", "default": "COLLECTION OF OUR BAGS" },
+    { "type": "image_picker", "id": "bg_image", "label": "模块背景模特图" },
+    { "type": "range", "id": "bg_overlay_opacity", "label": "背景图片遮罩透明度", "min": 0, "max": 90, "step": 5, "default": 0, "unit": "%" },
+    { "type": "color", "id": "bg_color", "label": "背景色(两侧)", "default": "#f4ecdf" },
+    { "type": "color", "id": "card_bg", "label": "内嵌白卡背景色", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "文字颜色", "default": "#111111" },
+    { "type": "range", "id": "columns_desktop", "label": "桌面端列数", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "text", "id": "bottom_link_label", "label": "底部左下链接文案", "default": "VIEW ALL" },
+    { "type": "url", "id": "bottom_link_url", "label": "底部链接地址" },
+    { "type": "range", "id": "padding_top", "label": "上内边距(px)", "min": 0, "max": 160, "step": 4, "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "下内边距(px)", "min": 0, "max": 160, "step": 4, "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "分类卡片",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "关联分类(可选)" },
+        { "type": "image_picker", "id": "image", "label": "分类封面图(覆盖分类默认图)" },
+        { "type": "text", "id": "label", "label": "显示名称" },
+        { "type": "url", "id": "url", "label": "跳转链接(未填则跳转分类页)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "分类模块",
+      "blocks": [
+        { "type": "category", "settings": { "label": "CROSSBODY BAGS" } },
+        { "type": "category", "settings": { "label": "TOTE BAGS" } },
+        { "type": "category", "settings": { "label": "BACKPACKS" } },
+        { "type": "category", "settings": { "label": "WALLETS&POUCHES" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

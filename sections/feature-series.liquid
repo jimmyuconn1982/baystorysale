@@ -1,0 +1,158 @@
+{%- comment -%}
+  特色系列(Feature Series)
+  - 样机布局(CORGI SERIES / PET COLLECTION):
+      · 整行浅色背景(可配背景图)
+      · 左右两张带模特/宠物形象的剪影图(PNG 带透明)
+      · 中央:顶部小标题 + 中间大标题 + 底部方形 SHOP NOW 按钮
+{%- endcomment -%}
+
+<style>
+  #shopify-section-{{ section.id }} .feature-series {
+    position: relative;
+    width: 100%;
+    min-height: {{ section.settings.min_height }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: {{ section.settings.fallback_bg | default: '#f5f5f5' }};
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    {%- if section.settings.bg_image != blank -%}
+      background-image: url('{{ section.settings.bg_image | image_url: width: 2400 }}');
+    {%- endif -%}
+    overflow: hidden;
+    color: {{ section.settings.text_color | default: '#111' }};
+  }
+  #shopify-section-{{ section.id }} .feature-series::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,{{ section.settings.overlay_opacity | divided_by: 100.0 }});
+    z-index: 1;
+  }
+  #shopify-section-{{ section.id }} .feature-series__figure {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+  }
+  #shopify-section-{{ section.id }} .feature-series__figure--left  { left: 5%; }
+  #shopify-section-{{ section.id }} .feature-series__figure--right { right: 5%; }
+  #shopify-section-{{ section.id }} .feature-series__figure img {
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    max-width: 420px;
+    object-fit: contain;
+  }
+  @media (max-width: 900px) {
+    #shopify-section-{{ section.id }} .feature-series__figure img { max-width: 180px; }
+  }
+  @media (max-width: 640px) {
+    #shopify-section-{{ section.id }} .feature-series__figure { display: none; }
+  }
+  #shopify-section-{{ section.id }} .feature-series__inner {
+    position: relative;
+    z-index: 3;
+    max-width: 680px;
+    padding: 48px 24px;
+    text-align: {{ section.settings.content_align | default: 'center' }};
+  }
+  #shopify-section-{{ section.id }} .feature-series__eyebrow {
+    font-size: 13px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    opacity: .9;
+    font-weight: 600;
+    margin: 0 0 18px;
+  }
+  #shopify-section-{{ section.id }} .feature-series__title {
+    font-size: clamp(30px, 4.4vw, 54px);
+    font-weight: 600;
+    margin: 0 0 30px;
+    line-height: 1.15;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  #shopify-section-{{ section.id }} .feature-series__desc {
+    font-size: 16px;
+    opacity: .85;
+    margin: 0 0 28px;
+  }
+  #shopify-section-{{ section.id }} .feature-series__btn {
+    display: inline-block;
+    padding: 14px 42px;
+    font-size: 13px;
+    letter-spacing: .18em;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 0;
+    background: {{ section.settings.btn_bg | default: '#111111' }};
+    color: {{ section.settings.btn_text | default: '#ffffff' }};
+    border: 1px solid {{ section.settings.btn_bg | default: '#111111' }};
+    transition: transform .2s ease, opacity .2s ease;
+  }
+  #shopify-section-{{ section.id }} .feature-series__btn:hover {
+    transform: translateY(-2px);
+    opacity: .92;
+  }
+</style>
+
+<section class="feature-series">
+  {%- if section.settings.figure_left != blank -%}
+    <div class="feature-series__figure feature-series__figure--left">
+      {{ section.settings.figure_left | image_url: width: 800 | image_tag: loading: 'lazy', widths: '300,500,700,900', alt: 'figure-left' }}
+    </div>
+  {%- endif -%}
+  {%- if section.settings.figure_right != blank -%}
+    <div class="feature-series__figure feature-series__figure--right">
+      {{ section.settings.figure_right | image_url: width: 800 | image_tag: loading: 'lazy', widths: '300,500,700,900', alt: 'figure-right' }}
+    </div>
+  {%- endif -%}
+
+  <div class="feature-series__inner">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="feature-series__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+    {%- endif -%}
+    {%- if section.settings.title != blank -%}
+      <h2 class="feature-series__title">{{ section.settings.title | escape }}</h2>
+    {%- endif -%}
+    {%- if section.settings.description != blank -%}
+      <div class="feature-series__desc">{{ section.settings.description }}</div>
+    {%- endif -%}
+    {%- if section.settings.btn_label != blank -%}
+      <a class="feature-series__btn" href="{{ section.settings.btn_link | default: '#' }}">{{ section.settings.btn_label | escape }}</a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "特色系列",
+  "class": "section-feature-series",
+  "settings": [
+    { "type": "image_picker", "id": "bg_image", "label": "背景图(可选)" },
+    { "type": "color", "id": "fallback_bg", "label": "背景兜底颜色", "default": "#f5f5f5" },
+    { "type": "range", "id": "overlay_opacity", "label": "遮罩透明度(%)", "min": 0, "max": 80, "step": 5, "default": 0 },
+    { "type": "range", "id": "min_height", "label": "最小高度(px)", "min": 240, "max": 900, "step": 20, "default": 420 },
+    { "type": "image_picker", "id": "figure_left", "label": "左侧剪影图(人物/宠物)" },
+    { "type": "image_picker", "id": "figure_right", "label": "右侧剪影图(人物/宠物)" },
+    { "type": "text", "id": "eyebrow", "label": "顶部小标题", "default": "CORGI SERIES" },
+    { "type": "text", "id": "title", "label": "中间大标题", "default": "PET COLLECTION" },
+    { "type": "richtext", "id": "description", "label": "副文案" },
+    { "type": "color", "id": "text_color", "label": "文字颜色", "default": "#111111" },
+    { "type": "select", "id": "content_align", "label": "对齐方式", "options": [
+      { "value": "left", "label": "左" }, { "value": "center", "label": "中" }, { "value": "right", "label": "右" }
+    ], "default": "center" },
+    { "type": "text", "id": "btn_label", "label": "按钮文字", "default": "SHOP NOW" },
+    { "type": "url", "id": "btn_link", "label": "按钮链接" },
+    { "type": "color", "id": "btn_bg", "label": "按钮背景色", "default": "#111111" },
+    { "type": "color", "id": "btn_text", "label": "按钮文字颜色", "default": "#ffffff" }
+  ],
+  "presets": [ { "name": "特色系列" } ]
+}
+{% endschema %}
