@@ -33,7 +33,7 @@
   }
 
   .header__heading-logo {
-    max-width: {{ section.settings.logo_width }}px;
+    max-width: {{ section.settings.logo_width | times: 0.65 | round: 0 }}px;
   }
 
   @media screen and (min-width: 990px) {
@@ -155,11 +155,16 @@
                 <nav class="menu-drawer__navigation">
                   <ul class="menu-drawer__menu has-submenu list-menu" role="list">
                     {%- for link in section.settings.menu.links -%}
+                      {%- assign link_title_down = link.title | downcase -%}
+                      {%- if link_title_down == 'custom: human' or link_title_down == 'custom: pets' -%}{%- continue -%}{%- endif -%}
+                      {%- assign link_display_title = link.title | escape -%}
+                      {%- if link_title_down == 'new in' -%}{%- assign link_display_title = 'New Arrivals' -%}{%- endif -%}
+                      {%- if link_title_down == 'for pets' -%}{%- assign link_display_title = 'For Pets' -%}{%- endif -%}
                       <li>
-                        {%- if link.links != blank -%}
+                        {%- if link.links != blank and link_title_down != 'new in' -%}
                           <details id="Details-menu-drawer-menu-item-{{ forloop.index }}">
                             <summary class="menu-drawer__menu-item list-menu__item link link--text focus-inset{% if link.child_active %} menu-drawer__menu-item--active{% endif %}">
-                              {{ link.title | escape }}
+                              {{ link_display_title }}
                               {% render 'icon-arrow' %}
                               {% render 'icon-caret' %}
                             </summary>
@@ -167,10 +172,12 @@
                               <div class="menu-drawer__inner-submenu">
                                 <button class="menu-drawer__close-button link link--text focus-inset" aria-expanded="true">
                                   {% render 'icon-arrow' %}
-                                  {{ link.title | escape }}
+                                  {{ link_display_title }}
                                 </button>
                                 <ul class="menu-drawer__menu list-menu" role="list" tabindex="-1">
                                   {%- for childlink in link.links -%}
+                                    {%- assign childlink_title_down = childlink.title | downcase -%}
+                                    {%- if childlink_title_down == 'school' or childlink_title_down == 'gifts' -%}{%- continue -%}{%- endif -%}
                                     <li>
                                       {%- if childlink.links == blank -%}
                                         <a href="{{ childlink.url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset{% if childlink.current %} menu-drawer__menu-item--active{% endif %}"{% if childlink.current %} aria-current="page"{% endif %}>
@@ -208,7 +215,7 @@
                           </details>
                         {%- else -%}
                           <a href="{{ link.url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset{% if link.current %} menu-drawer__menu-item--active{% endif %}"{% if link.current %} aria-current="page"{% endif %}>
-                            {{ link.title | escape }}
+                            {{ link_display_title }}
                           </a>
                         {%- endif -%}
                       </li>
@@ -412,16 +419,23 @@
         <nav class="header__inline-menu">
           <ul class="list-menu list-menu--inline" role="list">
             {%- for link in section.settings.menu.links -%}
+              {%- assign link_title_down = link.title | downcase -%}
+              {%- if link_title_down == 'custom: human' or link_title_down == 'custom: pets' -%}{%- continue -%}{%- endif -%}
+              {%- assign link_display_title = link.title | escape -%}
+              {%- if link_title_down == 'new in' -%}{%- assign link_display_title = 'New Arrivals' -%}{%- endif -%}
+              {%- if link_title_down == 'for pets' -%}{%- assign link_display_title = 'For Pets' -%}{%- endif -%}
               <li>
-                {%- if link.links != blank -%}
+                {%- if link.links != blank and link_title_down != 'new in' -%}
                   <header-menu>
                     <details id="Details-HeaderMenu-{{ forloop.index }}">
                       <summary class="header__menu-item list-menu__item link focus-inset">
-                        <span {%- if link.child_active %} class="header__active-menu-item"{% endif %}>{{ link.title | escape }}</span>
+                        <span {%- if link.child_active %} class="header__active-menu-item"{% endif %}>{{ link_display_title }}</span>
                         {% render 'icon-caret' %}
                       </summary>
                       <ul id="HeaderMenu-MenuList-{{ forloop.index }}" class="header__submenu list-menu list-menu--disclosure gradient caption-large motion-reduce global-settings-popup" role="list" tabindex="-1">
                         {%- for childlink in link.links -%}
+                          {%- assign childlink_title_down = childlink.title | downcase -%}
+                          {%- if childlink_title_down == 'school' or childlink_title_down == 'gifts' -%}{%- continue -%}{%- endif -%}
                           <li>
                             {%- if childlink.links == blank -%}
                               <a href="{{ childlink.url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large{% if childlink.current %} list-menu__item--active{% endif %}"{% if childlink.current %} aria-current="page"{% endif %}>
@@ -451,7 +465,7 @@
                   </header-menu>
                 {%- else -%}
                   <a href="{{ link.url }}" class="header__menu-item header__menu-item list-menu__item link link--text focus-inset"{% if link.current %} aria-current="page"{% endif %}>
-                    <span {%- if link.current %} class="header__active-menu-item"{% endif %}>{{ link.title | escape }}</span>
+                    <span {%- if link.current %} class="header__active-menu-item"{% endif %}>{{ link_display_title }}</span>
                   </a>
                 {%- endif -%}
               </li>
@@ -462,17 +476,24 @@
         <nav class="header__inline-menu">
           <ul class="list-menu list-menu--inline" role="list">
             {%- for link in section.settings.menu.links -%}
+              {%- assign link_title_down = link.title | downcase -%}
+              {%- if link_title_down == 'custom: human' or link_title_down == 'custom: pets' -%}{%- continue -%}{%- endif -%}
+              {%- assign link_display_title = link.title | escape -%}
+              {%- if link_title_down == 'new in' -%}{%- assign link_display_title = 'New Arrivals' -%}{%- endif -%}
+              {%- if link_title_down == 'for pets' -%}{%- assign link_display_title = 'For Pets' -%}{%- endif -%}
               <li>
-                {%- if link.links != blank -%}
+                {%- if link.links != blank and link_title_down != 'new in' -%}
                   <header-menu>
                     <details id="Details-HeaderMenu-{{ forloop.index }}" class="mega-menu">
                       <summary class="header__menu-item list-menu__item link focus-inset">
-                        <span {%- if link.child_active %} class="header__active-menu-item"{% endif %}>{{ link.title | escape }}</span>
+                        <span {%- if link.child_active %} class="header__active-menu-item"{% endif %}>{{ link_display_title }}</span>
                         {% render 'icon-caret' %}
                       </summary>
                       <div id="MegaMenu-Content-{{ forloop.index }}" class="mega-menu__content gradient motion-reduce global-settings-popup" tabindex="-1">
                         <ul class="mega-menu__list page-width{% if link.levels == 1 %} mega-menu__list--condensed{% endif %}" role="list">
                           {%- for childlink in link.links -%}
+                            {%- assign childlink_title_down = childlink.title | downcase -%}
+                            {%- if childlink_title_down == 'school' or childlink_title_down == 'gifts' -%}{%- continue -%}{%- endif -%}
                             <li>
                               <a href="{{ childlink.url }}" class="mega-menu__link mega-menu__link--level-2 link{% if childlink.current %} mega-menu__link--active{% endif %}"{% if childlink.current %} aria-current="page"{% endif %}>
                                 {{ childlink.title | escape }}
@@ -496,7 +517,7 @@
                   </header-menu>
                 {%- else -%}
                   <a href="{{ link.url }}" class="header__menu-item header__menu-item list-menu__item link link--text focus-inset"{% if link.current %} aria-current="page"{% endif %}>
-                    <span {%- if link.current %} class="header__active-menu-item"{% endif %}>{{ link.title | escape }}</span>
+                    <span {%- if link.current %} class="header__active-menu-item"{% endif %}>{{ link_display_title }}</span>
                   </a>
                 {%- endif -%}
               </li>

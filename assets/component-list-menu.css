@@ -14,12 +14,11 @@
 }
 
 .list-menu__item--active {
-  text-decoration: underline;
-  text-underline-offset: 0.3rem;
+  text-decoration: none;
 }
 
 .list-menu__item--active:hover {
-  text-decoration-thickness: 0.2rem;
+  text-decoration: none;
 }
 
 .list-menu--disclosure.localization-selector {
