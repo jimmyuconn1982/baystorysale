@@ -21,9 +21,6 @@
   assign price = target.price | default: 1999
   assign available = target.available | default: false
   assign money_price = price | money
-  if settings.currency_code_enabled
-    assign money_price = price | money_with_currency
-  endif
 
   if target == product and product.price_varies
     assign money_price = 'products.product.price.from_price_html' | t: price: money_price
@@ -44,27 +41,51 @@
     {%- endcomment -%}
     <div class="price__regular">
       <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
-      <span class="price-item price-item--regular">
+      <span class="price-item price-item--regular" style="color: #b12739; font-weight: bold;">
         {{ money_price }}
       </span>
     </div>
     <div class="price__sale">
+      <div class="price__sale-wrapper" style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+      <div class="price__sale-current" style="display: flex; align-items: center; gap: 8px;">
+        <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.sale_price' | t }}</span>
+        <span class="price-item price-item--sale price-item--last" style="color: #b12739; font-size: 2.4rem; font-weight: bold; margin: 0; line-height: 1;">
+          {{ money_price }}
+        </span>
+        {%- if compare_at_price > price -%}
+          {%- assign discount = compare_at_price | minus: price | times: 100.0 | divided_by: compare_at_price | round -%}
+          <span class="price-item--discount" style="color: #b12739; font-size: 2.2rem; font-weight: bold; margin: 0; line-height: 1;">
+            (-{{ discount }}%)
+          </span>
+        {%- endif -%}
+      </div>
+
       {%- unless product.price_varies == false and product.compare_at_price_varies %}
         <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
-        <span>
-          <s class="price-item price-item--regular">
-            {% if settings.currency_code_enabled %}
-              {{ compare_at_price | money_with_currency }}
-            {% else %}
-              {{ compare_at_price | money }}
-            {% endif %}
+        <span class="price__sale-compare" style="display: flex; align-items: center; gap: 4px; color: #737373; font-size: 1.4rem; line-height: 1;">
+          <s class="price-item price-item--regular" style="color: inherit; margin: 0;">
+            {{ compare_at_price | money }}
           </s>
+          {%- if price_class contains 'price--large' -%}
+          <span class="price-info-tooltip-wrapper" style="position: relative; display: inline-flex; align-items: center; cursor: pointer;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #2b5bc1; margin-top: 1px;">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span class="price-info-tooltip" style="position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); width: 260px; background: #f0f0f0; color: #222; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); font-size: 1.3rem; line-height: 1.4; text-align: left; opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s; z-index: 10; margin-bottom: 8px; font-weight: normal; font-family: inherit;">
+              This is the List Price. The List Price is the suggested retail price from a manufacturer, supplier, or other retailer. It may not necessarily reflect an actual price offered on our site or elsewhere.
+              <span style="position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border-width: 7px; border-style: solid; border-color: #ccc transparent transparent transparent;"></span>
+              <span style="position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border-width: 6px; border-style: solid; border-color: #f0f0f0 transparent transparent transparent; margin-top: -2px;"></span>
+            </span>
+          </span>
+          <style>
+            .price-info-tooltip-wrapper:hover .price-info-tooltip { opacity: 1 !important; visibility: visible !important; }
+          </style>
+          {%- endif -%}
         </span>
       {%- endunless -%}
-      <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.sale_price' | t }}</span>
-      <span class="price-item price-item--sale price-item--last">
-        {{ money_price }}
-      </span>
+      </div>
     </div>
     <small class="unit-price caption{% if product.selected_or_first_available_variant.unit_price_measurement == nil %} hidden{% endif %}">
       <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
@@ -82,7 +103,7 @@
     </small>
   </div>
   {%- if show_badges -%}
-    <span class="badge price__badge-sale color-{{ settings.sale_badge_color_scheme }}">
+    <span class="badge price__badge-sale color-{{ settings.sale_badge_color_scheme }}" style="display: none;">
       {{ 'products.product.on_sale' | t }}
     </span>
 

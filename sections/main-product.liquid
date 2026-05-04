@@ -55,22 +55,36 @@
                 assign media_width = 0.45
               endif
             -%}
-            {%- if product.selected_or_first_available_variant.featured_media != null -%}
-              {%- assign featured_media = product.selected_or_first_available_variant.featured_media -%}
+            {%- liquid
+              assign featured_media = product.selected_or_first_available_variant.featured_media
+              assign first_video = product.media | where: 'media_type', 'video' | first
+              if first_video == null
+                assign first_video = product.media | where: 'media_type', 'external_video' | first
+              endif
+            -%}
+
+            {%- if featured_media != null -%}
               <li id="Slide-{{ section.id }}-{{ featured_media.id }}" class="product__media-item grid__item slider__slide is-active{% if featured_media.media_type != 'image' %} product__media-item--full{% endif %}{% if section.settings.hide_variants and variant_images contains featured_media.src %} product__media-item--variant{% endif %}" data-media-id="{{ section.id }}-{{ featured_media.id }}">
                 {%- assign media_position = 1 -%}
                 {% render 'product-thumbnail', media: featured_media, position: media_position, loop: section.settings.enable_video_looping, modal_id: section.id, xr_button: true, media_width: media_width, lazy_load: false %}
               </li>
             {%- endif -%}
+
+            {%- if first_video != null and first_video.id != featured_media.id -%}
+              <li id="Slide-{{ section.id }}-{{ first_video.id }}" class="product__media-item grid__item slider__slide{% if featured_media == null %} is-active{% endif %}{% if first_video.media_type != 'image' %} product__media-item--full{% endif %}{% if section.settings.hide_variants and variant_images contains first_video.src %} product__media-item--variant{% endif %}" data-media-id="{{ section.id }}-{{ first_video.id }}">
+                {%- liquid
+                  assign media_position = media_position | default: 0 | plus: 1
+                  render 'product-thumbnail', media: first_video, position: media_position, loop: section.settings.enable_video_looping, modal_id: section.id, xr_button: true, media_width: media_width, lazy_load: true
+                -%}
+              </li>
+            {%- endif -%}
+
             {%- for media in product.media -%}
-              {%- unless media.id == product.selected_or_first_available_variant.featured_media.id -%}
-                <li id="Slide-{{ section.id }}-{{ media.id }}" class="product__media-item grid__item slider__slide{% if product.selected_or_first_available_variant.featured_media == null and forloop.index == 1 %} is-active{% endif %}{% if media.media_type != 'image' %} product__media-item--full{% endif %}{% if section.settings.hide_variants and variant_images contains media.src %} product__media-item--variant{% endif %}" data-media-id="{{ section.id }}-{{ media.id }}">
+              {%- unless media.id == featured_media.id or media.id == first_video.id -%}
+                <li id="Slide-{{ section.id }}-{{ media.id }}" class="product__media-item grid__item slider__slide{% if featured_media == null and first_video == null and forloop.index == 1 %} is-active{% endif %}{% if media.media_type != 'image' %} product__media-item--full{% endif %}{% if section.settings.hide_variants and variant_images contains media.src %} product__media-item--variant{% endif %}" data-media-id="{{ section.id }}-{{ media.id }}">
                   {%- liquid
                     assign media_position = media_position | default: 0 | plus: 1
-                    assign lazy_load = false
-                    if media_position > 1
-                      assign lazy_load = true
-                    endif
+                    assign lazy_load = true
                     render 'product-thumbnail', media: media, position: media_position, loop: section.settings.enable_video_looping, modal_id: section.id, xr_button: true, media_width: media_width, lazy_load: lazy_load
                   -%}
                 </li>
@@ -197,6 +211,7 @@
           </slider-component>
         {%- endif -%}
       </media-gallery>
+
     </div>
     <div class="product__info-wrapper grid__item{% if settings.page_width > 1400 and section.settings.media_size == "small" %} product__info-wrapper--extra-padding{% endif %}">
       <div id="ProductInfo-{{ section.id }}" class="product__info-container{% if section.settings.enable_sticky_info %} product__info-container--sticky{% endif %}">
@@ -241,31 +256,11 @@
               {%- endform -%}
             </div>
           {%- when 'description' -%}
-            {%- if product.description != blank -%}
-              <div class="product__description rte quick-add-hidden">
-                {{ product.description }}
-              </div>
-            {%- endif -%}
+            {%- comment -%} Description moved to below media gallery {%- endcomment -%}
           {%- when 'custom_liquid' -%}
             {{ block.settings.custom_liquid }}
           {%- when 'collapsible_tab' -%}
-            <div class="product__accordion accordion quick-add-hidden" {{ block.shopify_attributes }}>
-              <details id="Details-{{ block.id }}-{{ section.id }}">
-                <summary>
-                  <div class="summary__title">
-                    {% render 'icon-accordion', icon: block.settings.icon %}
-                    <h2 class="h4 accordion__title">
-                      {{ block.settings.heading | default: block.settings.page.title }}
-                    </h2>
-                  </div>
-                  {% render 'icon-caret' %}
-                </summary>
-                <div class="accordion__content rte" id="ProductAccordion-{{ block.id }}-{{ section.id }}">
-                  {{ block.settings.content }}
-                  {{ block.settings.page.content }}
-                </div>
-              </details>
-            </div>
+            {%- comment -%} Collapsible tabs are disabled via code {%- endcomment -%}
           {%- when 'quantity_selector' -%}
             <div class="product-form__input product-form__quantity{% if settings.inputs_shadow_vertical_offset != 0 and settings.inputs_shadow_vertical_offset < 0 %} product-form__quantity-top{% endif %}" {{ block.shopify_attributes }}>
               <label class="form__label" for="Quantity-{{ section.id }}">
@@ -339,18 +334,41 @@
                 <variant-radios class="no-js-hidden" data-section="{{ section.id }}" data-url="{{ product.url }}" {{ block.shopify_attributes }}>
                   {%- for option in product.options_with_values -%}
                       <fieldset class="js product-form__input">
-                        <legend class="form__label">{{ option.name }}</legend>
-                        {%- for value in option.values -%}
-                          <input type="radio" id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
-                                name="{{ option.name }}"
-                                value="{{ value | escape }}"
-                                form="{{ product_form_id }}"
-                                {% if option.selected_value == value %}checked{% endif %}
-                          >
-                          <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">
-                            {{ value }}
-                          </label>
-                        {%- endfor -%}
+                        <legend class="form__label">{{ option.name }}: <span class="selected-value">{{ option.selected_value }}</span></legend>
+                        <div class="variant-input-wrapper">
+                          {%- for value in option.values -%}
+                            {%- liquid
+                              assign variant_image = null
+                              assign option_name_downcase = option.name | downcase
+                              if option_name_downcase contains 'color' or option_name_downcase contains 'colour' or option_name_downcase contains '颜色'
+                                for variant in product.variants
+                                  if variant.options contains value
+                                    if variant.featured_media
+                                      assign variant_image = variant.featured_media
+                                      break
+                                    endif
+                                  endif
+                                endfor
+                              endif
+                            -%}
+                            <input type="radio" id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                                  name="{{ option.name }}"
+                                  value="{{ value | escape }}"
+                                  form="{{ product_form_id }}"
+                                  {% if option.selected_value == value %}checked{% endif %}
+                            >
+                            <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}" class="{% if variant_image %}label-with-image{% endif %}">
+                              {%- if variant_image -%}
+                                <img src="{{ variant_image | image_url: width: 150, height: 150, crop: 'center' }}" 
+                                     alt="{{ value }}" 
+                                     width="75" height="75" 
+                                     loading="lazy"
+                                >
+                              {%- endif -%}
+                              <span>{{ value }}</span>
+                            </label>
+                          {%- endfor -%}
+                        </div>
                       </fieldset>
                   {%- endfor -%}
                   <script type="application/json">
@@ -444,9 +462,11 @@
                           </svg>
                         </div>
                     </button>
+                    {% comment %}
                     {%- if block.settings.show_dynamic_checkout -%}
                       {{ form | payment_button }}
                     {%- endif -%}
+                    {% endcomment %}
                   </div>
                 {%- endform -%}
               </product-form>
@@ -471,6 +491,11 @@
                   </pickup-availability-preview>
                 </template>
               </pickup-availability>
+              
+              <div style="margin-top: 1.5rem; display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 1.4rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                <span><strong>Ship out in 2 business days.</strong> Free 30-day returns.</span>
+              </div>
             </div>
 
             <script src="{{ 'pickup-availability.js' | asset_url }}" defer="defer"></script>
@@ -505,35 +530,60 @@
       </div>
     </div>
   </div>
+      {%- if product.description != blank -%}
+      <div class="product__about-item" style="margin-top: 6rem;">
+        <hr style="border: 0; height: 1px; background: #e6e6e6; margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.8rem; font-weight: 700; color: #222; margin-bottom: 1.5rem;">About This Item</h3>
+        
+        <div class="product-description-content rte" style="padding-bottom: 1.5rem; font-size: 1.4rem; color: #555; line-height: 1.6; border-bottom: 1px solid #e6e6e6;">
+          {{ product.description }}
+        </div>
 
-  <product-modal id="ProductModal-{{ section.id }}" class="product-media-modal media-modal">
-    <div class="product-media-modal__dialog" role="dialog" aria-label="{{ 'products.modal.label' | t }}" aria-modal="true" tabindex="-1">
-      <button id="ModalClose-{{ section.id }}" type="button" class="product-media-modal__toggle" aria-label="{{ 'accessibility.close' | t }}">{% render 'icon-close' %}</button>
 
-      <div class="product-media-modal__content gradient" role="document" aria-label="{{ 'products.modal.label' | t }}" tabindex="0">
-        {%- liquid
-          if product.selected_or_first_available_variant.featured_media != null
-            assign media = product.selected_or_first_available_variant.featured_media
-            render 'product-media', media: media, loop: section.settings.enable_video_looping, variant_image: section.settings.hide_variants
-          endif
-        -%}
-
-        {%- for media in product.media -%}
-          {%- liquid
-            if section.settings.hide_variants and variant_images contains media.src
-              assign variant_image = true
-            else
-              assign variant_image = false
-            endif
-
-            unless media.id == product.selected_or_first_available_variant.featured_media.id
-              render 'product-media', media: media, loop: section.settings.enable_video_looping, variant_image: variant_image
-            endunless
-          -%}
-        {%- endfor -%}
       </div>
+
+      <style>
+        .about-item-accordion summary::-webkit-details-marker {
+          display: none;
+        }
+        .about-item-accordion summary {
+          outline: none;
+        }
+      </style>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('.about-item-accordion').forEach(function(details) {
+            details.addEventListener('toggle', function() {
+              var icon = details.querySelector('.accordion-icon');
+              var content = details.querySelector('.accordion-content');
+              if (details.open) {
+                icon.innerHTML = '&minus;';
+                if(content) content.style.display = 'block';
+              } else {
+                icon.innerHTML = '&plus;';
+                if(content) content.style.display = 'none';
+              }
+            });
+          });
+        });
+      </script>
+      {%- endif -%}
+
+
+  <!-- Keep product-modal stub for Shopify JS compatibility -->
+  <product-modal id="ProductModal-{{ section.id }}" class="product-media-modal media-modal" style="display:none!important"></product-modal>
+
+  <!-- ===== Custom Lightbox (fully independent of Shopify modal JS) ===== -->
+  <div id="CustomLightbox-{{ section.id }}" class="cstlb" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="cstlb__backdrop" id="CstlbBackdrop-{{ section.id }}"></div>
+    <button class="cstlb__close" id="CstlbClose-{{ section.id }}" aria-label="Close">&#10005;</button>
+    <button class="cstlb__nav cstlb__nav--prev" id="CstlbPrev-{{ section.id }}" aria-label="Previous"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+    <button class="cstlb__nav cstlb__nav--next" id="CstlbNext-{{ section.id }}" aria-label="Next"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+    <div class="cstlb__frame">
+      <img class="cstlb__img" id="CstlbImg-{{ section.id }}" src="" alt="" />
     </div>
-  </product-modal>
+    <div class="cstlb__counter" id="CstlbCounter-{{ section.id }}">1 / 1</div>
+  </div>
 
   {% assign popups = section.blocks | where: "type", "popup" %}
   {%- for block in popups -%}
@@ -559,6 +609,106 @@
     </script>
     <script src="{{ 'product-model.js' | asset_url }}" defer></script>
   {%- endif -%}
+
+  <script>
+    (function() {
+      // ── Hover-zoom ──
+      document.addEventListener('mousemove', function(e) {
+        var item = e.target.closest('.product__media-item');
+        if (!item) return;
+        var img = item.querySelector('img');
+        if (!img) return;
+        var rect = img.getBoundingClientRect();
+        var x = ((e.clientX - rect.left) / rect.width  * 100).toFixed(2);
+        var y = ((e.clientY - rect.top)  / rect.height * 100).toFixed(2);
+        item.style.setProperty('--zoom-x', x + '%');
+        item.style.setProperty('--zoom-y', y + '%');
+      });
+
+      // ── Custom Lightbox ──
+      var sid     = '{{ section.id }}';
+      var lb      = document.getElementById('CustomLightbox-' + sid);
+      var lbImg   = document.getElementById('CstlbImg-' + sid);
+      var lbCnt   = document.getElementById('CstlbCounter-' + sid);
+      var lbPrev  = document.getElementById('CstlbPrev-' + sid);
+      var lbNext  = document.getElementById('CstlbNext-' + sid);
+      var lbClose = document.getElementById('CstlbClose-' + sid);
+      var lbBack  = document.getElementById('CstlbBackdrop-' + sid);
+
+      var images  = [];
+      var current = 0;
+
+      function collectImages() {
+        images = [];
+        document.querySelectorAll('#Slider-Gallery-' + sid + ' .product__media-item').forEach(function(item) {
+          if (item.classList.contains('product__media-item--full')) return;
+          var img = item.querySelector('img');
+          if (!img || !img.src) return;
+          var src = img.src.replace(/(_\d+x\d*|_\d*x\d+)(\.\w+)$/, '$2');
+          images.push({ src: src, alt: img.alt || '' });
+        });
+      }
+
+      function showImage(idx) {
+        if (!images.length) return;
+        idx = ((idx % images.length) + images.length) % images.length;
+        current = idx;
+        lbImg.style.opacity = '0';
+        lbImg.onload = function() { lbImg.style.opacity = '1'; };
+        lbImg.src = images[idx].src;
+        lbImg.alt = images[idx].alt;
+        lbCnt.textContent = (idx + 1) + ' / ' + images.length;
+        lbPrev.style.display = images.length > 1 ? 'flex' : 'none';
+        lbNext.style.display = images.length > 1 ? 'flex' : 'none';
+      }
+
+      function openLB(idx) {
+        collectImages();
+        showImage(idx);
+        lb.classList.add('is-open');
+        lb.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeLB() {
+        lb.classList.remove('is-open');
+        lb.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      // Bind clicks DIRECTLY on each image item (capture phase, bypasses Shopify modal)
+      function bindItemClicks() {
+        document.querySelectorAll(
+          '#Slider-Gallery-' + sid + ' .product__media-item:not(.product__media-item--full)'
+        ).forEach(function(item, idx) {
+          if (item.dataset.lbBound) return;
+          item.dataset.lbBound = '1';
+          item.addEventListener('click', function(e) {
+            if (e.target.closest('.deferred-media') || e.target.closest('video')) return;
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            openLB(idx);
+          }, true);
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', bindItemClicks);
+      if (document.readyState !== 'loading') bindItemClicks();
+
+      lbPrev.addEventListener('click',  function(e) { e.stopPropagation(); showImage(current - 1); });
+      lbNext.addEventListener('click',  function(e) { e.stopPropagation(); showImage(current + 1); });
+      lbClose.addEventListener('click', function(e) { e.stopPropagation(); closeLB(); });
+      lbBack.addEventListener('click',  closeLB);
+
+      document.addEventListener('keydown', function(e) {
+        if (!lb.classList.contains('is-open')) return;
+        if (e.key === 'Escape')     closeLB();
+        if (e.key === 'ArrowLeft')  showImage(current - 1);
+        if (e.key === 'ArrowRight') showImage(current + 1);
+      });
+    })();
+  </script>
+
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
