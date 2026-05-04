@@ -40,11 +40,16 @@ if (!customElements.get('media-gallery')) {
 
       this.preventStickyHeader();
       window.setTimeout(() => {
-        if (this.elements.thumbnails) {
-          activeMedia.parentElement.scrollTo({ left: activeMedia.offsetLeft });
-        }
-        if (!this.elements.thumbnails || this.dataset.desktopLayout === 'stacked') {
-          activeMedia.scrollIntoView({behavior: 'smooth'});
+        // Scroll horizontally if it's a slider (mobile), or vertically if it's stacked (desktop)
+        if (this.dataset.desktopLayout === 'stacked' && window.matchMedia('(min-width: 750px)').matches) {
+          activeMedia.parentElement.scrollTo({ top: activeMedia.offsetTop, behavior: 'smooth' });
+        } else {
+          if (this.elements.thumbnails) {
+            activeMedia.parentElement.scrollTo({ left: activeMedia.offsetLeft, behavior: 'smooth' });
+          }
+          if (!this.elements.thumbnails) {
+            activeMedia.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+          }
         }
       });
       this.playActiveMedia(activeMedia);
