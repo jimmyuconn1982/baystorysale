@@ -85,7 +85,40 @@
         {%- endif -%}
         <div class="card__content">
           <div class="card__information">
-            <h3 class="card__heading"{% if card_product.featured_media == nil and settings.card_style == 'standard' %} id="title-{{ section_id }}-{{ card_product.id }}"{% endif %}>
+          {%- if card_product.variants.size > 0 -%}
+            {%- assign color_options = card_product.options_with_values | where: "name", "Color" | first -%}
+            {%- if color_options == blank -%}
+              {%- assign color_options = card_product.options_with_values | where: "name", "Colour" | first -%}
+            {%- endif -%}
+
+            {%- if color_options -%}
+              <div class="card__colors" style="display: flex; flex-wrap: nowrap; gap: 8px; margin-bottom: 10px; align-items: center; justify-content: center; overflow: hidden; height: 30px;">
+                {%- for value in color_options.values -%}
+                  {%- if forloop.index <= 4 -%}
+                    {%- assign color_code = value | downcase | replace: ' ', '' -%}
+                    {%- if color_code == 'deeppurple' -%}{%- assign color_code = '#36013f' -%}{%- endif -%}
+                    {%- if color_code == 'vibrantyellow' -%}{%- assign color_code = '#ffd700' -%}{%- endif -%}
+                    {%- if color_code == 'classicblack' -%}{%- assign color_code = '#000000' -%}{%- endif -%}
+                    {%- if color_code == 'khaki' -%}{%- assign color_code = '#f0e68c' -%}{%- endif -%}
+                    {%- if color_code == 'beige' -%}{%- assign color_code = '#f5f5dc' -%}{%- endif -%}
+                    {%- if color_code == 'grey' or color_code == 'gray' -%}{%- assign color_code = '#808080' -%}{%- endif -%}
+                    {%- if color_code == 'black' -%}{%- assign color_code = '#000000' -%}{%- endif -%}
+                    <span class="color-swatch" style="display: inline-block; width: 24px; height: 24px; border-radius: 50%; background-color: {{ color_code }}; border: 1.5px solid #dcdcdc; flex-shrink: 0;" title="{{ value }}"></span>
+                  {%- elsif forloop.index == 5 -%}
+                    <span class="color-more" style="font-size: 1.2rem; color: #666; margin-left: 4px; flex-shrink: 0; font-weight: 500;">+{{ color_options.values.size | minus: 4 }} more</span>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+
+            {%- assign size_options = card_product.options_with_values | where: "name", "Size" | first -%}
+            {%- if size_options -%}
+              <div class="card__sizes" style="font-size: 1.2rem; color: #666; margin-bottom: 10px; font-weight: 500; text-align: center;">
+                Size: {{ size_options.values | join: ' / ' }}
+              </div>
+            {%- endif -%}
+          {%- endif -%}
+<h3 class="card__heading"{% if card_product.featured_media == nil and settings.card_style == 'standard' %} id="title-{{ section_id }}-{{ card_product.id }}"{% endif %}>
               <a href="{{ card_product.url }}" id="StandardCardNoMediaLink-{{ section_id }}-{{ card_product.id }}" class="full-unstyled-link" aria-labelledby="StandardCardNoMediaLink-{{ section_id }}-{{ card_product.id }} NoMediaStandardBadge-{{ section_id }}-{{ card_product.id }}">
                 {{ card_product.title | escape }}
               </a>
@@ -102,12 +135,45 @@
       </div>
       <div class="card__content">
         <div class="card__information">
-          <h3 class="card__heading{% if card_product.featured_media or settings.card_style == 'standard' %} h5{% endif %}"{% if card_product.featured_media or settings.card_style == 'card' %} id="title-{{ section_id }}-{{ card_product.id }}"{% endif %}>
+          {%- if card_product.variants.size > 0 -%}
+            {%- assign color_options = card_product.options_with_values | where: "name", "Color" | first -%}
+            {%- if color_options == blank -%}
+              {%- assign color_options = card_product.options_with_values | where: "name", "Colour" | first -%}
+            {%- endif -%}
+
+            {%- if color_options -%}
+              <div class="card__colors" style="display: flex; flex-wrap: nowrap; gap: 8px; margin-bottom: 10px; align-items: center; justify-content: center; overflow: hidden; height: 30px;">
+                {%- for value in color_options.values -%}
+                  {%- if forloop.index <= 4 -%}
+                    {%- assign color_code = value | downcase | replace: ' ', '' -%}
+                    {%- if color_code == 'deeppurple' -%}{%- assign color_code = '#36013f' -%}{%- endif -%}
+                    {%- if color_code == 'vibrantyellow' -%}{%- assign color_code = '#ffd700' -%}{%- endif -%}
+                    {%- if color_code == 'classicblack' -%}{%- assign color_code = '#000000' -%}{%- endif -%}
+                    {%- if color_code == 'khaki' -%}{%- assign color_code = '#f0e68c' -%}{%- endif -%}
+                    {%- if color_code == 'beige' -%}{%- assign color_code = '#f5f5dc' -%}{%- endif -%}
+                    {%- if color_code == 'grey' or color_code == 'gray' -%}{%- assign color_code = '#808080' -%}{%- endif -%}
+                    {%- if color_code == 'black' -%}{%- assign color_code = '#000000' -%}{%- endif -%}
+                    <span class="color-swatch" style="display: inline-block; width: 24px; height: 24px; border-radius: 50%; background-color: {{ color_code }}; border: 1.5px solid #dcdcdc; flex-shrink: 0;" title="{{ value }}"></span>
+                  {%- elsif forloop.index == 5 -%}
+                    <span class="color-more" style="font-size: 1.2rem; color: #666; margin-left: 4px; flex-shrink: 0; font-weight: 500;">+{{ color_options.values.size | minus: 4 }} more</span>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+
+            {%- assign size_options = card_product.options_with_values | where: "name", "Size" | first -%}
+            {%- if size_options -%}
+              <div class="card__sizes" style="font-size: 1.2rem; color: #666; margin-bottom: 10px; font-weight: 500; text-align: center;">
+                Size: {{ size_options.values | join: ' / ' }}
+              </div>
+            {%- endif -%}
+          {%- endif -%}
+<h3 class="card__heading{% if card_product.featured_media or settings.card_style == 'standard' %} h5{% endif %}"{% if card_product.featured_media or settings.card_style == 'card' %} id="title-{{ section_id }}-{{ card_product.id }}"{% endif %}>
             <a href="{{ card_product.url }}" id="CardLink-{{ section_id }}-{{ card_product.id }}" class="full-unstyled-link" aria-labelledby="CardLink-{{ section_id }}-{{ card_product.id }} Badge-{{ section_id }}-{{ card_product.id }}">
               {{ card_product.title | escape }}
             </a>
           </h3>
-          <div class="card-information">
+          <div class="card-information" style="text-align: center;">
             {%- if show_vendor -%}
               <span class="visually-hidden">{{ 'accessibility.vendor' | t }}</span>
               <div class="caption-with-letter-spacing light">{{ card_product.vendor }}</div>
@@ -228,7 +294,40 @@
       <div class="card__inner {% if settings.card_style == 'standard' %}color-{{ settings.card_color_scheme }} gradient{% endif %}{% if settings.card_style == 'standard' %} ratio{% endif %}" style="--ratio-percent: 100%;">
         <div class="card__content">
           <div class="card__information">
-            <h3 class="card__heading">
+          {%- if card_product.variants.size > 0 -%}
+            {%- assign color_options = card_product.options_with_values | where: "name", "Color" | first -%}
+            {%- if color_options == blank -%}
+              {%- assign color_options = card_product.options_with_values | where: "name", "Colour" | first -%}
+            {%- endif -%}
+
+            {%- if color_options -%}
+              <div class="card__colors" style="display: flex; flex-wrap: nowrap; gap: 8px; margin-bottom: 10px; align-items: center; justify-content: center; overflow: hidden; height: 30px;">
+                {%- for value in color_options.values -%}
+                  {%- if forloop.index <= 4 -%}
+                    {%- assign color_code = value | downcase | replace: ' ', '' -%}
+                    {%- if color_code == 'deeppurple' -%}{%- assign color_code = '#36013f' -%}{%- endif -%}
+                    {%- if color_code == 'vibrantyellow' -%}{%- assign color_code = '#ffd700' -%}{%- endif -%}
+                    {%- if color_code == 'classicblack' -%}{%- assign color_code = '#000000' -%}{%- endif -%}
+                    {%- if color_code == 'khaki' -%}{%- assign color_code = '#f0e68c' -%}{%- endif -%}
+                    {%- if color_code == 'beige' -%}{%- assign color_code = '#f5f5dc' -%}{%- endif -%}
+                    {%- if color_code == 'grey' or color_code == 'gray' -%}{%- assign color_code = '#808080' -%}{%- endif -%}
+                    {%- if color_code == 'black' -%}{%- assign color_code = '#000000' -%}{%- endif -%}
+                    <span class="color-swatch" style="display: inline-block; width: 24px; height: 24px; border-radius: 50%; background-color: {{ color_code }}; border: 1.5px solid #dcdcdc; flex-shrink: 0;" title="{{ value }}"></span>
+                  {%- elsif forloop.index == 5 -%}
+                    <span class="color-more" style="font-size: 1.2rem; color: #666; margin-left: 4px; flex-shrink: 0; font-weight: 500;">+{{ color_options.values.size | minus: 4 }} more</span>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+
+            {%- assign size_options = card_product.options_with_values | where: "name", "Size" | first -%}
+            {%- if size_options -%}
+              <div class="card__sizes" style="font-size: 1.2rem; color: #666; margin-bottom: 10px; font-weight: 500; text-align: center;">
+                Size: {{ size_options.values | join: ' / ' }}
+              </div>
+            {%- endif -%}
+          {%- endif -%}
+<h3 class="card__heading">
               <a role="link" aria-disabled="true" class="full-unstyled-link">
                 {{ 'onboarding.product_title' | t }}
               </a>
@@ -238,12 +337,45 @@
       </div>
       <div class="card__content">
         <div class="card__information">
-          <h3 class="card__heading{% if settings.card_style == 'standard' %} h5{% endif %}">
+          {%- if card_product.variants.size > 0 -%}
+            {%- assign color_options = card_product.options_with_values | where: "name", "Color" | first -%}
+            {%- if color_options == blank -%}
+              {%- assign color_options = card_product.options_with_values | where: "name", "Colour" | first -%}
+            {%- endif -%}
+
+            {%- if color_options -%}
+              <div class="card__colors" style="display: flex; flex-wrap: nowrap; gap: 8px; margin-bottom: 10px; align-items: center; justify-content: center; overflow: hidden; height: 30px;">
+                {%- for value in color_options.values -%}
+                  {%- if forloop.index <= 4 -%}
+                    {%- assign color_code = value | downcase | replace: ' ', '' -%}
+                    {%- if color_code == 'deeppurple' -%}{%- assign color_code = '#36013f' -%}{%- endif -%}
+                    {%- if color_code == 'vibrantyellow' -%}{%- assign color_code = '#ffd700' -%}{%- endif -%}
+                    {%- if color_code == 'classicblack' -%}{%- assign color_code = '#000000' -%}{%- endif -%}
+                    {%- if color_code == 'khaki' -%}{%- assign color_code = '#f0e68c' -%}{%- endif -%}
+                    {%- if color_code == 'beige' -%}{%- assign color_code = '#f5f5dc' -%}{%- endif -%}
+                    {%- if color_code == 'grey' or color_code == 'gray' -%}{%- assign color_code = '#808080' -%}{%- endif -%}
+                    {%- if color_code == 'black' -%}{%- assign color_code = '#000000' -%}{%- endif -%}
+                    <span class="color-swatch" style="display: inline-block; width: 24px; height: 24px; border-radius: 50%; background-color: {{ color_code }}; border: 1.5px solid #dcdcdc; flex-shrink: 0;" title="{{ value }}"></span>
+                  {%- elsif forloop.index == 5 -%}
+                    <span class="color-more" style="font-size: 1.2rem; color: #666; margin-left: 4px; flex-shrink: 0; font-weight: 500;">+{{ color_options.values.size | minus: 4 }} more</span>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+
+            {%- assign size_options = card_product.options_with_values | where: "name", "Size" | first -%}
+            {%- if size_options -%}
+              <div class="card__sizes" style="font-size: 1.2rem; color: #666; margin-bottom: 10px; font-weight: 500; text-align: center;">
+                Size: {{ size_options.values | join: ' / ' }}
+              </div>
+            {%- endif -%}
+          {%- endif -%}
+<h3 class="card__heading{% if settings.card_style == 'standard' %} h5{% endif %}">
             <a role="link" aria-disabled="true" class="full-unstyled-link">
               {{ 'onboarding.product_title' | t }}
             </a>
           </h3>
-          <div class="card-information">
+          <div class="card-information" style="text-align: center;">
             {%- if show_vendor -%}
               <span class="visually-hidden">{{ 'accessibility.vendor' | t }}</span>
               <div class="caption-with-letter-spacing light">{{ 'products.product.vendor' | t }}</div>

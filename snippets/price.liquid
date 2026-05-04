@@ -46,18 +46,13 @@
       </span>
     </div>
     <div class="price__sale">
-      <div class="price__sale-wrapper" style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+      <div class="price__sale-wrapper" style="display: flex; flex-direction: row; align-items: baseline; gap: 8px; justify-content: center;">
       <div class="price__sale-current" style="display: flex; align-items: center; gap: 8px;">
         <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.sale_price' | t }}</span>
         <span class="price-item price-item--sale price-item--last" style="color: #b12739; font-size: 2.4rem; font-weight: bold; margin: 0; line-height: 1;">
           {{ money_price }}
         </span>
-        {%- if compare_at_price > price -%}
-          {%- assign discount = compare_at_price | minus: price | times: 100.0 | divided_by: compare_at_price | round -%}
-          <span class="price-item--discount" style="color: #b12739; font-size: 2.2rem; font-weight: bold; margin: 0; line-height: 1;">
-            (-{{ discount }}%)
-          </span>
-        {%- endif -%}
+        
       </div>
 
       {%- unless product.price_varies == false and product.compare_at_price_varies %}

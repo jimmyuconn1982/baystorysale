@@ -227,8 +227,7 @@
   }
 
   .underline-links-hover:hover a {
-    text-decoration: underline;
-    text-underline-offset: 0.3rem;
+    text-decoration: none !important;
   }
 }
 
@@ -310,4 +309,31 @@
 
 .card-article-info {
   margin-top: 1rem;
+}
+
+.card__information .card__heading a {
+  display: inline !important;
+}
+
+.card__information { text-align: center !important; }
+.card__heading { text-align: center !important; }
+.card-information { text-align: center !important; }
+
+/* Force 2-line truncation for product titles */
+.card__heading {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  white-space: normal !important;
+  text-decoration: none !important;
+  margin: 0 auto !important;
+  max-width: 90% !important;
+}
+
+.card__heading a {
+  display: inline !important;
+  color: #111 !important;
+  font-weight: 700 !important;
+  font-size: 1.4rem !important;
 }
