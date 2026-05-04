@@ -172,7 +172,7 @@
 }
 
 .newsletter-form__field-wrapper {
-  max-width: 36rem;
+  max-width: 70rem;
 }
 
 @media screen and (min-width: 750px) {

@@ -155,6 +155,7 @@
                 <nav class="menu-drawer__navigation">
                   <ul class="menu-drawer__menu has-submenu list-menu" role="list">
                     {%- for link in section.settings.menu.links -%}
+              {%- if link.title == "Home" or link.title == "首页" -%}{%- continue -%}{%- endif -%}
                       {%- assign link_title_down = link.title | downcase -%}
                       {%- if link_title_down == 'custom: human' or link_title_down == 'custom: pets' -%}{%- continue -%}{%- endif -%}
                       {%- assign link_display_title = link.title | escape -%}
@@ -214,7 +215,7 @@
                             </div>
                           </details>
                         {%- else -%}
-                          <a href="{{ link.url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset{% if link.current %} menu-drawer__menu-item--active{% endif %}"{% if link.current %} aria-current="page"{% endif %}>
+                          <a {% assign link_title_clean = link.title | strip | downcase %}{% if link_title_clean == "about us" %}href="/pages/about-us"{% else %}href="{{ link.url }}"{% endif %} class="menu-drawer__menu-item list-menu__item link link--text focus-inset{% if link.current %} menu-drawer__menu-item--active{% endif %}"{% if link.current %} aria-current="page"{% endif %}>
                             {{ link_display_title }}
                           </a>
                         {%- endif -%}
@@ -419,6 +420,7 @@
         <nav class="header__inline-menu">
           <ul class="list-menu list-menu--inline" role="list">
             {%- for link in section.settings.menu.links -%}
+              {%- if link.title == "Home" or link.title == "首页" -%}{%- continue -%}{%- endif -%}
               {%- assign link_title_down = link.title | downcase -%}
               {%- if link_title_down == 'custom: human' or link_title_down == 'custom: pets' -%}{%- continue -%}{%- endif -%}
               {%- assign link_display_title = link.title | escape -%}
@@ -464,7 +466,7 @@
                     </details>
                   </header-menu>
                 {%- else -%}
-                  <a href="{{ link.url }}" class="header__menu-item header__menu-item list-menu__item link link--text focus-inset"{% if link.current %} aria-current="page"{% endif %}>
+                  <a {% assign link_title_clean = link.title | strip | downcase %}{% if link_title_clean == "about us" %}href="/pages/about-us"{% else %}href="{{ link.url }}"{% endif %} class="header__menu-item header__menu-item list-menu__item link link--text focus-inset"{% if link.current %} aria-current="page"{% endif %}>
                     <span {%- if link.current %} class="header__active-menu-item"{% endif %}>{{ link_display_title }}</span>
                   </a>
                 {%- endif -%}
@@ -476,6 +478,7 @@
         <nav class="header__inline-menu">
           <ul class="list-menu list-menu--inline" role="list">
             {%- for link in section.settings.menu.links -%}
+              {%- if link.title == "Home" or link.title == "首页" -%}{%- continue -%}{%- endif -%}
               {%- assign link_title_down = link.title | downcase -%}
               {%- if link_title_down == 'custom: human' or link_title_down == 'custom: pets' -%}{%- continue -%}{%- endif -%}
               {%- assign link_display_title = link.title | escape -%}
@@ -516,7 +519,7 @@
                     </details>
                   </header-menu>
                 {%- else -%}
-                  <a href="{{ link.url }}" class="header__menu-item header__menu-item list-menu__item link link--text focus-inset"{% if link.current %} aria-current="page"{% endif %}>
+                  <a {% assign link_title_clean = link.title | strip | downcase %}{% if link_title_clean == "about us" %}href="/pages/about-us"{% else %}href="{{ link.url }}"{% endif %} class="header__menu-item header__menu-item list-menu__item link link--text focus-inset"{% if link.current %} aria-current="page"{% endif %}>
                     <span {%- if link.current %} class="header__active-menu-item"{% endif %}>{{ link_display_title }}</span>
                   </a>
                 {%- endif -%}

@@ -1,0 +1,163 @@
+{%- style -%}
+  .about-us-hero {
+    background-color: #2c3e50;
+    color: white;
+    padding: 6rem 2rem;
+    text-align: center;
+  }
+  .about-us-hero h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: white;
+  }
+  .about-us-hero p {
+    font-size: 1.8rem;
+    opacity: 0.9;
+  }
+  .about-us-content {
+    max-width: 1200px;
+    margin: 6rem auto;
+    padding: 0 2rem;
+  }
+  .about-us-story {
+    display: flex;
+    gap: 6rem;
+    align-items: center;
+    margin-bottom: 8rem;
+  }
+  .about-us-story-image {
+    flex: 1;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+  .about-us-story-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .about-us-story-text {
+    flex: 1;
+  }
+  .about-us-story-text h2 {
+    font-size: 3.2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+  }
+  .about-us-story-text p {
+    font-size: 1.6rem;
+    line-height: 1.8;
+    color: #4b5563;
+    margin-bottom: 2rem;
+  }
+  .about-us-story-text .highlight {
+    color: #2c3e50;
+    font-weight: 600;
+  }
+  .about-us-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    padding-top: 6rem;
+    border-top: 1px solid #e5e7eb;
+  }
+  .about-us-grid-item h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+  }
+  .pill-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .pill {
+    background: #f3f4f6;
+    padding: 0.8rem 1.6rem;
+    border-radius: 50px;
+    font-size: 1.4rem;
+    color: #4b5563;
+    font-weight: 500;
+  }
+  .commitment-list {
+    list-style: none;
+    padding: 0;
+  }
+  .commitment-list li {
+    font-size: 1.6rem;
+    color: #4b5563;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .commitment-list li:before {
+    content: "—";
+    color: #9ca3af;
+  }
+
+  @media screen and (max-width: 768px) {
+    .about-us-story {
+      flex-direction: column;
+    }
+    .about-us-grid {
+      grid-template-columns: 1fr;
+    }
+    .about-us-hero h1 {
+      font-size: 3rem;
+    }
+  }
+{%- endstyle -%}
+<div class="about-us">
+  <div class="about-us-hero">
+    <div class="page-width">
+      <h1>Experience Meets Innovation</h1>
+      <p>30 Years of Craftsmanship, Designed in Silicon Valley.</p>
+    </div>
+  </div>
+
+  <div class="about-us-content">
+    <div class="about-us-story">
+      <div class="about-us-story-image">
+        <img src="{{ 'about-us-story.png' | asset_url }}" alt="Baystory Craftsmanship" loading="lazy">
+      </div>
+      <div class="about-us-story-text">
+        <h2>Our Story</h2>
+        <p><span class="highlight">Baystory</span> was born at the intersection of decades-long manufacturing expertise and the forward-thinking spirit of Silicon Valley. With over <span class="highlight">30 years of experience</span> as a premier bag factory, we decided to bring our craftsmanship directly to you.</p>
+        <p>Our mission is simple: to redefine your daily carry. We believe that everyday bags shouldn't just be functional—they should be lightweight, fashionable, and accessible to everyone. By cutting out the middleman, we provide high-end quality at honest prices.</p>
+        
+        <h3>Our Design Approach</h3>
+        <ul class="commitment-list">
+          <li>Lightweight Engineering</li>
+          <li>Modern Silicon Valley Aesthetic</li>
+          <li>Uncompromising Factory Durability</li>
+          <li>Everyday Practicality</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="about-us-grid">
+      <div class="about-us-grid-item">
+        <h3>Product Focus</h3>
+        <p style="color: #9ca3af; text-transform: uppercase; font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem; letter-spacing: 0.1em;">Daily Essentials</p>
+        <div class="pill-container">
+          <span class="pill">Daily Backpacks</span>
+          <span class="pill">Commuter Totes</span>
+          <span class="pill">Lightweight Slings</span>
+          <span class="pill">Versatile Organizers</span>
+          <span class="pill">Travel Carry-ons</span>
+        </div>
+      </div>
+      <div class="about-us-grid-item">
+        <h3>Our Commitment</h3>
+        <ul class="commitment-list">
+          <li>Direct-from-Factory Quality Control</li>
+          <li>Sustainable & Lightweight Materials</li>
+          <li>User-Centric Functional Design</li>
+          <li>Lifetime Craftsmanship Warranty</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

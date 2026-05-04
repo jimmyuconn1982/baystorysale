@@ -65,8 +65,9 @@
                   {%- if block.settings.menu != blank -%}
                     <ul class="footer-block__details-content list-unstyled">
                       {%- for link in block.settings.menu.links -%}
+                        {%- if link.title == "Search" or link.title == "搜索" -%}{%- continue -%}{%- endif -%}
                         <li>
-                          <a href="{{ link.url }}" class="link link--text list-menu__item list-menu__item--link{% if link.active %} list-menu__item--active{% endif %}">
+                          <a {% assign link_title_clean = link.title | strip | downcase %}{% if link_title_clean == "about us" %}href="/pages/about-us"{% else %}href="{{ link.url }}"{% endif %} class="link link--text list-menu__item list-menu__item--link{% if link.active %} list-menu__item--active{% endif %}">
                             {{ link.title }}
                           </a>
                         </li>
@@ -98,14 +99,45 @@
 
       <div class="footer-block--newsletter">
         {%- if section.settings.newsletter_enable -%}
-          <div class="footer-block__newsletter">
-            {%- if section.settings.newsletter_heading != blank -%}
-              <h2 class="footer-block__heading">{{ section.settings.newsletter_heading | escape }}</h2>
-            {%- endif -%}
+          
+<style>
+  .footer-block__newsletter .field:after, 
+  .footer-block__newsletter .field:before {
+    content: none !important;
+  }
+  .footer-block__newsletter .field {
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .footer-block__newsletter .field__input:focus {
+    box-shadow: none !important;
+  }
+
+  .footer-block__newsletter input::placeholder {
+    color: #666 !important;
+    opacity: 1 !important;
+  }
+  .footer-block__newsletter input::-webkit-input-placeholder {
+    color: #666 !important;
+    opacity: 1 !important;
+  }
+
+
+  .footer-block__newsletter .newsletter-form {
+    max-width: 50rem !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+</style>
+<div class="footer-block__newsletter" style="width: 100%; max-width: 100%;">
+            
+            <h2 class="footer-block__heading" style="font-size: 2.2rem; font-weight: 800; margin-bottom: 1rem;">Get 15% Off Your First Order</h2>
+            <p style="font-size: 1.4rem; color: #333; margin-bottom: 2rem;">Get updates on new products, promotion offers.</p>
             {%- form 'customer', id: 'ContactFooter', class: 'footer__newsletter newsletter-form' -%}
               <input type="hidden" name="contact[tags]" value="newsletter">
-              <div class="newsletter-form__field-wrapper">
-                <div class="field">
+              <div class="newsletter-form__field-wrapper" style="max-width: 520px; width: 100%;">
+                <div class="field" style="box-shadow: none !important; border: none !important; display: flex !important; gap: 15px; align-items: stretch; width: 100%; position: relative;">
                   <input
                     id="NewsletterForm--{{ section.id }}"
                     type="email"
@@ -123,16 +155,17 @@
                     {% elsif form.posted_successfully? %}
                       aria-describedby="ContactFooter-success"
                     {% endif %}
-                    placeholder="{{ 'newsletter.label' | t }}"
-                    required
+                    placeholder="Enter your email" required style="border-radius: 8px; border: 1px solid #d1d5db; background: #fff; height: 48px; color: #333 !important; padding-left: 15px; flex: 10 1 400px !important; opacity: 1 !important; visibility: visible !important;"
                   >
-                  <label class="field__label" for="NewsletterForm--{{ section.id }}">
-                    {{ 'newsletter.label' | t }}
+                  <label class="field__label" for="NewsletterForm--{{ section.id }}" style="display: none;">
+                    Enter your email
                   </label>
-                  <button type="submit" class="newsletter-form__button field__button" name="commit" id="Subscribe" aria-label="{{ 'newsletter.button_label' | t }}">
-                    {% render 'icon-arrow' %}
+                  <button type="submit" class="newsletter-form__button" name="commit" id="Subscribe" aria-label="Get 15% Off" 
+                    style="background-color: #c91f37; color: white; border: none; border-radius: 8px; padding: 0 30px; flex: 0 0 auto !important; min-width: max-content; font-weight: bold; font-size: 1.4rem; white-space: nowrap; cursor: pointer; height: 48px;">
+                    Get 15% Off
                   </button>
                 </div>
+                <p style="font-size: 1.2rem; color: #9ca3af; margin-top: 1rem;">No spam. Unsubscribe anytime.</p>
                 {%- if form.errors -%}
                   <small class="newsletter-form__message form__message" id="ContactFooter-error">{% render 'icon-error' %}{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}</small>
                 {%- endif -%}
@@ -141,6 +174,7 @@
                 <h3 class="newsletter-form__message newsletter-form__message--success form__message" id="ContactFooter-success" tabindex="-1" autofocus>{% render 'icon-success' %}{{ 'newsletter.success' | t }}</h3>
               {%- endif -%}
             {%- endform -%}
+
           </div>
         {%- endif -%}
 
