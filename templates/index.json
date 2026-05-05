@@ -1,1 +1,348 @@
-{"sections":{"custom_slideshow_main":{"type":"custom-slideshow","blocks":{"slide_1":{"type":"slide","settings":{"image":"shopify:\/\/shop_images\/1.png","link":"","heading":"","subheading":""}},"slide_bR86az":{"type":"slide","settings":{"image":"shopify:\/\/shop_images\/bn.png","link":"","heading":"","subheading":""}}},"block_order":["slide_1","slide_bR86az"],"name":"03 · 轮播海报","settings":{"autoplay":true,"autoplay_speed":5000,"show_arrows":true,"show_dots":true,"slide_height":"auto","custom_height":500}},"featured_products_hover_main":{"type":"featured-products-hover","blocks":{"p_1":{"type":"product","settings":{"primary_image":"shopify:\/\/shop_images\/A1.png","secondary_image":"shopify:\/\/shop_images\/A2.png","name":"FASHIONABLE BAG","url":"shopify:\/\/products\/ms-origin-waterproof-nylon-crossbody-bag-for-women-multi-pocket-shoulder-purse-for-work-commute-and-travel-lightweight-water-resistant-everyday-handbag-6-color-stylish-top-handle-crossbody-design","dot_1":"#121212","dot_2":"#f4ecdf","dot_3":"#334fb4","dot_4":"","dot_5":"","dot_6":""}},"product_94jxXq":{"type":"product","settings":{"primary_image":"shopify:\/\/shop_images\/B1.png","secondary_image":"shopify:\/\/shop_images\/B2.png","name":"FASHIONABLE BAG","url":"shopify:\/\/products\/ms-origin-waterproof-nylon-crossbody-bag-with-adjustable-strap-multi-pocket-shoulder-purse-for-commute-and-travel-tablet-compatible-handbag-black-grey-yellow-plum","dot_1":"#ebbe20","dot_2":"#121212","dot_3":"#b9bbb1","dot_4":"#5f1f1f","dot_5":"","dot_6":""}},"product_idYQQE":{"type":"product","settings":{"primary_image":"shopify:\/\/shop_images\/C1.png","secondary_image":"shopify:\/\/shop_images\/C2.png","name":"FASHIONABLE BAG","url":"shopify:\/\/products\/ms-heritage-city-tote-water-resistant-nylon-tote-bag-with-multiple-pockets-and-adjustable-strap-lightweight-top-handle-crossbody-handbag-in-classic-black-khaki-or-lilac-purple","dot_1":"#121212","dot_2":"#b3a894","dot_3":"#5f1f1f","dot_4":"#5f497f","dot_5":"#ebbe20","dot_6":"#8b6ccf"}},"product_xLeQrX":{"type":"product","settings":{"primary_image":"shopify:\/\/shop_images\/D1.png","secondary_image":"shopify:\/\/shop_images\/D2.png","name":"FASHIONABLE BAG","url":"shopify:\/\/products\/ms-series-waterproof-nylon-tote-bag-large-capacity-shoulder-handbag-used-for-daily-commute-and-travel-capable-of-crossbody-conversion-with-multi-pocket-organization","dot_1":"#121212","dot_2":"#b3a894","dot_3":"#5f1f1f","dot_4":"#3f237d","dot_5":"#ebbe20","dot_6":"#957ad0"}},"product_8ENCUT":{"type":"product","settings":{"primary_image":"shopify:\/\/shop_images\/E1.png","secondary_image":"shopify:\/\/shop_images\/E2.png","name":"FASHIONABLE BAG","url":"shopify:\/\/products\/ms-signature-urban-nylon-satchel-water-resistant-multi-pocket-tote-handbag-lightweight-large-capacity-everyday-shoulder-bag-and-travel-crossbody-5-color-versatile-work-and-commute-purse","dot_1":"#121212","dot_2":"#9f9584","dot_3":"#ebbe20","dot_4":"#5f1f1f","dot_5":"#5b379f","dot_6":""}},"product_PWjzDB":{"type":"product","settings":{"primary_image":"shopify:\/\/shop_images\/F1.png","secondary_image":"shopify:\/\/shop_images\/F2.png","name":"FASHIONABLE BAG","url":"shopify:\/\/products\/ms-hybrid-convertible-backpack-purse-for-women-waterproof-nylon-2-way-shoulder-bag-with-multi-pockets-versatile-travel-crossbody-bag-for-commuting-school","dot_1":"#121212","dot_2":"#736832","dot_3":"#ebbe20","dot_4":"#b3a894","dot_5":"","dot_6":""}},"product_mmKRVJ":{"type":"product","disabled":true,"settings":{"name":"FASHIONABLE BAG","url":"","dot_1":"","dot_2":"","dot_3":"","dot_4":"","dot_5":"","dot_6":""}}},"block_order":["p_1","product_94jxXq","product_idYQQE","product_xLeQrX","product_8ENCUT","product_PWjzDB","product_mmKRVJ"],"name":"04 · 主推产品","settings":{"title":"FEATURED COLLECTION","top_link":"shopify:\/\/collections","product_label":"FASHIONABLE BAG","collection":"","products_to_show":6,"bg_color":"#ffffff","text_color":"#111111","heading_size":38,"columns_desktop":3,"grid_gap":16,"bottom_link_label":"VIEW THE FULL COLLECTION","bottom_link_url":"","padding_top":64,"padding_bottom":68}},"category_grid_main":{"type":"category-grid","blocks":{"category_LdqyWG":{"type":"category","settings":{"collection":"","image":"shopify:\/\/shop_images\/01_62bbe4f9-300e-4f88-9b48-3ca70d732a57.png","label":"Crossbody Bags","url":""}},"cg_1":{"type":"category","settings":{"collection":"","image":"shopify:\/\/shop_images\/02_65223a2a-24c9-444e-bf08-3af36020a0a1.png","label":"TOTE BAGS","url":""}},"cg_2":{"type":"category","settings":{"collection":"","image":"shopify:\/\/shop_images\/03_f9fc0681-bcf6-4c73-9cd8-224cade1f29a.png","label":"BACKPACKS","url":""}},"cg_3":{"type":"category","settings":{"collection":"","image":"shopify:\/\/shop_images\/04_9e2fe8ac-6f3f-4767-ab2d-a592ac33e952.png","label":"CROSSBODY BAGS","url":""}}},"block_order":["category_LdqyWG","cg_1","cg_2","cg_3"],"name":"05 · 分类模块","settings":{"title":"COLLECTION OF OUR BAGS","bg_image":"shopify:\/\/shop_images\/C-_Users_Administrator_Desktop__0421_02.png","bg_overlay_opacity":0,"bg_color":"#f4ecdf","card_bg":"#ffffff","text_color":"#111111","columns_desktop":4,"bottom_link_label":"VIEW ALL","bottom_link_url":"","padding_top":160,"padding_bottom":160}},"spacer_main":{"type":"section-spacer","name":"06 · 空白占位","settings":{"height":80,"bg_color":"#ffffff"}},"feature_series_pet":{"type":"feature-series","name":"07 · 特色系列","settings":{"bg_image":"shopify:\/\/shop_images\/pagebg_2.png","fallback_bg":"#f2f2f2","overlay_opacity":0,"min_height":420,"eyebrow":"CORGI SERIES","title":"PET COLLECTION","description":"","text_color":"#111111","content_align":"center","btn_label":"SHOP NOW","btn_link":"","btn_bg":"#111111","btn_text":"#ffffff"}},"brand_story_main":{"type":"brand-story","custom_css":["\/* refresh storefront *\/"],"name":"08 · 品牌故事","settings":{"image":"shopify:\/\/shop_images\/Image_14_1_1.png","image_ratio":"4 \/ 5","logo":"shopify:\/\/shop_images\/Image_1-_2.png","logo_width":180,"title":"","description":"<p>Your bag is more than an accessory.<br\/>it is the keeper of your journey. From stylish chest bags to elegant wallets. Baystory empowers modern women to carry their confidence, embrace their freedom, and write their own beautiful stories everywhere<\/p>","btn_label":"more","btn_link":"","bg_color":"#ffffff","text_color":"#111111","padding_top":80,"padding_bottom":80}},"page_banner_main":{"type":"page-banner","blocks":{"pb_1":{"type":"feature","settings":{"icon_preset":"delivery","label":"EXPRESS DELIVERY","url":""}},"pb_2":{"type":"feature","settings":{"icon_preset":"chat","label":"AVAILABLE CUSTOMER SERVICE","url":""}},"pb_3":{"type":"feature","settings":{"icon_preset":"card","label":"PAYMENT IN 3X","url":""}}},"block_order":["pb_1","pb_2","pb_3"],"name":"09 · 页面条幅","settings":{"bg_image":"shopify:\/\/shop_images\/pagebg_3.png","bg_color":"#5b3d2f","overlay_opacity":0,"text_color":"#ffffff","alt":"","link":"","full_bleed":true,"padding_top":48,"padding_bottom":48}}},"order":["custom_slideshow_main","featured_products_hover_main","category_grid_main","spacer_main","feature_series_pet","brand_story_main","page_banner_main"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "custom_slideshow_main": {
+      "type": "custom-slideshow",
+      "blocks": {
+        "slide_1": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/1.png",
+            "link": "",
+            "heading": "",
+            "subheading": ""
+          }
+        },
+        "slide_bR86az": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/bn.png",
+            "link": "",
+            "heading": "",
+            "subheading": ""
+          }
+        }
+      },
+      "block_order": [
+        "slide_1",
+        "slide_bR86az"
+      ],
+      "name": "03 · 轮播海报",
+      "settings": {
+        "autoplay": true,
+        "autoplay_speed": 5000,
+        "show_arrows": true,
+        "show_dots": true,
+        "slide_height": "auto",
+        "custom_height": 500
+      }
+    },
+    "featured_products_hover_main": {
+      "type": "featured-products-hover",
+      "blocks": {
+        "p_1": {
+          "type": "product",
+          "settings": {
+            "primary_image": "shopify://shop_images/A1.png",
+            "secondary_image": "shopify://shop_images/A2.png",
+            "name": "FASHIONABLE BAG",
+            "url": "shopify://products/ms-origin-waterproof-nylon-crossbody-bag-for-women-multi-pocket-shoulder-purse-for-work-commute-and-travel-lightweight-water-resistant-everyday-handbag-6-color-stylish-top-handle-crossbody-design",
+            "dot_1": "#121212",
+            "dot_2": "#f4ecdf",
+            "dot_3": "#334fb4",
+            "dot_4": "",
+            "dot_5": "",
+            "dot_6": ""
+          }
+        },
+        "product_94jxXq": {
+          "type": "product",
+          "settings": {
+            "primary_image": "shopify://shop_images/B1.png",
+            "secondary_image": "shopify://shop_images/B2.png",
+            "name": "FASHIONABLE BAG",
+            "url": "shopify://products/ms-origin-waterproof-nylon-crossbody-bag-with-adjustable-strap-multi-pocket-shoulder-purse-for-commute-and-travel-tablet-compatible-handbag-black-grey-yellow-plum",
+            "dot_1": "#ebbe20",
+            "dot_2": "#121212",
+            "dot_3": "#b9bbb1",
+            "dot_4": "#5f1f1f",
+            "dot_5": "",
+            "dot_6": ""
+          }
+        },
+        "product_idYQQE": {
+          "type": "product",
+          "settings": {
+            "primary_image": "shopify://shop_images/C1.png",
+            "secondary_image": "shopify://shop_images/C2.png",
+            "name": "FASHIONABLE BAG",
+            "url": "shopify://products/waterproof-nylon-multi-pocket-shoulder-bag-large-capacity-tote",
+            "dot_1": "#121212",
+            "dot_2": "#b3a894",
+            "dot_3": "#5f1f1f",
+            "dot_4": "#5f497f",
+            "dot_5": "#ebbe20",
+            "dot_6": "#8b6ccf"
+          }
+        },
+        "product_xLeQrX": {
+          "type": "product",
+          "settings": {
+            "primary_image": "shopify://shop_images/D1.png",
+            "secondary_image": "shopify://shop_images/D2.png",
+            "name": "FASHIONABLE BAG",
+            "url": "shopify://products/ms-series-waterproof-nylon-tote-bag-large-capacity-shoulder-handbag-used-for-daily-commute-and-travel-capable-of-crossbody-conversion-with-multi-pocket-organization",
+            "dot_1": "#121212",
+            "dot_2": "#b3a894",
+            "dot_3": "#5f1f1f",
+            "dot_4": "#3f237d",
+            "dot_5": "#ebbe20",
+            "dot_6": "#957ad0"
+          }
+        },
+        "product_8ENCUT": {
+          "type": "product",
+          "settings": {
+            "primary_image": "shopify://shop_images/E1.png",
+            "secondary_image": "shopify://shop_images/E2.png",
+            "name": "FASHIONABLE BAG",
+            "url": "shopify://products/ms-signature-urban-nylon-satchel-water-resistant-multi-pocket-tote-handbag-lightweight-large-capacity-everyday-shoulder-bag-and-travel-crossbody-5-color-versatile-work-and-commute-purse",
+            "dot_1": "#121212",
+            "dot_2": "#9f9584",
+            "dot_3": "#ebbe20",
+            "dot_4": "#5f1f1f",
+            "dot_5": "#5b379f",
+            "dot_6": ""
+          }
+        },
+        "product_PWjzDB": {
+          "type": "product",
+          "settings": {
+            "primary_image": "shopify://shop_images/F1.png",
+            "secondary_image": "shopify://shop_images/F2.png",
+            "name": "FASHIONABLE BAG",
+            "url": "shopify://products/ms-hybrid-convertible-backpack-purse-for-women-waterproof-nylon-2-way-shoulder-bag-with-multi-pockets-versatile-travel-crossbody-bag-for-commuting-school",
+            "dot_1": "#121212",
+            "dot_2": "#736832",
+            "dot_3": "#ebbe20",
+            "dot_4": "#b3a894",
+            "dot_5": "",
+            "dot_6": ""
+          }
+        },
+        "product_mmKRVJ": {
+          "type": "product",
+          "disabled": true,
+          "settings": {
+            "name": "FASHIONABLE BAG",
+            "url": "",
+            "dot_1": "",
+            "dot_2": "",
+            "dot_3": "",
+            "dot_4": "",
+            "dot_5": "",
+            "dot_6": ""
+          }
+        }
+      },
+      "block_order": [
+        "p_1",
+        "product_94jxXq",
+        "product_idYQQE",
+        "product_xLeQrX",
+        "product_8ENCUT",
+        "product_PWjzDB",
+        "product_mmKRVJ"
+      ],
+      "name": "04 · 主推产品",
+      "settings": {
+        "title": "FEATURED COLLECTION",
+        "top_link": "shopify://collections",
+        "product_label": "FASHIONABLE BAG",
+        "collection": "",
+        "products_to_show": 6,
+        "bg_color": "#ffffff",
+        "text_color": "#111111",
+        "heading_size": 38,
+        "columns_desktop": 3,
+        "grid_gap": 16,
+        "bottom_link_label": "VIEW THE FULL COLLECTION",
+        "bottom_link_url": "",
+        "padding_top": 64,
+        "padding_bottom": 68
+      }
+    },
+    "category_grid_main": {
+      "type": "category-grid",
+      "blocks": {
+        "category_LdqyWG": {
+          "type": "category",
+          "settings": {
+            "collection": "",
+            "image": "shopify://shop_images/01_62bbe4f9-300e-4f88-9b48-3ca70d732a57.png",
+            "label": "Crossbody Bags",
+            "url": ""
+          }
+        },
+        "cg_1": {
+          "type": "category",
+          "settings": {
+            "collection": "",
+            "image": "shopify://shop_images/02_65223a2a-24c9-444e-bf08-3af36020a0a1.png",
+            "label": "TOTE BAGS",
+            "url": ""
+          }
+        },
+        "cg_2": {
+          "type": "category",
+          "settings": {
+            "collection": "",
+            "image": "shopify://shop_images/03_f9fc0681-bcf6-4c73-9cd8-224cade1f29a.png",
+            "label": "BACKPACKS",
+            "url": ""
+          }
+        },
+        "cg_3": {
+          "type": "category",
+          "settings": {
+            "collection": "",
+            "image": "shopify://shop_images/04_9e2fe8ac-6f3f-4767-ab2d-a592ac33e952.png",
+            "label": "CROSSBODY BAGS",
+            "url": ""
+          }
+        }
+      },
+      "block_order": [
+        "category_LdqyWG",
+        "cg_1",
+        "cg_2",
+        "cg_3"
+      ],
+      "name": "05 · 分类模块",
+      "settings": {
+        "title": "COLLECTION OF OUR BAGS",
+        "bg_image": "shopify://shop_images/C-_Users_Administrator_Desktop__0421_02.png",
+        "bg_overlay_opacity": 0,
+        "bg_color": "#f4ecdf",
+        "card_bg": "#ffffff",
+        "text_color": "#111111",
+        "columns_desktop": 4,
+        "bottom_link_label": "VIEW ALL",
+        "bottom_link_url": "",
+        "padding_top": 160,
+        "padding_bottom": 160
+      }
+    },
+    "spacer_main": {
+      "type": "section-spacer",
+      "name": "06 · 空白占位",
+      "settings": {
+        "height": 80,
+        "bg_color": "#ffffff"
+      }
+    },
+    "feature_series_pet": {
+      "type": "feature-series",
+      "name": "07 · 特色系列",
+      "settings": {
+        "bg_image": "shopify://shop_images/pagebg_2.png",
+        "fallback_bg": "#f2f2f2",
+        "overlay_opacity": 0,
+        "min_height": 420,
+        "eyebrow": "CORGI SERIES",
+        "title": "PET COLLECTION",
+        "description": "",
+        "text_color": "#111111",
+        "content_align": "center",
+        "btn_label": "SHOP NOW",
+        "btn_link": "",
+        "btn_bg": "#111111",
+        "btn_text": "#ffffff"
+      }
+    },
+    "brand_story_main": {
+      "type": "brand-story",
+      "custom_css": [
+        "/* refresh storefront */"
+      ],
+      "name": "08 · 品牌故事",
+      "settings": {
+        "image": "shopify://shop_images/Image_14_1_1.png",
+        "image_ratio": "4 / 5",
+        "logo": "shopify://shop_images/Image_1-_2.png",
+        "logo_width": 180,
+        "title": "",
+        "description": "<p>Your bag is more than an accessory.<br/>it is the keeper of your journey. From stylish chest bags to elegant wallets. Baystory empowers modern women to carry their confidence, embrace their freedom, and write their own beautiful stories everywhere</p>",
+        "btn_label": "more",
+        "btn_link": "",
+        "bg_color": "#ffffff",
+        "text_color": "#111111",
+        "padding_top": 80,
+        "padding_bottom": 80
+      }
+    },
+    "page_banner_main": {
+      "type": "page-banner",
+      "blocks": {
+        "pb_1": {
+          "type": "feature",
+          "settings": {
+            "icon_preset": "delivery",
+            "label": "EXPRESS DELIVERY",
+            "url": ""
+          }
+        },
+        "pb_2": {
+          "type": "feature",
+          "settings": {
+            "icon_preset": "chat",
+            "label": "AVAILABLE CUSTOMER SERVICE",
+            "url": ""
+          }
+        },
+        "pb_3": {
+          "type": "feature",
+          "settings": {
+            "icon_preset": "card",
+            "label": "PAYMENT IN 3X",
+            "url": ""
+          }
+        }
+      },
+      "block_order": [
+        "pb_1",
+        "pb_2",
+        "pb_3"
+      ],
+      "name": "09 · 页面条幅",
+      "settings": {
+        "bg_image": "shopify://shop_images/pagebg_3.png",
+        "bg_color": "#5b3d2f",
+        "overlay_opacity": 0,
+        "text_color": "#ffffff",
+        "alt": "",
+        "link": "",
+        "full_bleed": true,
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
+    }
+  },
+  "order": [
+    "custom_slideshow_main",
+    "featured_products_hover_main",
+    "category_grid_main",
+    "spacer_main",
+    "feature_series_pet",
+    "brand_story_main",
+    "page_banner_main"
+  ]
+}
