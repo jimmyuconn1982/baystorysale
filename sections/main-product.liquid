@@ -23,6 +23,22 @@
   {%- endstyle -%}
 
   <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var backButton = document.querySelector('[data-product-back-button]');
+
+      if (!backButton) return;
+
+      backButton.addEventListener('click', function() {
+        if (window.history.length > 1 && document.referrer) {
+          window.history.back();
+          return;
+        }
+
+        window.location.href = '{{ routes.all_products_collection_url }}';
+      });
+    });
+  </script>
 
   {%- assign first_3d_model = product.media | where: "media_type", "model" | first -%}
   {%- if first_3d_model -%}
@@ -30,6 +46,11 @@
     <link id="ModelViewerStyle" rel="stylesheet" href="https://cdn.shopify.com/shopifycloud/model-viewer-ui/assets/v1.0/model-viewer-ui.css" media="print" onload="this.media='all'">
     <link id="ModelViewerOverride" rel="stylesheet" href="{{ 'component-model-viewer-ui.css' | asset_url }}" media="print" onload="this.media='all'">
   {%- endif -%}
+
+  <button type="button" class="product__back-button" data-product-back-button>
+    <span aria-hidden="true">&larr;</span>
+    Back to previous page
+  </button>
 
   <div class="product product--{{ section.settings.media_size }} product--{{ section.settings.gallery_layout }} grid grid--1-col {% if product.media.size > 0 %}grid--2-col-tablet{% else %}product--no-media{% endif %}">
     <div class="grid__item product__media-wrapper">

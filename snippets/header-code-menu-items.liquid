@@ -1,0 +1,55 @@
+{%- comment -%}
+  Code-owned top header navigation.
+
+  Expected variables:
+  - category_menu_collections: collections source
+  - code_menu_mode: "mobile", "desktop", or "mega"
+{%- endcomment -%}
+
+{%- liquid
+  assign new_arrivals_url = collections['new-arrivals'].url | default: '/collections/new-arrivals'
+  assign shop_all_url = '/collections/all'
+  assign about_us_url = '/pages/about-us'
+-%}
+
+{%- if code_menu_mode == 'mobile' -%}
+  <li>
+    <a href="{{ new_arrivals_url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
+      New Arrivals
+    </a>
+  </li>
+  <li>
+    <a href="{{ shop_all_url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
+      Shop All
+    </a>
+  </li>
+  {%- if category_menu_collections != blank -%}
+    {%- assign category_menu_mode = 'mobile' -%}
+    {%- render 'header-metafield-category-menu', category_menu_collections: category_menu_collections, category_menu_mode: category_menu_mode -%}
+  {%- endif -%}
+  <li>
+    <a href="{{ about_us_url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
+      About Us
+    </a>
+  </li>
+{%- else -%}
+  <li>
+    <a href="{{ new_arrivals_url }}" class="header__menu-item header__menu-item list-menu__item link link--text focus-inset">
+      <span>New Arrivals</span>
+    </a>
+  </li>
+  <li>
+    <a href="{{ shop_all_url }}" class="header__menu-item header__menu-item list-menu__item link link--text focus-inset">
+      <span>Shop All</span>
+    </a>
+  </li>
+  {%- if category_menu_collections != blank -%}
+    {%- assign category_menu_mode = code_menu_mode -%}
+    {%- render 'header-metafield-category-menu', category_menu_collections: category_menu_collections, category_menu_mode: category_menu_mode -%}
+  {%- endif -%}
+  <li>
+    <a href="{{ about_us_url }}" class="header__menu-item header__menu-item list-menu__item link link--text focus-inset">
+      <span>About Us</span>
+    </a>
+  </li>
+{%- endif -%}

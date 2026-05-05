@@ -311,6 +311,44 @@
   margin-top: 1rem;
 }
 
+.product-grid .card--media .card__inner.ratio {
+  --ratio-percent: 100% !important;
+  flex-grow: 0;
+}
+
+.product-grid .card__media,
+.product-grid .card__media .media {
+  background: #fff !important;
+}
+
+.product-grid .card__media .media img {
+  object-fit: contain;
+}
+
+.product-grid .card--standard > .card__content .card__information {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.product-grid .card__options {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 4rem;
+  width: 100%;
+  margin-bottom: 0.8rem;
+  overflow: hidden;
+}
+
+.product-grid .card__colors {
+  margin-bottom: 0 !important;
+}
+
+.product-grid .card__sizes {
+  display: none;
+}
+
 .card__information .card__heading a {
   display: inline !important;
 }
@@ -319,16 +357,18 @@
 .card__heading { text-align: center !important; }
 .card-information { text-align: center !important; }
 
-/* Force 2-line truncation for product titles */
+/* Align product-card titles and limit them to three lines. */
 .card__heading {
   display: -webkit-box !important;
-  -webkit-line-clamp: 2 !important;
+  -webkit-line-clamp: 3 !important;
   -webkit-box-orient: vertical !important;
   overflow: hidden !important;
   white-space: normal !important;
   text-decoration: none !important;
   margin: 0 auto !important;
   max-width: 90% !important;
+  min-height: calc(1.35em * 3) !important;
+  line-height: 1.35 !important;
 }
 
 .card__heading a {
@@ -336,4 +376,5 @@
   color: #111 !important;
   font-weight: 700 !important;
   font-size: 1.4rem !important;
+  line-height: 1.35 !important;
 }

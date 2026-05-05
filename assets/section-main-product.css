@@ -6,6 +6,37 @@
   gap: 0;
 }
 
+.product__back-button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 2rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(var(--color-foreground), 0.72);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1.3rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.product__back-button:hover,
+.product__back-button:focus-visible {
+  color: rgb(var(--color-foreground));
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+.product__back-button:focus-visible {
+  outline: 0.2rem solid rgba(var(--color-foreground), 0.25);
+  outline-offset: 0.4rem;
+}
+
 .product--no-media {
   max-width: 57rem;
   margin: 0 auto;

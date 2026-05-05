@@ -21,9 +21,32 @@
   assign price = target.price | default: 1999
   assign available = target.available | default: false
   assign money_price = price | money
+  assign money_price_separator = '.'
+  assign money_price_parts = money_price | split: money_price_separator
+
+  unless money_price contains money_price_separator
+    assign money_price_separator = ','
+    assign money_price_parts = money_price | split: money_price_separator
+  endunless
+
+  assign compare_money_price = compare_at_price | money
+  assign compare_money_price_separator = '.'
+  assign compare_money_price_parts = compare_money_price | split: compare_money_price_separator
+
+  unless compare_money_price contains compare_money_price_separator
+    assign compare_money_price_separator = ','
+    assign compare_money_price_parts = compare_money_price | split: compare_money_price_separator
+  endunless
 
   if target == product and product.price_varies
     assign money_price = 'products.product.price.from_price_html' | t: price: money_price
+    assign money_price_separator = '.'
+    assign money_price_parts = money_price | split: money_price_separator
+
+    unless money_price contains money_price_separator
+      assign money_price_separator = ','
+      assign money_price_parts = money_price | split: money_price_separator
+    endunless
   endif
 -%}
 
@@ -42,7 +65,11 @@
     <div class="price__regular">
       <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
       <span class="price-item price-item--regular" style="color: #b12739; font-weight: bold;">
-        {{ money_price }}
+        {%- if money_price_parts.size > 1 -%}
+          <span class="price-item__main">{{ money_price_parts[0] }}{{ money_price_separator }}</span><sup class="price-item__cents">{{ money_price_parts[1] }}</sup>
+        {%- else -%}
+          {{ money_price }}
+        {%- endif -%}
       </span>
     </div>
     <div class="price__sale">
@@ -50,7 +77,11 @@
       <div class="price__sale-current" style="display: flex; align-items: center; gap: 8px;">
         <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.sale_price' | t }}</span>
         <span class="price-item price-item--sale price-item--last" style="color: #b12739; font-size: 2.4rem; font-weight: bold; margin: 0; line-height: 1;">
-          {{ money_price }}
+          {%- if money_price_parts.size > 1 -%}
+            <span class="price-item__main">{{ money_price_parts[0] }}{{ money_price_separator }}</span><sup class="price-item__cents">{{ money_price_parts[1] }}</sup>
+          {%- else -%}
+            {{ money_price }}
+          {%- endif -%}
         </span>
         
       </div>
@@ -59,7 +90,11 @@
         <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
         <span class="price__sale-compare" style="display: flex; align-items: center; gap: 4px; color: #737373; font-size: 1.4rem; line-height: 1;">
           <s class="price-item price-item--regular" style="color: inherit; margin: 0;">
-            {{ compare_at_price | money }}
+            {%- if compare_money_price_parts.size > 1 -%}
+              <span class="price-item__main">{{ compare_money_price_parts[0] }}{{ compare_money_price_separator }}</span><sup class="price-item__cents">{{ compare_money_price_parts[1] }}</sup>
+            {%- else -%}
+              {{ compare_money_price }}
+            {%- endif -%}
           </s>
           {%- if price_class contains 'price--large' -%}
           <span class="price-info-tooltip-wrapper" style="position: relative; display: inline-flex; align-items: center; cursor: pointer;">

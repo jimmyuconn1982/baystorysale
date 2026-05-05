@@ -1,0 +1,174 @@
+{%- comment -%}
+  Builds top-level header dropdowns from collection metafields.
+
+  Expected variables:
+  - category_menu_collections: collections source
+  - category_menu_mode: "mobile", "desktop", or "mega"
+{%- endcomment -%}
+
+{%- assign category_menu_labels = '' -%}
+{%- for category_collection in category_menu_collections -%}
+  {%- assign primary_category_metafield = category_collection.metafields.custom.primary_category -%}
+  {%- if primary_category_metafield != blank -%}
+    {%- liquid
+      if primary_category_metafield.type contains 'list.'
+        assign primary_category_values = primary_category_metafield.value | join: '||'
+      else
+        assign primary_category_values = primary_category_metafield.value
+      endif
+
+      assign primary_category_values = primary_category_values | replace: ' • ', '||' | replace: '•', '||' | replace: ', ', '||' | replace: ',', '||' | replace: '; ', '||' | replace: ';', '||'
+      assign primary_category_list = primary_category_values | split: '||'
+    -%}
+    {%- for primary_category in primary_category_list -%}
+      {%- assign primary_category_label = primary_category | strip -%}
+      {%- if primary_category_label == blank -%}
+        {%- continue -%}
+      {%- endif -%}
+      {%- assign primary_category_key = primary_category_label | downcase -%}
+      {%- assign primary_category_handle = primary_category_label | handleize -%}
+      {%- assign primary_category_token = '||' | append: primary_category_key | append: '||' -%}
+      {%- unless category_menu_labels contains primary_category_token -%}
+        {%- assign category_menu_labels = category_menu_labels | append: primary_category_token -%}
+
+        {%- case category_menu_mode -%}
+          {%- when 'mobile' -%}
+            <li>
+              <details id="Details-menu-drawer-metafield-category-{{ primary_category_handle }}">
+                <summary class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
+                  {{ primary_category_label | escape }}
+                  {% render 'icon-arrow' %}
+                  {% render 'icon-caret' %}
+                </summary>
+                <div id="link-{{ primary_category_handle }}" class="menu-drawer__submenu has-submenu gradient motion-reduce" tabindex="-1">
+                  <div class="menu-drawer__inner-submenu">
+                    <button class="menu-drawer__close-button link link--text focus-inset" aria-expanded="true">
+                      {% render 'icon-arrow' %}
+                      {{ primary_category_label | escape }}
+                    </button>
+                    <ul class="menu-drawer__menu list-menu" role="list" tabindex="-1">
+                      {%- for child_collection in category_menu_collections -%}
+                        {%- assign child_primary_category_metafield = child_collection.metafields.custom.primary_category -%}
+                        {%- liquid
+                          assign child_primary_category_keys = ''
+                          if child_primary_category_metafield != blank
+                            if child_primary_category_metafield.type contains 'list.'
+                              assign child_primary_category_values = child_primary_category_metafield.value | join: '||'
+                            else
+                              assign child_primary_category_values = child_primary_category_metafield.value
+                            endif
+
+                            assign child_primary_category_values = child_primary_category_values | replace: ' • ', '||' | replace: '•', '||' | replace: ', ', '||' | replace: ',', '||' | replace: '; ', '||' | replace: ';', '||'
+                            assign child_primary_category_list = child_primary_category_values | split: '||'
+                            for child_primary_category in child_primary_category_list
+                              assign child_primary_category_key = child_primary_category | strip | downcase
+                              if child_primary_category_key != blank
+                                assign child_primary_category_keys = child_primary_category_keys | append: '||' | append: child_primary_category_key | append: '||'
+                              endif
+                            endfor
+                          endif
+                        -%}
+                        {%- if child_primary_category_keys contains primary_category_token -%}
+                          <li>
+                            <a href="{{ child_collection.url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset">
+                              {{ child_collection.title | escape }}
+                            </a>
+                          </li>
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                </div>
+              </details>
+            </li>
+          {%- when 'mega' -%}
+            <li>
+              <header-menu>
+                <details id="Details-HeaderMenu-MetafieldCategory-{{ primary_category_handle }}" class="mega-menu">
+                  <summary class="header__menu-item list-menu__item link focus-inset">
+                    <span>{{ primary_category_label | escape }}</span>
+                    {% render 'icon-caret' %}
+                  </summary>
+                  <div id="MegaMenu-MetafieldCategory-{{ primary_category_handle }}" class="mega-menu__content gradient motion-reduce global-settings-popup" tabindex="-1">
+                    <ul class="mega-menu__list page-width mega-menu__list--condensed" role="list">
+                      {%- for child_collection in category_menu_collections -%}
+                        {%- assign child_primary_category_metafield = child_collection.metafields.custom.primary_category -%}
+                        {%- liquid
+                          assign child_primary_category_keys = ''
+                          if child_primary_category_metafield != blank
+                            if child_primary_category_metafield.type contains 'list.'
+                              assign child_primary_category_values = child_primary_category_metafield.value | join: '||'
+                            else
+                              assign child_primary_category_values = child_primary_category_metafield.value
+                            endif
+
+                            assign child_primary_category_values = child_primary_category_values | replace: ' • ', '||' | replace: '•', '||' | replace: ', ', '||' | replace: ',', '||' | replace: '; ', '||' | replace: ';', '||'
+                            assign child_primary_category_list = child_primary_category_values | split: '||'
+                            for child_primary_category in child_primary_category_list
+                              assign child_primary_category_key = child_primary_category | strip | downcase
+                              if child_primary_category_key != blank
+                                assign child_primary_category_keys = child_primary_category_keys | append: '||' | append: child_primary_category_key | append: '||'
+                              endif
+                            endfor
+                          endif
+                        -%}
+                        {%- if child_primary_category_keys contains primary_category_token -%}
+                          <li>
+                            <a href="{{ child_collection.url }}" class="mega-menu__link mega-menu__link--level-2 link">
+                              {{ child_collection.title | escape }}
+                            </a>
+                          </li>
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                </details>
+              </header-menu>
+            </li>
+          {%- else -%}
+            <li>
+              <header-menu>
+                <details id="Details-HeaderMenu-MetafieldCategory-{{ primary_category_handle }}">
+                  <summary class="header__menu-item list-menu__item link focus-inset">
+                    <span>{{ primary_category_label | escape }}</span>
+                    {% render 'icon-caret' %}
+                  </summary>
+                  <ul id="HeaderMenu-MetafieldCategory-{{ primary_category_handle }}" class="header__submenu list-menu list-menu--disclosure gradient caption-large motion-reduce global-settings-popup" role="list" tabindex="-1">
+                    {%- for child_collection in category_menu_collections -%}
+                      {%- assign child_primary_category_metafield = child_collection.metafields.custom.primary_category -%}
+                      {%- liquid
+                        assign child_primary_category_keys = ''
+                        if child_primary_category_metafield != blank
+                          if child_primary_category_metafield.type contains 'list.'
+                            assign child_primary_category_values = child_primary_category_metafield.value | join: '||'
+                          else
+                            assign child_primary_category_values = child_primary_category_metafield.value
+                          endif
+
+                          assign child_primary_category_values = child_primary_category_values | replace: ' • ', '||' | replace: '•', '||' | replace: ', ', '||' | replace: ',', '||' | replace: '; ', '||' | replace: ';', '||'
+                          assign child_primary_category_list = child_primary_category_values | split: '||'
+                          for child_primary_category in child_primary_category_list
+                            assign child_primary_category_key = child_primary_category | strip | downcase
+                            if child_primary_category_key != blank
+                              assign child_primary_category_keys = child_primary_category_keys | append: '||' | append: child_primary_category_key | append: '||'
+                            endif
+                          endfor
+                        endif
+                      -%}
+                      {%- if child_primary_category_keys contains primary_category_token -%}
+                        <li>
+                          <a href="{{ child_collection.url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large">
+                            {{ child_collection.title | escape }}
+                          </a>
+                        </li>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </ul>
+                </details>
+              </header-menu>
+            </li>
+        {%- endcase -%}
+      {%- endunless -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endfor -%}
