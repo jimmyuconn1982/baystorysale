@@ -211,44 +211,6 @@
       },
       "mega-menu-pro": {
         "type": "mega-menu-pro",
-        "blocks": {
-          "category_panel_TzjbMV": {
-            "type": "category_panel",
-            "settings": {
-              "trigger_title": "New",
-              "heading": "NewTittle",
-              "subheading": "",
-              "link_label_1": "",
-              "link_url_1": "",
-              "link_label_2": "",
-              "link_url_2": "",
-              "link_label_3": "",
-              "link_url_3": "",
-              "link_label_4": "",
-              "link_url_4": "",
-              "link_label_5": "",
-              "link_url_5": "",
-              "link_label_6": "",
-              "link_url_6": "",
-              "link_label_7": "",
-              "link_url_7": "",
-              "link_label_8": "",
-              "link_url_8": "",
-              "card_image_1": "shopify://shop_images/1_8b6bb246-b7d9-4781-b45b-1d9aa5afa3dd.png",
-              "card_title_1": "",
-              "card_url_1": "",
-              "card_title_2": "",
-              "card_url_2": "",
-              "card_title_3": "",
-              "card_url_3": "",
-              "card_title_4": "",
-              "card_url_4": ""
-            }
-          }
-        },
-        "block_order": [
-          "category_panel_TzjbMV"
-        ],
         "settings": {
           "panel_bg": "#ffffff",
           "panel_text_color": "#111111",
