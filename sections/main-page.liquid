@@ -20,10 +20,23 @@
       padding-bottom: {{ section.settings.padding_bottom }}px;
     }
   }
+
+  {%- if page.handle == 'privacy-policy' or page.handle == 'terms-of-service' -%}
+  .policy-page .main-page-title {
+    font-size: 2.8rem;
+  }
+  .policy-page .rte {
+    font-size: 1.5rem;
+    line-height: 1.8;
+  }
+  .policy-page .rte p {
+    margin-bottom: 1.5rem;
+  }
+  {%- endif -%}
 {%- endstyle -%}
 
-<div class="page-width page-width--narrow section-{{ section.id }}-padding">
-  <h1 class="main-page-title page-title h0">
+<div class="page-width{% if page.handle == 'privacy-policy' or page.handle == 'terms-of-service' %}{% else %} page-width--narrow{% endif %} section-{{ section.id }}-padding{% if page.handle == 'privacy-policy' or page.handle == 'terms-of-service' %} policy-page{% endif %}">
+  <h1 class="main-page-title page-title {% if page.handle == 'privacy-policy' or page.handle == 'terms-of-service' %}h1{% else %}h0{% endif %}">
     {{ page.title | escape }}
   </h1>
   <div class="rte">

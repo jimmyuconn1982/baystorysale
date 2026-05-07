@@ -65,7 +65,7 @@
                   {%- if block.settings.menu != blank -%}
                     <ul class="footer-block__details-content list-unstyled">
                       {%- for link in block.settings.menu.links -%}
-                        {%- if link.title == "Search" or link.title == "搜索" -%}{%- continue -%}{%- endif -%}
+                        {%- if link.title == "Search" or link.title == "搜索" or link.title == "Shipping Policy" or link.title == "Refund Policy" or link.title == "退款政策" or link.title == "退換貨政策" -%}{%- continue -%}{%- endif -%}
                         <li>
                           <a {% assign link_title_clean = link.title | strip | downcase %}{% if link_title_clean == "about us" %}href="/pages/about-us"{% else %}href="{{ link.url }}"{% endif %} class="link link--text list-menu__item list-menu__item--link{% if link.active %} list-menu__item--active{% endif %}">
                             {{ link.title }}
@@ -73,7 +73,16 @@
                         </li>
                       {%- endfor -%}
                       <li>
+                        <a href="/pages/faq" class="link link--text list-menu__item list-menu__item--link">FAQ</a>
+                      </li>
+                      <li>
                         <a href="/pages/contact" class="link link--text list-menu__item list-menu__item--link">Contact</a>
+                      </li>
+                      <li>
+                        <a href="{{ routes.root_url }}policies/privacy-policy" class="link link--text list-menu__item list-menu__item--link">Privacy</a>
+                      </li>
+                      <li>
+                        <a href="{{ routes.root_url }}policies/terms-of-service" class="link link--text list-menu__item list-menu__item--link">Terms</a>
                       </li>
                     </ul>
                   {%- endif -%}

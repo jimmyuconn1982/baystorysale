@@ -1,0 +1,205 @@
+{%- style -%}
+  .faq-hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    padding: 8rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .faq-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1600&q=80') center/cover no-repeat;
+    opacity: 0.12;
+  }
+  .faq-hero h1 {
+    font-size: 4.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+    color: white;
+  }
+  .faq-hero p {
+    font-size: 1.8rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .faq-wrapper {
+    max-width: 900px;
+    margin: 5rem auto;
+    padding: 0 2rem;
+  }
+
+  .faq-section-title {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin: 4rem 0 2.5rem;
+    color: #111;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #c91f37;
+    display: inline-block;
+  }
+
+  .faq-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    margin-bottom: 1.2rem;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .faq-item:hover {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .faq-question {
+    width: 100%;
+    background: white;
+    border: none;
+    padding: 2rem 2.5rem;
+    text-align: left;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #111;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    transition: background 0.2s;
+  }
+  .faq-question:hover {
+    background: #f9fafb;
+  }
+  .faq-question .faq-icon {
+    font-size: 2rem;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+    color: #c91f37;
+  }
+  .faq-question.active .faq-icon {
+    transform: rotate(45deg);
+  }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+    padding: 0 2.5rem;
+    background: #f9fafb;
+  }
+  .faq-answer.open {
+    max-height: 500px;
+    padding: 0 2.5rem 2rem;
+  }
+  .faq-answer p {
+    font-size: 1.5rem;
+    color: #4b5563;
+    line-height: 1.8;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 768px) {
+    .faq-hero h1 {
+      font-size: 3rem;
+    }
+    .faq-question {
+      padding: 1.5rem;
+      font-size: 1.4rem;
+    }
+    .faq-answer {
+      padding: 0 1.5rem;
+    }
+    .faq-answer.open {
+      padding: 0 1.5rem 1.5rem;
+    }
+  }
+{%- endstyle -%}
+
+<div class="faq-hero">
+  <h1>FAQ</h1>
+  <p>Find answers to common questions about ordering, shipping, and more.</p>
+</div>
+
+<div class="faq-wrapper">
+  <h2 class="faq-section-title">ORDER & SUPPORT</h2>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      <span>How can I place an order?</span>
+      <span class="faq-icon">+</span>
+    </button>
+    <div class="faq-answer">
+      <p>Placing an order is simple! Browse our products, add your desired items to the cart, and proceed to checkout. Follow the on-screen instructions to enter your shipping details and payment information. Once your order is confirmed, you'll receive a confirmation email with your order details.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      <span>What payment methods do you accept?</span>
+      <span class="faq-icon">+</span>
+    </button>
+    <div class="faq-answer">
+      <p>We accept all major credit cards (Visa, MasterCard, American Express), PayPal, Apple Pay, Google Pay, and Shop Pay. All transactions are securely processed to ensure your payment information is protected.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      <span>How long will it take to receive my order?</span>
+      <span class="faq-icon">+</span>
+    </button>
+    <div class="faq-answer">
+      <p>Standard shipping typically takes 5-7 business days. Express shipping is available for 2-3 business day delivery. Processing time is usually 1-2 business days. You'll receive a tracking number once your order ships.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      <span>Can I track my order?</span>
+      <span class="faq-icon">+</span>
+    </button>
+    <div class="faq-answer">
+      <p>Yes! Once your order has been shipped, you'll receive an email with a tracking number. You can use this number to track your package on our website or the carrier's website to see real-time delivery updates.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      <span>What if I have questions or need assistance with my order?</span>
+      <span class="faq-icon">+</span>
+    </button>
+    <div class="faq-answer">
+      <p>We're here to help! If you have any questions or need support regarding your order, our dedicated customer support team is available to assist you. You can reach out to us through our contact form, email, or phone. We strive to provide prompt and helpful responses to ensure your shopping experience with us is seamless.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleFaq(btn) {
+    btn.classList.toggle('active');
+    var answer = btn.nextElementSibling;
+    answer.classList.toggle('open');
+  }
+</script>
+
+{% schema %}
+{
+  "name": "FAQ Page",
+  "settings": [],
+  "presets": [
+    {
+      "name": "FAQ Page Template"
+    }
+  ]
+}
+{% endschema %}
