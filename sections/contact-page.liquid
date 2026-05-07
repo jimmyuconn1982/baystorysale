@@ -1,0 +1,311 @@
+{%- style -%}
+  .contact-hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    padding: 8rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('https://images.unsplash.com/photo-1560343090-f0409e92791a?w=1600&q=80') center/cover no-repeat;
+    opacity: 0.15;
+  }
+  .contact-hero h1 {
+    font-size: 4.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+    color: white;
+  }
+  .contact-hero p {
+    font-size: 1.8rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .contact-page-wrapper {
+    max-width: 1200px;
+    margin: 6rem auto;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+  }
+
+  .contact-info-section h2 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 3rem;
+  }
+
+  .contact-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .contact-info-icon {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    background: #f3f4f6;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+  }
+  .contact-info-text h3 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .contact-info-text p, .contact-info-text a {
+    font-size: 1.5rem;
+    color: #4b5563;
+    text-decoration: none;
+    line-height: 1.6;
+  }
+  .contact-info-text a:hover {
+    color: #c91f37;
+  }
+
+  .contact-form-section {
+    background: #f9fafb;
+    border-radius: 16px;
+    padding: 4rem;
+  }
+  .contact-form-section h2 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 2.5rem;
+  }
+
+  .contact-form-custom .field-group {
+    margin-bottom: 2rem;
+  }
+  .contact-form-custom label {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.8rem;
+  }
+  .contact-form-custom input,
+  .contact-form-custom textarea {
+    width: 100%;
+    padding: 1.2rem 1.6rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    background: white;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+  }
+  .contact-form-custom input:focus,
+  .contact-form-custom textarea:focus {
+    outline: none;
+    border-color: #c91f37;
+    box-shadow: 0 0 0 3px rgba(201, 31, 55, 0.1);
+  }
+  .contact-form-custom textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+  .contact-form-custom .submit-btn {
+    background: #c91f37;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 1.4rem 3rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+  }
+  .contact-form-custom .submit-btn:hover {
+    background: #a8182e;
+  }
+
+  .map-section {
+    max-width: 1200px;
+    margin: 0 auto 6rem;
+    padding: 0 2rem;
+  }
+  .map-section h2 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .map-container {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  .map-container iframe {
+    width: 100%;
+    height: 400px;
+    border: 0;
+    display: block;
+  }
+
+  .form-status-message {
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+  .form-status-success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+  }
+  .form-status-error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+  }
+
+  @media screen and (max-width: 768px) {
+    .contact-hero h1 {
+      font-size: 3rem;
+    }
+    .contact-page-wrapper {
+      grid-template-columns: 1fr;
+      gap: 4rem;
+      margin: 4rem auto;
+    }
+    .contact-form-section {
+      padding: 2.5rem;
+    }
+    .map-container iframe {
+      height: 300px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="contact-hero">
+  <h1>Get In Touch</h1>
+  <p>We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+</div>
+
+<div class="contact-page-wrapper">
+  <div class="contact-info-section">
+    <h2>Contact Information</h2>
+    
+    <div class="contact-info-item">
+      <div class="contact-info-icon">📞</div>
+      <div class="contact-info-text">
+        <h3>Phone</h3>
+        <p><a href="tel:+14086410896">+1 (408) 641-0896</a></p>
+      </div>
+    </div>
+
+    <div class="contact-info-item">
+      <div class="contact-info-icon">✉️</div>
+      <div class="contact-info-text">
+        <h3>Email</h3>
+        <p><a href="mailto:baystorysale@gmail.com">baystorysale@gmail.com</a></p>
+      </div>
+    </div>
+
+    <div class="contact-info-item">
+      <div class="contact-info-icon">📍</div>
+      <div class="contact-info-text">
+        <h3>Location</h3>
+        <p>Irvine, California, United States</p>
+      </div>
+    </div>
+
+    <div class="contact-info-item">
+      <div class="contact-info-icon">🕐</div>
+      <div class="contact-info-text">
+        <h3>Business Hours</h3>
+        <p>Monday – Friday: 9:00 AM – 6:00 PM PST<br>Saturday: 10:00 AM – 4:00 PM PST<br>Sunday: Closed</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="contact-form-section">
+    <h2>Send Us a Message</h2>
+    {%- form 'contact', id: 'ContactForm', class: 'contact-form-custom' -%}
+      {%- if form.posted_successfully? -%}
+        <div class="form-status-message form-status-success" tabindex="-1" autofocus>
+          ✓ Thank you for your message! We'll get back to you soon.
+        </div>
+      {%- elsif form.errors -%}
+        <div class="form-status-message form-status-error">
+          ✗ Please check your email address and try again.
+        </div>
+      {%- endif -%}
+
+      <div class="field-group">
+        <label for="ContactForm-name">Name <span style="color: #c91f37;">*</span></label>
+        <input type="text" id="ContactForm-name" name="contact[name]" value="{% if form.name %}{{ form.name }}{% endif %}" required placeholder="Your full name">
+      </div>
+
+      <div class="field-group">
+        <label for="ContactForm-email">Email <span style="color: #c91f37;">*</span></label>
+        <input type="email" id="ContactForm-email" name="contact[email]" value="{% if form.email %}{{ form.email }}{% endif %}" required placeholder="your@email.com" autocorrect="off" autocapitalize="off">
+      </div>
+
+      <div class="field-group">
+        <label for="ContactForm-phone">Phone</label>
+        <input type="tel" id="ContactForm-phone" name="contact[phone]" value="{% if form.phone %}{{ form.phone }}{% endif %}" placeholder="+1 (408) 641-0896">
+      </div>
+
+      <div class="field-group">
+        <label for="ContactForm-body">Message <span style="color: #c91f37;">*</span></label>
+        <textarea
+          rows="10"
+          id="ContactForm-body"
+          name="contact[body]"
+          required
+          placeholder="Tell us what's on your mind..."
+        >{% if form.body %}{{ form.body }}{% endif %}</textarea>
+      </div>
+
+      <button type="submit" class="submit-btn">
+        Send Message
+      </button>
+    {%- endform -%}
+  </div>
+</div>
+
+<div class="map-section">
+  <h2>Find Us</h2>
+  <div class="map-container">
+    <iframe 
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d106179.95774346493!2d-117.84919612911057!3d33.68456685511153!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80dcde8297b7c1c5%3A0x8e5f1c8e5a5c5e5!2sIrvine%2C%20CA!5e0!3m2!1sen!2sus!4v1"
+      allowfullscreen=""
+      loading="lazy"
+      title="BaystoryBag - Irvine, CA Location">
+    </iframe>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Contact Page",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Contact Page Template"
+    }
+  ]
+}
+{% endschema %}
