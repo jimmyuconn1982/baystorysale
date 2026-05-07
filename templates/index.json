@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "custom_slideshow_main": {
@@ -43,141 +34,6 @@
         "show_dots": true,
         "slide_height": "auto",
         "custom_height": 500
-      }
-    },
-    "featured_products_hover_main": {
-      "type": "featured-products-hover",
-      "blocks": {
-        "p_1": {
-          "type": "product",
-          "settings": {
-            "primary_image": "shopify://shop_images/A1.png",
-            "secondary_image": "shopify://shop_images/A2.png",
-            "name": "FASHIONABLE BAG",
-            "url": "shopify://products/ms-origin-waterproof-nylon-crossbody-bag-for-women-multi-pocket-shoulder-purse-for-work-commute-and-travel-lightweight-water-resistant-everyday-handbag-6-color-stylish-top-handle-crossbody-design",
-            "dot_1": "#121212",
-            "dot_2": "#f4ecdf",
-            "dot_3": "#334fb4",
-            "dot_4": "",
-            "dot_5": "",
-            "dot_6": ""
-          }
-        },
-        "product_94jxXq": {
-          "type": "product",
-          "settings": {
-            "primary_image": "shopify://shop_images/B1.png",
-            "secondary_image": "shopify://shop_images/B2.png",
-            "name": "FASHIONABLE BAG",
-            "url": "shopify://products/waterproof-nylon-multi-pocket-crossbody-handbag-travel-messenger",
-            "dot_1": "#ebbe20",
-            "dot_2": "#121212",
-            "dot_3": "#b9bbb1",
-            "dot_4": "#5f1f1f",
-            "dot_5": "",
-            "dot_6": ""
-          }
-        },
-        "product_idYQQE": {
-          "type": "product",
-          "settings": {
-            "primary_image": "shopify://shop_images/C1.png",
-            "secondary_image": "shopify://shop_images/C2.png",
-            "name": "FASHIONABLE BAG",
-            "url": "shopify://products/waterproof-nylon-multi-pocket-shoulder-bag-large-capacity-tote",
-            "dot_1": "#121212",
-            "dot_2": "#b3a894",
-            "dot_3": "#5f1f1f",
-            "dot_4": "#5f497f",
-            "dot_5": "#ebbe20",
-            "dot_6": "#8b6ccf"
-          }
-        },
-        "product_xLeQrX": {
-          "type": "product",
-          "settings": {
-            "primary_image": "shopify://shop_images/D1.png",
-            "secondary_image": "shopify://shop_images/D2.png",
-            "name": "FASHIONABLE BAG",
-            "url": "shopify://products/waterproof-multi-pocket-nylon-crossbody-bag-large-capacity-tote",
-            "dot_1": "#121212",
-            "dot_2": "#b3a894",
-            "dot_3": "#5f1f1f",
-            "dot_4": "#3f237d",
-            "dot_5": "#ebbe20",
-            "dot_6": "#957ad0"
-          }
-        },
-        "product_8ENCUT": {
-          "type": "product",
-          "settings": {
-            "primary_image": "shopify://shop_images/E1.png",
-            "secondary_image": "shopify://shop_images/E2.png",
-            "name": "FASHIONABLE BAG",
-            "url": "shopify://products/waterproof-nylon-tote-crossbody-handbag-large-capacity",
-            "dot_1": "#121212",
-            "dot_2": "#9f9584",
-            "dot_3": "#ebbe20",
-            "dot_4": "#5f1f1f",
-            "dot_5": "#5b379f",
-            "dot_6": ""
-          }
-        },
-        "product_PWjzDB": {
-          "type": "product",
-          "settings": {
-            "primary_image": "shopify://shop_images/F1.png",
-            "secondary_image": "shopify://shop_images/F2.png",
-            "name": "FASHIONABLE BAG",
-            "url": "shopify://products/geometric-minimalist-waterproof-backpack-shoulder-bag",
-            "dot_1": "#121212",
-            "dot_2": "#736832",
-            "dot_3": "#ebbe20",
-            "dot_4": "#b3a894",
-            "dot_5": "",
-            "dot_6": ""
-          }
-        },
-        "product_mmKRVJ": {
-          "type": "product",
-          "disabled": true,
-          "settings": {
-            "name": "FASHIONABLE BAG",
-            "url": "",
-            "dot_1": "",
-            "dot_2": "",
-            "dot_3": "",
-            "dot_4": "",
-            "dot_5": "",
-            "dot_6": ""
-          }
-        }
-      },
-      "block_order": [
-        "p_1",
-        "product_94jxXq",
-        "product_idYQQE",
-        "product_xLeQrX",
-        "product_8ENCUT",
-        "product_PWjzDB",
-        "product_mmKRVJ"
-      ],
-      "name": "04 · 主推产品",
-      "settings": {
-        "title": "FEATURED COLLECTION",
-        "top_link": "shopify://collections",
-        "product_label": "FASHIONABLE BAG",
-        "collection": "",
-        "products_to_show": 6,
-        "bg_color": "#ffffff",
-        "text_color": "#111111",
-        "heading_size": 38,
-        "columns_desktop": 3,
-        "grid_gap": 16,
-        "bottom_link_label": "VIEW THE FULL COLLECTION",
-        "bottom_link_url": "",
-        "padding_top": 64,
-        "padding_bottom": 68
       }
     },
     "category_grid_main": {
@@ -338,7 +194,6 @@
   },
   "order": [
     "custom_slideshow_main",
-    "featured_products_hover_main",
     "category_grid_main",
     "spacer_main",
     "feature_series_pet",
