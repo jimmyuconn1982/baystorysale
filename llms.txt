@@ -1,0 +1,50 @@
+# BaystoryBag
+
+> BaystoryBag is an online fashion store specializing in stylish, lightweight women's handbags designed for daily use. We offer free shipping on orders over $49 and 15% off your first order when you sign up.
+
+## About
+
+BaystoryBag offers a curated collection of lightweight women's handbags designed for everyday use. Our products feature innovative, fashion-forward designs that combine style with practical functionality at accessible price points. Every bag is carefully selected to be lightweight enough for daily carry while staying on-trend with fresh, novel styles. Key brand attributes: daily use, stylish and novel designs, lightweight.
+
+## Products
+
+- **Tote Bags**: Spacious and versatile, perfect for work, shopping, or daily use. Available in leather, canvas, and synthetic materials.
+- **Crossbody Bags**: Hands-free convenience with adjustable straps. Ideal for casual outings and travel.
+- **Shoulder Bags**: Classic silhouettes with modern details. Suitable for both professional and social settings.
+- **Clutch Bags**: Elegant evening bags for special occasions. Features secure closures and refined hardware.
+- **Backpacks**: Fashion-forward backpacks that combine style with comfort. Great for commuting and weekend adventures.
+
+## Key Features
+
+- Free shipping on all orders over $49
+- 15% discount on first order with email sign-up
+- Free 30-day returns
+- Ships out within 2 business days
+- Secure checkout with multiple payment options
+- Quality materials and craftsmanship
+
+## Collections
+
+Our bags are organized into the following categories:
+- **New Arrivals**: Latest additions to our collection
+- **Best Sellers**: Most popular bags loved by our customers
+- **Sale Items**: Discounted bags at special prices
+
+## Shipping & Returns
+
+- Free standard shipping on orders over $49 within the US
+- Orders ship within 2 business days
+- Free 30-day return policy
+- Contact us at our contact page for any issues
+
+## Contact
+
+- Website: https://www.baystorybag.com
+- Contact Page: https://www.baystorybag.com/pages/contact
+- FAQ: https://www.baystorybag.com/pages/faq
+- About Us: https://www.baystorybag.com/pages/about-us
+
+## Policies
+
+- Privacy Policy: https://www.baystorybag.com/policies/privacy-policy
+- Terms of Service: https://www.baystorybag.com/policies/terms-of-service

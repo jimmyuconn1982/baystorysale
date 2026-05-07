@@ -76,7 +76,7 @@
       <div class="price__sale-wrapper" style="display: flex; flex-direction: row; align-items: baseline; gap: 8px; justify-content: center;">
       <div class="price__sale-current" style="display: flex; align-items: center; gap: 8px;">
         <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.sale_price' | t }}</span>
-        <span class="price-item price-item--sale price-item--last" style="color: #b12739; font-size: 2.6rem; font-weight: bold; margin: 0; line-height: 1;">
+        <span class="price-item price-item--sale price-item--last" style="color: #b12739; font-weight: bold; margin: 0; line-height: 1;">
           {%- if money_price_parts.size > 1 -%}
             <span class="price-item__main">{{ money_price_parts[0] }}{{ money_price_separator }}</span><sup class="price-item__cents">{{ money_price_parts[1] }}</sup>
           {%- else -%}

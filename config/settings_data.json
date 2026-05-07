@@ -116,16 +116,16 @@
           "announcement_LMnQgn": {
             "type": "announcement",
             "settings": {
-              "text": "<p>Free shipping over $49 order! Enjoy 15% off for first order when you sign in.</p>",
+              "text": "<p>Free shipping over $49 order! Enjoy <strong>15% off</strong> for first order when you sign in.</p>",
               "link": "",
               "open_in_new_tab": false,
-              "font_family": "'Georgia', serif",
+              "font_family": "inherit",
               "font_size": 14,
-              "font_weight": "400",
+              "font_weight": "500",
               "italic": false,
               "underline": false,
               "letter_spacing": 0,
-              "text_color": "#ffffff",
+              "text_color": "#e8d5b7",
               "alignment": "center"
             }
           }
@@ -134,8 +134,8 @@
           "announcement_LMnQgn"
         ],
         "settings": {
-          "bar_bg_color": "#000000",
-          "bar_padding_y": 2
+          "bar_bg_color": "#1a1a2e",
+          "bar_padding_y": 10
         }
       },
       "header": {

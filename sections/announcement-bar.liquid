@@ -1,25 +1,48 @@
 {%- comment -%}
   通知栏(Announcement Bar)
-  - 支持后台更换文本、文本超链接、字体样式,以及通知栏背景底色(默认黑色)。
+  - 支持后台更换文本、文本超链接、字体样式,以及通知栏背景底色(默认渐变色)。
   - 每条通知是一个 block,可配置:文本、链接、字体、字号、字重、是否斜体、下划线、字母间距、文字颜色、背景色、内边距。
 {%- endcomment -%}
 
 {%- liquid
-  assign bar_bg = section.settings.bar_bg_color | default: '#000000'
+  assign bar_bg = section.settings.bar_bg_color | default: '#1a1a2e'
   assign bar_padding_y = section.settings.bar_padding_y | default: 10
 -%}
 
 <style>
+  /* Google Font for announcement bar */
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap');
+
   #shopify-section-{{ section.id }} .announcement-bar-wrapper {
-    background-color: {{ bar_bg }} !important;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%) !important;
     padding-top: {{ bar_padding_y }}px;
     padding-bottom: {{ bar_padding_y }}px;
+    position: relative;
+    overflow: hidden;
   }
+  /* Subtle shimmer decoration */
+  #shopify-section-{{ section.id }} .announcement-bar-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.03) 50%, transparent 100%);
+    animation: announcement-shimmer 8s ease-in-out infinite;
+  }
+  @keyframes announcement-shimmer {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(50%); }
+  }
+
   #shopify-section-{{ section.id }} .announcement-bar {
     background-color: transparent !important;
     background-image: none !important;
     border: none !important;
     padding: 0 !important;
+    position: relative;
+    z-index: 1;
   }
   #shopify-section-{{ section.id }} .announcement-bar .gradient {
     background: transparent !important;
@@ -28,22 +51,36 @@
   {%- for block in section.blocks -%}
     {%- if block.type == 'announcement' -%}
 #shopify-section-{{ section.id }} .announcement-bar__message--{{ block.id }} p {
-  color: {{ block.settings.text_color | default: '#ffffff' }} !important;
-  font-family: {{ block.settings.font_family | default: 'inherit' }} !important;
+  color: {{ block.settings.text_color | default: '#e8d5b7' }} !important;
+  font-family: {{ block.settings.font_family | default: "'Cormorant Garamond', 'Georgia', serif" }} !important;
   font-size: {{ block.settings.font_size | default: 14 }}px !important;
-  font-weight: {{ block.settings.font_weight | default: 400 }} !important;
+  font-weight: {{ block.settings.font_weight | default: 500 }} !important;
   font-style: {% if block.settings.italic %}italic{% else %}normal{% endif %} !important;
-  letter-spacing: {{ block.settings.letter_spacing | default: 0 }}px !important;
+  letter-spacing: {{ block.settings.letter_spacing | default: 0.5 }}px !important;
   text-decoration: {% if block.settings.underline %}underline{% else %}none{% endif %} !important;
   text-align: {{ block.settings.alignment | default: 'center' }} !important;
-  line-height: 1.4 !important;
+  line-height: 1.5 !important;
   margin: 0 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
-
+/* Highlight special text like discounts */
+#shopify-section-{{ section.id }} .announcement-bar__message--{{ block.id }} p strong,
+#shopify-section-{{ section.id }} .announcement-bar__message--{{ block.id }} p b {
+  color: #d4af37 !important;
+  font-weight: 600 !important;
+}
+#shopify-section-{{ section.id }} .announcement-bar__message--{{ block.id }} p em,
+#shopify-section-{{ section.id }} .announcement-bar__message--{{ block.id }} p i {
+  color: #f0c6d0 !important;
+}
 
       #shopify-section-{{ section.id }} .announcement-bar__link--{{ block.id }} {
         text-decoration: none;
         color: inherit;
+        transition: opacity 0.2s ease;
+      }
+      #shopify-section-{{ section.id }} .announcement-bar__link--{{ block.id }}:hover {
+        opacity: 0.85;
       }
     {%- endif -%}
   {%- endfor -%}
