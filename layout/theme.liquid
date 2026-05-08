@@ -348,13 +348,13 @@
         margin-top: 0 !important;
       }
       .section {
-        padding-top: var(--space-3xl);
-        padding-bottom: var(--space-3xl);
+        padding-top: var(--space-lg);
+        padding-bottom: var(--space-lg);
       }
       @media (max-width: 749px) {
         .section {
-          padding-top: var(--space-2xl);
-          padding-bottom: var(--space-2xl);
+          padding-top: var(--space-md);
+          padding-bottom: var(--space-md);
         }
       }
 
@@ -389,6 +389,313 @@
       /* ── Selection color ── */
       ::selection {
         background-color: rgba(36,59,83,0.12);
+      }
+
+      /* ═══════════════════════════════════════════
+         UNIFIED CONTAINER + COLLECTION PAGE
+         ═══════════════════════════════════════════ */
+      :root {
+        --site-max-width: 1220px;
+        --site-padding-desktop: 48px;
+        --site-padding-tablet: 32px;
+        --site-padding-mobile: 20px;
+      }
+
+      /* ── Header alignment ── */
+      .header-wrapper { background-color: var(--premium-bg) !important; }
+      #shopify-section-header .header {
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: var(--site-padding-desktop) !important;
+        padding-right: var(--site-padding-desktop) !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        /* Override base.css grid layout */
+        display: grid !important;
+        grid-template-areas: "heading navigation icons" !important;
+        grid-template-columns: auto 1fr auto !important;
+        align-items: center !important;
+        column-gap: 2.2rem !important;
+      }
+      #shopify-section-header .header__heading-link {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+      }
+      #shopify-section-header .header__inline-menu {
+        grid-area: navigation !important;
+        margin-top: 0 !important;
+        justify-self: start !important;
+      }
+      #shopify-section-header .header__icons {
+        grid-area: icons !important;
+        justify-self: end !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+      }
+      .announcement-bar { max-width: 100% !important; }
+
+      /* ── Unified page-width ── */
+      .page-width { max-width: var(--site-max-width) !important; }
+
+      /* ── Logo ── */
+      #shopify-section-header .header__heading-logo { max-width: 70px !important; }
+
+      /* ── Nav font ── */
+      .header__inline-menu .list-menu__item,
+      .header__menu-item,
+      .header__menu-item > a,
+      .header__menu-item > span {
+        font-family: var(--font-sans) !important;
+        font-size: 16px !important;
+        font-weight: 500 !important;
+        letter-spacing: -0.01em !important;
+        color: var(--premium-text) !important;
+        transition: color 0.2s ease !important;
+      }
+
+      /* ── Collection page background ── */
+      .template-collection { background: #FAF8F5 !important; }
+
+      /* ── Collection container aligned with header ── */
+      .collection,
+      .collection.page-width {
+        max-width: var(--site-max-width) !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        padding-left: var(--site-padding-desktop) !important;
+        padding-right: var(--site-padding-desktop) !important;
+      }
+      .facets-wrapper.page-width {
+        max-width: var(--site-max-width) !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        padding-left: var(--site-padding-desktop) !important;
+        padding-right: var(--site-padding-desktop) !important;
+      }
+
+      /* ── Facets: reduced spacing ── */
+      .facets-wrapper { margin-bottom: 24px !important; }
+      .product-count, .product-count-vertical { display: none !important; }
+      .facets__heading, .facets .facets__sort {
+        font-family: var(--font-sans) !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        letter-spacing: 0.02em !important;
+        text-transform: uppercase !important;
+      }
+      .facets__disclosure summary {
+        font-family: var(--font-sans) !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+      }
+
+      /* ── Product grid ── */
+      /* Keep gaps modest so 4-col doesn't wrap to 3-col on narrower desktops */
+      .product-grid.grid--4-col-desktop { gap: 36px 22px !important; }
+      .product-grid.grid--3-col-desktop { gap: 48px 32px !important; }
+      .product-grid .grid__item { padding-bottom: 8px; }
+
+      @media screen and (min-width: 990px) {
+        /* Force 4 columns even if flex widths get overridden */
+        .product-grid.grid--4-col-desktop:not(.slider) {
+          display: grid !important;
+          grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+          column-gap: 22px !important;
+          row-gap: 36px !important;
+        }
+        .product-grid.grid--4-col-desktop:not(.slider) > .grid__item {
+          width: auto !important;
+          max-width: none !important;
+        }
+      }
+
+      /* ── Product card ── */
+      .product-grid .card {
+        border: none !important;
+        box-shadow: none !important;
+        background: #FFFFFF !important;
+        border-radius: 22px !important;
+        overflow: hidden;
+        transition: transform 0.35s ease, box-shadow 0.35s ease;
+      }
+      .product-grid .grid__item:hover .card {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(31,41,51,0.06) !important;
+      }
+
+      /* ── Product image ── */
+      .product-grid .card__inner {
+        background: #F5F3EF !important;
+        border-radius: 22px 22px 0 0 !important;
+        overflow: hidden;
+        aspect-ratio: 1 / 1.1 !important;
+      }
+      .product-grid .card__inner .card__media { aspect-ratio: 1 / 1.1 !important; }
+      .product-grid .card__media .media {
+        aspect-ratio: 1 / 1.1 !important;
+        padding: 32px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      .product-grid .card__media .media img {
+        object-fit: contain !important;
+        border-radius: 0 !important;
+        transform: scale(0.88) !important;
+        transition: transform 0.45s ease;
+        max-height: 100% !important;
+      }
+      .product-grid .grid__item:hover .card__media .media img {
+        transform: scale(0.91) !important;
+      }
+
+      /* ── Card content: left aligned ── */
+      .product-grid .card__content {
+        padding: 16px 20px 20px !important;
+        text-align: left !important;
+      }
+      .product-grid .card__information {
+        padding: 0 !important;
+        text-align: left !important;
+      }
+
+      /* ── Product title ── */
+      .product-grid .card__heading {
+        font-family: var(--font-serif) !important;
+        font-size: 18px !important;
+        font-weight: 600 !important;
+        line-height: 1.5 !important;
+        letter-spacing: -0.02em !important;
+        color: #24324A !important;
+        max-width: 100% !important;
+        margin: 0 0 4px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+      }
+      .product-grid .card__heading a {
+        color: #24324A !important;
+        text-decoration: none !important;
+        transition: color 0.2s ease !important;
+      }
+      .product-grid .card__heading a:hover { color: #1F3A5F !important; }
+      .product-grid .card__heading a::after { display: none !important; }
+
+      /* ── Price ── */
+      .product-grid .price,
+      .product-grid .price .price-item {
+        color: #24324A !important;
+        font-family: var(--font-sans) !important;
+        font-size: 17px !important;
+        font-weight: 500 !important;
+        letter-spacing: 0.01em !important;
+      }
+      .product-grid .price__sale .price-item--regular {
+        color: #9CA3AF !important;
+        font-weight: 400 !important;
+        font-size: 13px !important;
+        text-decoration: line-through !important;
+      }
+      .product-grid .price__badge,
+      .product-grid .badge {
+        background: #243B53 !important;
+        color: #fff !important;
+        border-radius: 6px !important;
+        font-size: 10px !important;
+        font-weight: 500 !important;
+      }
+
+      /* ── Collection hero ── */
+      .collection-hero__title {
+        font-family: var(--font-serif) !important;
+        font-weight: 600 !important;
+        letter-spacing: -0.03em !important;
+        font-size: clamp(28px, 4vw, 42px) !important;
+      }
+
+      /* ── Pagination ── */
+      .pagination { font-family: var(--font-sans) !important; margin-top: 24px !important; }
+      .pagination a, .pagination span { color: #6B7280 !important; font-weight: 500 !important; }
+      .pagination a:hover { color: #243B53 !important; }
+      .pagination .current { color: #1F2933 !important; font-weight: 600 !important; }
+
+      /* ── Responsive ── */
+      @media (min-width: 750px) and (max-width: 989px) {
+        .header,
+        .collection, .collection.page-width,
+        .facets-wrapper.page-width {
+          padding-left: var(--site-padding-tablet) !important;
+          padding-right: var(--site-padding-tablet) !important;
+        }
+      }
+      @media (max-width: 749px) {
+        .header,
+        .collection, .collection.page-width,
+        .facets-wrapper.page-width {
+          padding-left: var(--site-padding-mobile) !important;
+          padding-right: var(--site-padding-mobile) !important;
+        }
+        .product-grid { gap: 28px 16px !important; }
+        .product-grid .card { border-radius: 16px !important; }
+        .product-grid .card__inner { border-radius: 16px 16px 0 0 !important; }
+        .product-grid .card__content { padding: 12px 14px 16px !important; }
+        .product-grid .card__heading { font-size: 14px !important; }
+        .product-grid .card__media .media { padding: 20px !important; }
+        .product-grid .card__media .media img { transform: scale(0.85) !important; }
+        .product-grid .grid__item:hover .card__media .media img { transform: scale(0.88) !important; }
+        .product-grid .price, .product-grid .price .price-item { font-size: 14px !important; }
+      }
+
+      /* ── Back to top button ── */
+      .back-to-top {
+        position: fixed;
+        right: 22px;
+        bottom: 22px;
+        width: 56px;
+        height: 56px;
+        border-radius: 999px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        background: rgba(31, 41, 51, 0.92);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 50;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+        opacity: 0;
+        transform: translateY(8px);
+        pointer-events: none;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+      }
+      .back-to-top.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+      .back-to-top:hover {
+        background: rgba(31, 41, 51, 0.98);
+      }
+      .back-to-top:focus-visible {
+        outline: 2px solid rgba(36, 59, 83, 0.65);
+        outline-offset: 3px;
+      }
+      .back-to-top svg {
+        width: 22px;
+        height: 22px;
+        display: block;
+      }
+      @media (max-width: 749px) {
+        .back-to-top {
+          right: 16px;
+          bottom: 16px;
+          width: 52px;
+          height: 52px;
+        }
       }
     </style>
 
@@ -427,6 +734,12 @@
     </main>
 
     {% section 'footer' %}
+
+    <button class="back-to-top" type="button" aria-label="Back to top" data-back-to-top>
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 5l-7 7m7-7l7 7M12 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
 
     <ul hidden>
       <li id="a11y-refresh-page-message">{{ 'accessibility.refresh_page' | t }}</li>

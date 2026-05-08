@@ -899,3 +899,75 @@ class VariantRadios extends VariantSelects {
 }
 
 customElements.define('variant-radios', VariantRadios);
+
+// Collection/search product card color swatches (split-alo layout)
+function initCardColorSwatches() {
+  document.addEventListener('click', (event) => {
+    const swatch = event.target.closest('.card-wrapper--split-alo .card__alo-swatches .color-swatch');
+    if (!swatch) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const swatchRow = swatch.closest('.card__alo-swatches');
+    const wrapper = swatch.closest('.card-wrapper--split-alo');
+    if (!swatchRow || !wrapper) return;
+
+    const color = swatch.dataset.color || '';
+    const available = swatch.dataset.available === 'true';
+    const imgSrc = swatch.dataset.imgSrc || '';
+    const imgSrcset = swatch.dataset.imgSrcset || '';
+    const imgAlt = swatch.dataset.imgAlt || '';
+
+    swatchRow.querySelectorAll('.color-swatch.is-selected').forEach((el) => el.classList.remove('is-selected'));
+    swatch.classList.add('is-selected');
+    swatchRow.dataset.selectedColor = color;
+
+    const colorName = wrapper.querySelector('.card__alo-color-name');
+    if (colorName) {
+      colorName.textContent = color;
+      colorName.style.display = color ? '' : 'none';
+    }
+
+    const status = wrapper.querySelector('.card__alo-color-status');
+    if (status) status.textContent = available ? '' : 'Sold out';
+
+    // Swap main product image to selected color
+    if (imgSrc) {
+      const mainImg = wrapper.querySelector('.card--media .card__media .media img');
+      if (mainImg) {
+        mainImg.src = imgSrc;
+        if (imgSrcset) mainImg.srcset = imgSrcset;
+        if (imgAlt) mainImg.alt = imgAlt;
+      }
+    }
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initCardColorSwatches);
+} else {
+  initCardColorSwatches();
+}
+
+// Back to top button
+(() => {
+  const update = () => {
+    const btn = document.querySelector('[data-back-to-top]');
+    if (!btn) return;
+    const y = window.scrollY || document.documentElement.scrollTop || 0;
+    btn.classList.toggle('is-visible', y > 400);
+  };
+
+  const onClick = (event) => {
+    const btn = event.target.closest('[data-back-to-top]');
+    if (!btn) return;
+    event.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  document.addEventListener('click', onClick);
+  update();
+})();

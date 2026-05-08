@@ -90,11 +90,11 @@
 
   /* ── Main grid: asymmetric ── */
   .fp-grid {
-    max-width: 1120px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 44px 24px 36px;
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1.4fr;
+    grid-template-columns: 2fr 1fr 1fr 1.2fr 1.6fr;
     gap: 24px;
     align-items: start;
   }
@@ -256,46 +256,19 @@
   .fp-newsletter .field__label { display: none !important; }
   .fp-newsletter .field:after,
   .fp-newsletter .field:before { content: none !important; }
+
+  /* Newsletter when placed on the right column */
+  .fp-newsletter--right {
+    padding: 0;
+    border-bottom: none;
+  }
+  .fp-newsletter--right .fp-newsletter__inner {
+    max-width: none;
+    margin: 0;
+  }
 </style>
 
 <footer class="footer-premium">
-
-  {%- comment -%} ─── Newsletter (centered) ─── {%- endcomment -%}
-  {%- if section.settings.newsletter_enable -%}
-  <div class="fp-newsletter">
-    <div class="fp-newsletter__inner">
-      <h2 class="fp-newsletter__title">Get 15% Off Your First Order</h2>
-      <p class="fp-newsletter__subtitle">Get updates on new products, promotion offers.</p>
-      {%- form 'customer', id: 'ContactFooter', class: 'newsletter-form' -%}
-        <input type="hidden" name="contact[tags]" value="newsletter">
-        <div class="fp-newsletter__form">
-          <input
-            id="NewsletterForm--{{ section.id }}"
-            type="email"
-            name="contact[email]"
-            class="fp-newsletter__input"
-            value="{{ form.email }}"
-            aria-required="true"
-            autocorrect="off"
-            autocapitalize="off"
-            autocomplete="email"
-            {% if form.errors %}autofocus aria-invalid="true" aria-describedby="ContactFooter-error"{% elsif form.posted_successfully? %}aria-describedby="ContactFooter-success"{% endif %}
-            placeholder="Your email address"
-            required
-          >
-          <button type="submit" class="fp-newsletter__btn" name="commit" aria-label="Subscribe">Subscribe</button>
-        </div>
-        <p class="fp-newsletter__disclaimer">No spam. Unsubscribe anytime.</p>
-        {%- if form.errors -%}
-          <small class="newsletter-form__message form__message" id="ContactFooter-error">{% render 'icon-error' %}{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}</small>
-        {%- endif -%}
-        {%- if form.posted_successfully? -%}
-          <h3 class="newsletter-form__message newsletter-form__message--success form__message" id="ContactFooter-success" tabindex="-1" autofocus>{% render 'icon-success' %}{{ 'newsletter.success' | t }}</h3>
-        {%- endif -%}
-      {%- endform -%}
-    </div>
-  </div>
-  {%- endif -%}
 
   {%- comment -%} ─── Main Grid (asymmetric 4-col) ─── {%- endcomment -%}
   <div class="fp-grid">
@@ -376,6 +349,43 @@
         </li>
       </ul>
     </div>
+
+    {%- comment -%} Col 5 — Newsletter (right) {%- endcomment -%}
+    {%- if section.settings.newsletter_enable -%}
+      <div class="fp-col fp-newsletter fp-newsletter--right">
+        <div class="fp-newsletter__inner">
+          <h2 class="fp-newsletter__title">Get 15% Off Your First Order</h2>
+          <p class="fp-newsletter__subtitle">Get updates on new products, promotion offers.</p>
+          {%- form 'customer', id: 'ContactFooter', class: 'newsletter-form' -%}
+            <input type="hidden" name="contact[tags]" value="newsletter">
+            <div class="fp-newsletter__form">
+              <input
+                id="NewsletterForm--{{ section.id }}"
+                type="email"
+                name="contact[email]"
+                class="fp-newsletter__input"
+                value="{{ form.email }}"
+                aria-required="true"
+                autocorrect="off"
+                autocapitalize="off"
+                autocomplete="email"
+                {% if form.errors %}autofocus aria-invalid="true" aria-describedby="ContactFooter-error"{% elsif form.posted_successfully? %}aria-describedby="ContactFooter-success"{% endif %}
+                placeholder="Your email address"
+                required
+              >
+              <button type="submit" class="fp-newsletter__btn" name="commit" aria-label="Subscribe">Subscribe</button>
+            </div>
+            <p class="fp-newsletter__disclaimer">No spam. Unsubscribe anytime.</p>
+            {%- if form.errors -%}
+              <small class="newsletter-form__message form__message" id="ContactFooter-error">{% render 'icon-error' %}{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}</small>
+            {%- endif -%}
+            {%- if form.posted_successfully? -%}
+              <h3 class="newsletter-form__message newsletter-form__message--success form__message" id="ContactFooter-success" tabindex="-1" autofocus>{% render 'icon-success' %}{{ 'newsletter.success' | t }}</h3>
+            {%- endif -%}
+          {%- endform -%}
+        </div>
+      </div>
+    {%- endif -%}
   </div>
 
   {%- comment -%} ─── Bottom Bar ─── {%- endcomment -%}
