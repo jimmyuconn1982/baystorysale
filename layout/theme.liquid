@@ -1420,6 +1420,26 @@
       .pagination a:hover { color: #243B53 !important; }
       .pagination .current { color: #1F2933 !important; font-weight: 600 !important; }
 
+      /* Product page thumbnails: remove rounded corners completely */
+      .template-product .thumbnail.global-media-settings,
+      .template-product .thumbnail.global-media-settings img,
+      .template-product .thumbnail.global-media-settings iframe,
+      .template-product .thumbnail.global-media-settings video,
+      .template-product .thumbnail.global-media-settings model-viewer {
+        border-radius: 0 !important;
+      }
+      .template-product .thumbnail.global-media-settings::after,
+      .template-product .thumbnail.global-media-settings:after {
+        border-radius: 0 !important;
+      }
+
+      /* Product variant image pills (Color: Black/Khaki thumbnails): no rounded corners */
+      .template-product .product-form__input .label-with-image,
+      .template-product .product-form__input .label-with-image::before,
+      .template-product .product-form__input .label-with-image img {
+        border-radius: 0 !important;
+      }
+
       /* Cart empty state: remove button "border frame" (::after) */
       .cart__warnings .button::after,
       cart-items.is-empty .button::after,
