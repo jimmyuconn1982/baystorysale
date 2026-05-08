@@ -1,40 +1,68 @@
 {%- comment -%}
   Code-owned top header navigation with fixed order:
-  1. New Arrivals
-  2. Featured Products
-  3. Shop All
-  4. For Human (metafield dropdown with fixed child order)
-  5. For Pets (metafield dropdown with fixed child order)
-  6. About Us
+  1. Shop (dropdown: All Products, New Arrivals, Best Sellers)
+  2. Everyday Bags (metafield dropdown)
+  3. Travel (metafield dropdown)
+  4. Pet Travel (metafield dropdown)
+  5. Accessories (metafield dropdown)
+  6. About
 {%- endcomment -%}
 
 {%- liquid
   assign new_arrivals_url = collections['new-arrivals'].url | default: '/collections/new-arrivals'
-  assign featured_url = collections['featured-collection'].url | default: '/collections/featured-collection'
+  assign best_sellers_url = collections['best-sellers'].url
+  if best_sellers_url == blank
+    assign best_sellers_url = collections['best-seller'].url
+  endif
+  if best_sellers_url == blank
+    assign best_sellers_url = collections['bestsellers'].url
+  endif
+  if best_sellers_url == blank
+    assign best_sellers_url = collections['bestseller'].url
+  endif
+  if best_sellers_url == blank
+    assign best_sellers_url = '/collections/best-sellers'
+  endif
   assign shop_all_url = '/collections/all'
   assign about_us_url = '/pages/about-us'
 
-  assign category_order = "For Human,For Pets" | split: ','
-
-  assign for_human_child_order = "Crossbody Bag,Tote Bag,Backpack,Laptop,Travel Bags,Wallet,Pet Carrier,Treat Bag,Bag Accessory" | split: ','
-  assign for_pets_child_order = "Pet Carrier,Treat Bag,Bag Accessory" | split: ','
+  assign category_order = "Everyday Bags,Travel,Pet Travel,Accessories" | split: ','
 -%}
 
 {%- if code_menu_mode == 'mobile' -%}
   <li>
-    <a href="{{ new_arrivals_url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
-      New Arrivals
-    </a>
-  </li>
-  <li>
-    <a href="{{ featured_url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
-      Featured Products
-    </a>
-  </li>
-  <li>
-    <a href="{{ shop_all_url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
-      Shop All
-    </a>
+    <details id="Details-menu-drawer-shop">
+      <summary class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
+        Shop
+        {% render 'icon-arrow' %}
+        {% render 'icon-caret' %}
+      </summary>
+      <div id="link-shop" class="menu-drawer__submenu has-submenu gradient motion-reduce" tabindex="-1">
+        <div class="menu-drawer__inner-submenu">
+          <button class="menu-drawer__close-button link link--text focus-inset" aria-expanded="true">
+            {% render 'icon-arrow' %}
+            Shop
+          </button>
+          <ul class="menu-drawer__menu list-menu" role="list" tabindex="-1">
+            <li>
+              <a href="{{ shop_all_url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset">
+                All Products
+              </a>
+            </li>
+            <li>
+              <a href="{{ new_arrivals_url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset">
+                New Arrivals
+              </a>
+            </li>
+            <li>
+              <a href="{{ best_sellers_url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset">
+                Best Sellers
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </details>
   </li>
   {%- if category_menu_collections != blank -%}
     {%- for category_label in category_order -%}
@@ -55,13 +83,6 @@
         {%- endif -%}
       {%- endfor -%}
       {%- if has_children -%}
-        {%- assign child_order_key = category_label_clean | handleize | append: '_child_order' -%}
-        {%- assign child_order = '' -%}
-        {%- if category_label_clean == "For Human" -%}
-          {%- assign child_order = for_human_child_order -%}
-        {%- elsif category_label_clean == "For Pets" -%}
-          {%- assign child_order = for_pets_child_order -%}
-        {%- endif -%}
         <li>
           <details id="Details-menu-drawer-metafield-category-{{ category_handle }}">
             <summary class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
@@ -124,24 +145,36 @@
   {%- endif -%}
   <li>
     <a href="{{ about_us_url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
-      About Us
+      About
     </a>
   </li>
 {%- else -%}
   <li>
-    <a href="{{ new_arrivals_url }}" class="header__menu-item header__menu-item list-menu__item link link--text focus-inset">
-      <span>New Arrivals</span>
-    </a>
-  </li>
-  <li>
-    <a href="{{ featured_url }}" class="header__menu-item header__menu-item list-menu__item link link--text focus-inset">
-      <span>Featured Products</span>
-    </a>
-  </li>
-  <li>
-    <a href="{{ shop_all_url }}" class="header__menu-item header__menu-item list-menu__item link link--text focus-inset">
-      <span>Shop All</span>
-    </a>
+    <header-menu>
+      <details id="Details-HeaderMenu-Shop">
+        <summary class="header__menu-item list-menu__item link focus-inset">
+          <span>Shop</span>
+          {% render 'icon-caret' %}
+        </summary>
+        <ul id="HeaderMenu-Shop" class="header__submenu list-menu list-menu--disclosure gradient caption-large motion-reduce global-settings-popup" role="list" tabindex="-1">
+          <li>
+            <a href="{{ shop_all_url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large">
+              All Products
+            </a>
+          </li>
+          <li>
+            <a href="{{ new_arrivals_url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large">
+              New Arrivals
+            </a>
+          </li>
+          <li>
+            <a href="{{ best_sellers_url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large">
+              Best Sellers
+            </a>
+          </li>
+        </ul>
+      </details>
+    </header-menu>
   </li>
   {%- if category_menu_collections != blank -%}
     {%- for category_label in category_order -%}
@@ -162,12 +195,6 @@
         {%- endif -%}
       {%- endfor -%}
       {%- if has_children -%}
-        {%- assign child_order = '' -%}
-        {%- if category_label_clean == "For Human" -%}
-          {%- assign child_order = for_human_child_order -%}
-        {%- elsif category_label_clean == "For Pets" -%}
-          {%- assign child_order = for_pets_child_order -%}
-        {%- endif -%}
         <li>
           <header-menu>
             <details id="Details-HeaderMenu-MetafieldCategory-{{ category_handle }}">
@@ -223,7 +250,7 @@
   {%- endif -%}
   <li>
     <a href="{{ about_us_url }}" class="header__menu-item header__menu-item list-menu__item link link--text focus-inset">
-      <span>About Us</span>
+      <span>About</span>
     </a>
   </li>
 {%- endif -%}
