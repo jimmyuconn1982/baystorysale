@@ -269,6 +269,11 @@
     .fp-newsletter__title { font-size: 20px; }
   }
   @media (max-width: 599px) {
+    /* Mobile footer uses a dedicated accordion layout (fp-mobile) */
+    .fp-grid { display: none !important; }
+    .fp-mobile { display: block !important; }
+    .fp-newsletter--right { display: none !important; }
+
     .fp-grid {
       grid-template-columns: 1fr;
       gap: 24px;
@@ -280,6 +285,65 @@
     .fp-newsletter__btn { padding: 13px; border-radius: 0; }
     .fp-bottom { padding: 16px 20px; }
     .fp-bottom { flex-direction: column; align-items: flex-start; }
+  }
+
+  /* Mobile-only footer layout (accordion, newsletter first) */
+  .fp-mobile { display: none; }
+  @media (max-width: 599px) {
+    .fp-mobile {
+      padding: 26px 20px 10px;
+    }
+    .fp-mobile .fp-col__heading--brand { margin-bottom: 10px; }
+    .fp-mobile .fp-brand-text { margin-bottom: 18px; }
+
+    .fp-mobile .fp-newsletter {
+      padding: 0 0 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.14);
+      margin-bottom: 14px;
+    }
+    .fp-mobile .fp-newsletter__inner { max-width: none; margin: 0; }
+    .fp-mobile .fp-newsletter__title {
+      font-family: var(--font-sans), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0;
+      margin: 0 0 6px;
+    }
+    .fp-mobile .fp-newsletter__subtitle { margin: 0 0 14px; }
+    .fp-mobile .fp-newsletter__form { border-radius: 6px; }
+    .fp-mobile .fp-newsletter__btn { width: 100%; }
+
+    .fp-acc {
+      border-bottom: 1px solid rgba(255,255,255,0.14);
+      padding: 10px 0;
+    }
+    .fp-acc summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+    }
+    .fp-acc summary::-webkit-details-marker { display: none; }
+    .fp-acc__title {
+      font-family: var(--font-sans), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.92);
+    }
+    .fp-acc__caret {
+      width: 10px;
+      height: 10px;
+      opacity: 0.85;
+      transition: transform 160ms ease;
+    }
+    .fp-acc[open] .fp-acc__caret { transform: rotate(180deg); }
+    .fp-acc__body { padding: 0 0 14px; }
+    .fp-acc__body .fp-links { gap: 10px; }
   }
 
   /* ── Form messages ── */
@@ -306,6 +370,100 @@
 </style>
 
 <footer class="footer-premium">
+
+  {%- comment -%} ─── Mobile footer (accordion + newsletter first) ─── {%- endcomment -%}
+  <div class="fp-mobile">
+    {%- assign brand_block = section.blocks | where: 'type', 'text' | first -%}
+    {%- assign links_block = section.blocks | where: 'type', 'link_list' | first -%}
+
+    {%- if brand_block -%}
+      <h3 class="fp-col__heading fp-col__heading--brand">{{ brand_block.settings.heading | escape }}</h3>
+      <div class="fp-brand-text rte">{{ brand_block.settings.subtext }}</div>
+    {%- endif -%}
+
+    {%- if section.settings.newsletter_enable -%}
+      <div class="fp-newsletter">
+        <div class="fp-newsletter__inner">
+          <h2 class="fp-newsletter__title">Get 15% Off Your First Order</h2>
+          <p class="fp-newsletter__subtitle">Get updates on new products, promotion offers.</p>
+          {%- form 'customer', id: 'ContactFooterMobile', class: 'newsletter-form' -%}
+            <input type="hidden" name="contact[tags]" value="newsletter">
+            <div class="fp-newsletter__form">
+              <input
+                id="NewsletterFormMobile--{{ section.id }}"
+                type="email"
+                name="contact[email]"
+                class="fp-newsletter__input"
+                value="{{ form.email }}"
+                aria-required="true"
+                autocorrect="off"
+                autocapitalize="off"
+                autocomplete="email"
+                {% if form.errors %}autofocus aria-invalid="true" aria-describedby="ContactFooterMobile-error"{% elsif form.posted_successfully? %}aria-describedby="ContactFooterMobile-success"{% endif %}
+                placeholder="Your email address"
+                required
+              >
+              <button type="submit" class="fp-newsletter__btn" name="commit" aria-label="Subscribe">Subscribe</button>
+            </div>
+            <p class="fp-newsletter__disclaimer">By entering your email address, you agree to our Privacy Policy and will receive BaystoryBag offers, promotions and other commercial messages. You may unsubscribe at any time.</p>
+          {%- endform -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    <details class="fp-acc">
+      <summary>
+        <span class="fp-acc__title">Quick links</span>
+        <svg class="fp-acc__caret" viewBox="0 0 10 6" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </summary>
+      <div class="fp-acc__body">
+        <ul class="fp-links">
+          {%- if links_block -%}
+            {%- for link in links_block.settings.menu.links -%}
+              {%- if link.title == "Search" or link.title == "搜索" or link.title == "Shipping Policy" or link.title == "Refund Policy" or link.title == "退款政策" or link.title == "退換貨政策" -%}{%- continue -%}{%- endif -%}
+              <li><a {% assign link_title_clean = link.title | strip | downcase %}{% if link_title_clean == "about us" %}href="/pages/about-us"{% else %}href="{{ link.url }}"{% endif %} class="link--text{% if link.active %} list-menu__item--active{% endif %}">{{ link.title }}</a></li>
+            {%- endfor -%}
+          {%- endif -%}
+          <li><a href="/pages/faq" class="link--text">FAQ</a></li>
+          <li><a href="/pages/contact" class="link--text">Contact</a></li>
+          <li><a href="{{ routes.root_url }}policies/privacy-policy" class="link--text">Privacy</a></li>
+          <li><a href="{{ routes.root_url }}policies/terms-of-service" class="link--text">Terms</a></li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="fp-acc">
+      <summary>
+        <span class="fp-acc__title">Shop</span>
+        <svg class="fp-acc__caret" viewBox="0 0 10 6" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </summary>
+      <div class="fp-acc__body">
+        <ul class="fp-links">
+          <li><a href="/collections/all" class="link--text">All Products</a></li>
+          <li><a href="/collections/new-arrivals" class="link--text">New Arrivals</a></li>
+          <li><a href="/collections/all" class="link--text">Everyday Bags</a></li>
+          <li><a href="/collections/all" class="link--text">Travel</a></li>
+          <li><a href="/collections/all" class="link--text">Pet Travel</a></li>
+          <li><a href="/collections/all" class="link--text">Accessories</a></li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="fp-acc">
+      <summary>
+        <span class="fp-acc__title">Why BaystoryBag</span>
+        <svg class="fp-acc__caret" viewBox="0 0 10 6" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </summary>
+      <div class="fp-acc__body">
+        <ul class="fp-trust">
+          <li class="fp-trust__item"><svg class="fp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg><span>Fast U.S. Shipping</span></li>
+          <li class="fp-trust__item"><svg class="fp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Secure Checkout</span></li>
+          <li class="fp-trust__item"><svg class="fp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg><span>Easy Returns</span></li>
+          <li class="fp-trust__item"><svg class="fp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg><span>Pet-Friendly Travel Essentials</span></li>
+        </ul>
+      </div>
+    </details>
+  </div>
 
   {%- comment -%} ─── Main Grid (asymmetric 4-col) ─── {%- endcomment -%}
   <div class="fp-grid">

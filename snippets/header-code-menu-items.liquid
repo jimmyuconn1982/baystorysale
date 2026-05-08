@@ -34,17 +34,12 @@
     <details id="Details-menu-drawer-shop">
       <summary class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
         Shop
-        <span class="menu-drawer__submenu-toggle" aria-hidden="true">
+        <span class="menu-drawer__submenu-toggle mobile-accordion-toggle" aria-hidden="true">
           {% render 'icon-caret' %}
         </span>
       </summary>
-      <div id="link-shop" class="menu-drawer__submenu has-submenu gradient motion-reduce" tabindex="-1">
-        <div class="menu-drawer__inner-submenu">
-          <button class="menu-drawer__close-button link link--text focus-inset" aria-expanded="true">
-            {% render 'icon-arrow' %}
-            Shop
-          </button>
-          <ul class="menu-drawer__menu list-menu" role="list" tabindex="-1">
+      <div class="mobile-accordion-submenu" tabindex="-1">
+          <ul class="menu-drawer__menu list-menu" role="list">
             <li>
               <a href="{{ shop_all_url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset">
                 All Products
@@ -61,7 +56,6 @@
               </a>
             </li>
           </ul>
-        </div>
       </div>
     </details>
   </li>
@@ -88,17 +82,12 @@
           <details id="Details-menu-drawer-metafield-category-{{ category_handle }}">
             <summary class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
               {{ category_label_clean | escape }}
-              <span class="menu-drawer__submenu-toggle" aria-hidden="true">
+              <span class="menu-drawer__submenu-toggle mobile-accordion-toggle" aria-hidden="true">
                 {% render 'icon-caret' %}
               </span>
             </summary>
-            <div id="link-{{ category_handle }}" class="menu-drawer__submenu has-submenu gradient motion-reduce" tabindex="-1">
-              <div class="menu-drawer__inner-submenu">
-                <button class="menu-drawer__close-button link link--text focus-inset" aria-expanded="true">
-                  {% render 'icon-arrow' %}
-                  {{ category_label_clean | escape }}
-                </button>
-                <ul class="menu-drawer__menu list-menu" role="list" tabindex="-1">
+            <div class="mobile-accordion-submenu" tabindex="-1">
+                <ul class="menu-drawer__menu list-menu" role="list">
                   {%- if child_order != blank -%}
                     {%- for child_label in child_order -%}
                       {%- assign child_label_clean = child_label | strip -%}
@@ -138,7 +127,6 @@
                     {%- endfor -%}
                   {%- endif -%}
                 </ul>
-              </div>
             </div>
           </details>
         </li>

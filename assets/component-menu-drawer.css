@@ -76,6 +76,31 @@ details[open].menu-opening > .menu-drawer__submenu {
 
 /* Mobile: accordion submenu (expand downward) instead of slide-in panels */
 @media screen and (max-width: 989px) {
+  /* Drawer should overlay the page with the highest z-index and solid bg */
+  .menu-drawer-container > summary::before {
+    z-index: 2147483646 !important;
+  }
+  .menu-drawer {
+    z-index: 2147483647 !important;
+    background-color: rgb(var(--color-background)) !important;
+    position: fixed !important;
+    left: 0 !important;
+    top: var(--header-bottom-position, 0px) !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    border-width: 0 !important;
+  }
+  /* Avoid "full page blank" feel: let the drawer size to content with scrolling */
+  .js .menu-drawer {
+    height: auto !important;
+    max-height: calc(var(--viewport-height, 100vh) - var(--header-bottom-position, 0px)) !important;
+    overflow-y: auto !important;
+  }
+  .menu-drawer__navigation-container {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
   /* Show a small down-caret on the right, hide the right arrow */
   .menu-drawer__menu-item {
     display: flex;
@@ -104,45 +129,24 @@ details[open].menu-opening > .menu-drawer__submenu {
     transform: rotate(180deg);
   }
 
-  /* Never hide the parent list when a submenu is opened */
-  .js .menu-drawer__navigation .submenu-open {
-    visibility: visible;
+  /* Accordion submenu (new markup) */
+  .mobile-accordion-submenu {
+    display: block;
+    padding: 0.6rem 0 0.8rem;
   }
-
-  /* Make submenus part of the normal flow */
-  .js .menu-drawer__submenu {
-    position: static;
-    top: auto;
-    left: auto;
-    right: auto;
-    bottom: auto;
-    width: 100%;
-    transform: none;
-    visibility: visible;
-    border-left: none;
-    z-index: auto;
-    background-color: transparent;
-    overflow: hidden;
-    max-height: 0;
-    padding: 0;
-    transition: max-height 220ms ease;
-  }
-
-  /* When the details is open, expand downward */
-  details[open] > .menu-drawer__submenu {
-    max-height: 60vh;
-    padding-bottom: 0.8rem;
-  }
-
-  /* Hide the back/close button inside submenus (not needed for accordion) */
-  .menu-drawer__close-button {
+  /* Only show submenu content when the <details> is open */
+  details:not([open]) > .mobile-accordion-submenu {
     display: none;
   }
-
-  /* Make nested submenu container not force full height */
-  .menu-drawer__inner-submenu {
-    height: auto;
-    overflow: visible;
+  /* Submenu list items: slightly indented, lighter separators */
+  .mobile-accordion-submenu .menu-drawer__menu {
+    padding-left: 1.2rem;
+  }
+  .mobile-accordion-submenu .menu-drawer__menu-item {
+    font-size: 1.5rem;
+    padding-top: 1.1rem;
+    padding-bottom: 1.1rem;
+    opacity: 0.92;
   }
 
   /* Caret animation */
@@ -152,7 +156,7 @@ details[open].menu-opening > .menu-drawer__submenu {
 
   /* Reduce the big top padding so the list starts higher */
   .menu-drawer__navigation {
-    padding: 2.4rem 0;
+    padding: 1.2rem 0;
   }
 }
 

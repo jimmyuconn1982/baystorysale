@@ -726,4 +726,13 @@
     padding-left: 14px;
     padding-right: 14px;
   }
+
+  /* Mobile: NO rounded corners on product images/cards */
+  .product-grid .card,
+  .product-grid .card__inner,
+  .product-grid .card__media,
+  .product-grid .card__media .media,
+  .product-grid .card__media .media img {
+    border-radius: 0 !important;
+  }
 }
