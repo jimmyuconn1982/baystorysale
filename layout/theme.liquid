@@ -1420,6 +1420,14 @@
       .pagination a:hover { color: #243B53 !important; }
       .pagination .current { color: #1F2933 !important; font-weight: 600 !important; }
 
+      /* Cart empty state: remove button "border frame" (::after) */
+      .cart__warnings .button::after,
+      cart-items.is-empty .button::after,
+      .is-empty .cart__warnings .button::after {
+        content: none !important;
+        box-shadow: none !important;
+      }
+
       /* ── Responsive ── */
       @media (min-width: 750px) and (max-width: 989px) {
         .header,
