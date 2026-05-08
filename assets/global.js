@@ -925,8 +925,8 @@ function initCardColorSwatches() {
 
     const colorName = wrapper.querySelector('.card__alo-color-name');
     if (colorName) {
-      colorName.textContent = color;
-      colorName.style.display = color ? '' : 'none';
+      // Keep the row reserved even when empty so card layout stays aligned
+      colorName.textContent = color || '';
     }
 
     const status = wrapper.querySelector('.card__alo-color-status');
@@ -977,3 +977,79 @@ if (document.readyState === 'loading') {
 // param_names/labels vary per shop and pruning client-side previously hid all
 // facets. Use Online Store > Search & Discovery to add Product Type / Color /
 // Percent Off filters and they will show up automatically.)
+
+// Custom Alo-style sort dropdown: trigger toggles the panel; clicking an
+// option syncs the hidden native <select> and dispatches an `input` event so
+// facets.js auto-submits the form.
+(() => {
+  const setOpen = (dropdown, open) => {
+    if (!dropdown) return;
+    const trigger = dropdown.querySelector('[data-sort-trigger]');
+    const panel = dropdown.querySelector('[data-sort-panel]');
+    if (!trigger || !panel) return;
+    if (open) {
+      panel.removeAttribute('hidden');
+      trigger.setAttribute('aria-expanded', 'true');
+    } else {
+      panel.setAttribute('hidden', '');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+  };
+
+  const closeAllSortDropdowns = (except) => {
+    document.querySelectorAll('.sort-dropdown-alo').forEach((d) => {
+      if (d !== except) setOpen(d, false);
+    });
+  };
+
+  const onClick = (event) => {
+    // Toggle: click the trigger
+    const trigger = event.target.closest('[data-sort-trigger]');
+    if (trigger) {
+      event.preventDefault();
+      const dropdown = trigger.closest('.sort-dropdown-alo');
+      const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+      closeAllSortDropdowns(dropdown);
+      setOpen(dropdown, !isOpen);
+      return;
+    }
+
+    // Pick an option
+    const option = event.target.closest('.sort-dropdown-alo__option');
+    if (option) {
+      event.preventDefault();
+      const dropdown = option.closest('.sort-dropdown-alo');
+      const form = dropdown ? dropdown.closest('form') : null;
+      const select = form ? form.querySelector('select.sort-by-native') : null;
+      const value = option.getAttribute('data-sort-value') || '';
+      if (!select) return;
+
+      // Update visual selected state
+      dropdown.querySelectorAll('.sort-dropdown-alo__option.is-selected').forEach((el) => {
+        el.classList.remove('is-selected');
+        el.setAttribute('aria-selected', 'false');
+      });
+      option.classList.add('is-selected');
+      option.setAttribute('aria-selected', 'true');
+
+      // Sync the hidden native <select> and trigger facets.js auto-submit
+      if (select.value !== value) {
+        select.value = value;
+        select.dispatchEvent(new Event('input', { bubbles: true }));
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      setOpen(dropdown, false);
+      return;
+    }
+
+    // Click outside closes all open panels
+    if (!event.target.closest('.sort-dropdown-alo')) {
+      closeAllSortDropdowns(null);
+    }
+  };
+
+  document.addEventListener('click', onClick);
+  document.addEventListener('keyup', (e) => {
+    if (e.key === 'Escape') closeAllSortDropdowns(null);
+  });
+})();

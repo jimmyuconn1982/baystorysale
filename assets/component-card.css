@@ -400,9 +400,18 @@
   display: inline !important;
 }
 
-.card__information { text-align: center !important; }
-.card__heading { text-align: center !important; }
-.card-information { text-align: center !important; }
+/* Left-align all product-card meta (title / price / info) so they align
+   flush with the product image. Use the highest specificity inside the grid. */
+.product-grid .card__information,
+.product-grid .card__heading,
+.product-grid .card-information,
+.product-grid .card__heading a,
+.product-grid .price,
+.product-grid .price__container,
+.product-grid .price__regular,
+.product-grid .price__sale {
+  text-align: left !important;
+}
 
 /* Align product-card titles and limit them to three lines. */
 .card__heading {
@@ -494,42 +503,91 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  height: 100%;
 }
 
 .card-wrapper--split-alo .card__inner {
   position: relative;
 }
 
-/* Meta (title/price) is NOT a card */
+/* Meta (title/price) is NOT a card.
+   Use a flex column with FIXED min-heights per row so swatches / title /
+   color name / price line up across all cards even when a product has no
+   color options or no color name.
+   padding-left/right: 0 so swatches / title / price align flush with the
+   left edge of the product image above. */
 .card-wrapper--split-alo .card__alo-meta {
-  padding: 0 6px 6px;
+  padding: 0 0 6px;
   text-align: left;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
 }
 
+/* Row 1: swatches — always 22px high (one swatch row), even when empty */
 .card-wrapper--split-alo .card__alo-meta .card__alo-swatches {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 10px;
   padding: 10px 0 0;
-  min-height: 22px;
+  min-height: 32px !important;
+  height: 32px !important;
+  box-sizing: content-box;
+}
+.card-wrapper--split-alo .card__alo-meta .card__alo-swatches.is-empty {
+  min-height: 32px !important;
+  height: 32px !important;
 }
 
+/* Row 2: title — clamp to 2 lines so every card has the same title height */
 .card-wrapper--split-alo .card__alo-meta .card__heading {
-  margin: 10px 0 6px !important;
-  min-height: unset !important;
+  margin: 10px 0 4px !important;
   max-width: 100% !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  /* 2 lines * 1.4rem * 1.35 line-height ≈ 3.78rem */
+  min-height: 3.78rem !important;
+  height: 3.78rem !important;
 }
 
 .card-wrapper--split-alo .card__alo-meta .card__heading a {
-  font-weight: 700 !important;
+  font-weight: 550 !important;
   font-size: 1.4rem !important;
-  line-height: 1.35 !important;
+  line-height: 1.45 !important;
+  color: #4a5568 !important;
+  text-align: left !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
 }
 
+/* Row 3: color name — always reserve one line of space, even when blank */
+.card-wrapper--split-alo .card__alo-meta .card__alo-color-row {
+  display: flex !important;
+  align-items: baseline;
+  gap: 10px;
+  min-height: 1.7rem !important;
+  height: 1.7rem !important;
+}
+.card-wrapper--split-alo .card__alo-meta .card__alo-color-name {
+  margin-top: 0 !important;
+  font-size: 1.3rem;
+  line-height: 1.3;
+  color: rgba(31, 41, 51, 0.75);
+  min-height: 1.7rem;
+}
+
+/* Row 4: price — pinned to bottom so all prices align across rows */
 .card-wrapper--split-alo .card__alo-meta .card-information {
   text-align: left !important;
-  margin-top: 4px;
+  margin-top: auto !important;
+  padding-top: 4px !important;
 }
 
 .card-wrapper--split-alo .card__alo-meta .card__badge {
@@ -568,14 +626,9 @@
   background: rgba(28, 28, 28, 0.88) !important;
 }
 
-.card-wrapper--split-alo .card__alo-swatches {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
-  padding: 12px 18px 4px;
-}
-
+/* Note: the wider `.card-wrapper--split-alo .card__alo-swatches` rule above
+   (scoped under .card__alo-meta) is the source of truth. Keep this block
+   only for the swatch dots themselves so colours and sold-out marker render. */
 .card-wrapper--split-alo .card__alo-swatches .color-swatch {
   display: inline-block;
   width: 22px;

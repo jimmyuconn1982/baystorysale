@@ -566,6 +566,183 @@
         font-weight: 500 !important;
       }
 
+      /* ── Filter sidebar: keep each option on a single line ──
+         Sidebar is fixed at 200px wide; vertical-mode ul does NOT carry the
+         `.facets__list` class (per snippets/facets.liquid), so we target the
+         label directly. Force nowrap + a slightly smaller font so labels like
+         "Out of stock (10)" never break to 2 lines. */
+      .facets-vertical .facet-checkbox,
+      .facets-wrapper .facet-checkbox,
+      #FacetFiltersForm .facet-checkbox,
+      .facets-vertical .facets__item,
+      .facets-wrapper .facets__item {
+        white-space: nowrap !important;
+      }
+      .facets-vertical .facet-checkbox,
+      .facets-wrapper .facet-checkbox,
+      #FacetFiltersForm .facet-checkbox {
+        font-size: 12.5px !important;
+        line-height: 1.4 !important;
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 6px 0 !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+      }
+      .facets-vertical .facet-checkbox > *,
+      .facets-wrapper .facet-checkbox > *,
+      #FacetFiltersForm .facet-checkbox > * {
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+      }
+      .facets-vertical .facet-checkbox span,
+      .facets-wrapper .facet-checkbox span,
+      #FacetFiltersForm .facet-checkbox span {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        font-size: 12.5px !important;
+        letter-spacing: 0 !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+      }
+      .facets-vertical .facet-checkbox svg,
+      .facets-wrapper .facet-checkbox svg,
+      #FacetFiltersForm .facet-checkbox svg {
+        flex: 0 0 auto !important;
+        width: 1.4rem !important;
+        height: 1.4rem !important;
+      }
+
+      /* ═════════════════════════════════════════════════════════════════
+         Sort by: Alo-style custom dropdown (rewritten)
+         ═════════════════════════════════════════════════════════════════ */
+      /* Hide the native <select> visually but keep it in the form so
+         facets.js can read it on `input` events. */
+      .facets-vertical-sort .sort-by-native {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        border: 0 !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+      /* No ancestor should clip the dropdown */
+      .facets-vertical-sort,
+      .facets-vertical-sort .facets-vertical-form,
+      .facets-vertical-sort .facet-filters,
+      .facets-vertical-sort .facet-filters__field,
+      .sort-dropdown-alo {
+        overflow: visible !important;
+      }
+      .facets-vertical-sort .facet-filters,
+      .facets-vertical-sort .facet-filters__field {
+        align-items: center !important;
+        justify-content: flex-end !important;
+        gap: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      /* Container */
+      .sort-dropdown-alo {
+        position: relative !important;
+        display: inline-block !important;
+      }
+
+      /* Trigger ("Sort by ⌃") */
+      .sort-dropdown-alo__trigger {
+        all: unset !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        cursor: pointer !important;
+        font-family: var(--font-sans) !important;
+        font-size: 15px !important;
+        font-weight: 700 !important;
+        color: #111111 !important;
+        text-decoration: underline !important;
+        text-underline-offset: 3px !important;
+        line-height: 1.5 !important;
+        padding: 4px 2px !important;
+      }
+      .sort-dropdown-alo__trigger:hover { opacity: 0.7 !important; }
+      .sort-dropdown-alo__trigger .sort-dropdown-alo__caret {
+        transition: transform 0.2s ease !important;
+      }
+      .sort-dropdown-alo__trigger[aria-expanded="true"] .sort-dropdown-alo__caret {
+        transform: rotate(180deg) !important;
+      }
+
+      /* Panel: a flex column of buttons. Width is fixed so the panel
+         never resizes, and box-sizing: border-box makes children's
+         widths obey the panel exactly. */
+      .sort-dropdown-alo__panel {
+        position: absolute !important;
+        top: calc(100% + 10px) !important;
+        right: 0 !important;
+        width: 240px !important;
+        box-sizing: border-box !important;
+        margin: 0 !important;
+        padding: 6px 0 !important;
+        background: #FFFFFF !important;
+        border: 1px solid rgba(0, 0, 0, 0.06) !important;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.10) !important;
+        border-radius: 2px !important;
+        z-index: 50 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+      }
+      .sort-dropdown-alo__panel[hidden] { display: none !important; }
+
+      /* Each option button: width clamped to panel inner width, text
+         right-aligned, ellipsis if it ever overflows. */
+      .sort-dropdown-alo__option {
+        all: unset !important;
+        display: block !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 11px 18px !important;
+        text-align: right !important;
+        font-family: var(--font-sans) !important;
+        font-size: 14px !important;
+        font-weight: 400 !important;
+        color: #5b6166 !important;
+        line-height: 1.4 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        cursor: pointer !important;
+        transition: background-color 0.15s ease, color 0.15s ease !important;
+      }
+      .sort-dropdown-alo__option:hover {
+        background: rgba(0, 0, 0, 0.04) !important;
+        color: #1f2933 !important;
+      }
+      .sort-dropdown-alo__option.is-selected {
+        background: rgba(0, 0, 0, 0.05) !important;
+        color: #1f2933 !important;
+        font-weight: 600 !important;
+        text-decoration: underline !important;
+        text-underline-offset: 3px !important;
+      }
+
+      /* Tighten the gap between Sort bar and the products below */
+      @media screen and (min-width: 750px) {
+        .template-collection .facets-vertical-sort,
+        .template-search .facets-vertical-sort {
+          margin-top: 0 !important;
+          padding-top: 0 !important;
+          padding-bottom: 8px !important;
+        }
+      }
+
       /* ── Product grid ── */
       /* Keep gaps modest so 4-col doesn't wrap to 3-col on narrower desktops */
       .product-grid.grid--4-col-desktop { gap: 36px 22px !important; }
@@ -610,17 +787,25 @@
         transform: none !important;
         box-shadow: none !important;
       }
-      /* Meta area (swatches, title, color name, price) is naked on the page bg */
+      /* Meta area (swatches container, title, color name, price) is naked on
+         the page bg. We deliberately do NOT touch `.color-swatch` itself —
+         each swatch needs its inline background-color: <color> to display the
+         color dot. So we only target container / text elements, not "*". */
       .product-grid .grid__item,
-      .product-grid .grid__item > *,
       .product-grid .card__alo-meta,
-      .product-grid .card__alo-meta *,
       .product-grid .card__alo-swatches,
       .product-grid .card__alo-color-row,
+      .product-grid .card__alo-color-name,
+      .product-grid .card__alo-color-status,
       .product-grid .card-information,
       .product-grid .card__heading,
+      .product-grid .card__heading a,
       .product-grid .card__content,
-      .product-grid .card__information {
+      .product-grid .card__information,
+      .product-grid .price,
+      .product-grid .price__container,
+      .product-grid .price__regular,
+      .product-grid .price__sale {
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
@@ -683,16 +868,18 @@
         text-align: left !important;
       }
 
-      /* ── Product title ── */
+      /* ── Product title (medium weight 550, softer color, left aligned) ── */
       .product-grid .card__heading {
-        font-family: var(--font-serif) !important;
-        font-size: 18px !important;
-        font-weight: 600 !important;
-        line-height: 1.5 !important;
-        letter-spacing: -0.02em !important;
-        color: #24324A !important;
+        font-family: var(--font-sans) !important;
+        font-size: 14px !important;
+        font-weight: 550 !important;
+        line-height: 1.45 !important;
+        letter-spacing: 0 !important;
+        color: #4a5568 !important;
+        text-align: left !important;
         max-width: 100% !important;
         margin: 0 0 4px !important;
+        padding: 0 !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         display: -webkit-box !important;
@@ -700,11 +887,13 @@
         -webkit-box-orient: vertical !important;
       }
       .product-grid .card__heading a {
-        color: #24324A !important;
+        font-weight: 550 !important;
+        color: #4a5568 !important;
+        text-align: left !important;
         text-decoration: none !important;
         transition: color 0.2s ease !important;
       }
-      .product-grid .card__heading a:hover { color: #1F3A5F !important; }
+      .product-grid .card__heading a:hover { color: #1f2933 !important; }
       .product-grid .card__heading a::after { display: none !important; }
 
       /* ── Price ── */

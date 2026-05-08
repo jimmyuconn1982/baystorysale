@@ -18,15 +18,17 @@
 -%}
 
 {%- style -%}
+  /* Tighten the gap between the top header and the Sort bar by ~40%
+     (multiplier 0.6 on the configured padding values). */
   .section-{{ section.id }}-padding {
-    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
-    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    padding-top: {{ section.settings.padding_top | times: 0.45 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.6 | round: 0 }}px;
   }
 
   @media screen and (min-width: 750px) {
     .section-{{ section.id }}-padding {
-      padding-top: {{ section.settings.padding_top }}px;
-      padding-bottom: {{ section.settings.padding_bottom }}px;
+      padding-top: {{ section.settings.padding_top | times: 0.6 | round: 0 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | times: 0.6 | round: 0 }}px;
     }
   }
 {%- endstyle -%}
@@ -38,17 +40,51 @@
       <form class="facets-vertical-form" id="FacetSortForm">
         <div class="facet-filters sorting caption">
           <div class="facet-filters__field">
-            <h2 class="facet-filters__label caption-large text-body">
-              <label for="SortBy">{{ 'products.facets.sort_by_label' | t }}</label>
-            </h2>
-            <div class="select">
-              {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
-              <select name="sort_by" class="facet-filters__sort select__select caption-large" id="SortBy" aria-describedby="a11y-refresh-page-message">
+            {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+            {%- comment -%}
+              Hidden native <select> kept in the form so facets.js auto-submits
+              on `input` events. We render a custom Alo-style dropdown above it
+              that always shows the label "Sort by" (per design).
+            {%- endcomment -%}
+            <label for="SortBy" class="visually-hidden">{{ 'products.facets.sort_by_label' | t }}</label>
+            <select name="sort_by" class="facet-filters__sort select__select caption-large sort-by-native" id="SortBy" aria-describedby="a11y-refresh-page-message" tabindex="-1" aria-hidden="true">
+              {%- for option in collection.sort_options -%}
+                <option value="{{ option.value | escape }}"{% if option.value == sort_by %} selected="selected"{% endif %}>{{ option.name | escape }}</option>
+              {%- endfor -%}
+            </select>
+
+            <div class="sort-dropdown-alo" data-sort-dropdown>
+              <button
+                type="button"
+                class="sort-dropdown-alo__trigger"
+                data-sort-trigger
+                aria-haspopup="listbox"
+                aria-expanded="false"
+              >
+                <span class="sort-dropdown-alo__label">{{ 'products.facets.sort_by_label' | t | replace: ':', '' | strip }}</span>
+                <svg class="sort-dropdown-alo__caret" width="12" height="12" viewBox="0 0 10 6" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="sort-dropdown-alo__panel" data-sort-panel role="listbox" aria-label="{{ 'products.facets.sort_by_label' | t }}" hidden>
                 {%- for option in collection.sort_options -%}
-                  <option value="{{ option.value | escape }}"{% if option.value == sort_by %} selected="selected"{% endif %}>{{ option.name | escape }}</option>
+                  {%- comment -%}
+                    Hide the two date-based sort options per design.
+                    `created-ascending` = Date, old to new
+                    `created-descending` = Date, new to old
+                  {%- endcomment -%}
+                  {%- if option.value == 'created-ascending' or option.value == 'created-descending' -%}
+                    {%- continue -%}
+                  {%- endif -%}
+                  <button
+                    type="button"
+                    class="sort-dropdown-alo__option{% if option.value == sort_by %} is-selected{% endif %}"
+                    data-sort-value="{{ option.value | escape }}"
+                    role="option"
+                    aria-selected="{% if option.value == sort_by %}true{% else %}false{% endif %}"
+                  >{{ option.name | escape }}</button>
                 {%- endfor -%}
-              </select>
-              {% render 'icon-caret' %}
+              </div>
             </div>
           </div>
           <noscript>

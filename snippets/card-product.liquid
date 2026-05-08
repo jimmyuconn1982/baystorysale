@@ -236,7 +236,12 @@
         </a>
       </h3>
       <div class="card__alo-color-row">
-        <div class="card__alo-color-name"{% if current_color == blank %} style="display:none"{% endif %}>{{ current_color | escape }}</div>
+        {%- comment -%}
+          Always render both nodes (no display:none) so cards without a color
+          option still reserve the same vertical space as cards with one — keeps
+          swatches / title / color name / price aligned across the grid.
+        {%- endcomment -%}
+        <div class="card__alo-color-name">{{ current_color | escape }}</div>
         <div class="card__alo-color-status" aria-live="polite">{% if current_color != blank and current_available == false %}Sold out{% endif %}</div>
       </div>
 
