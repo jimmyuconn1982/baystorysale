@@ -16,6 +16,11 @@
 {%- liquid
   assign sort_by = results.sort_by | default: results.default_sort_by
   assign total_active_values = 0
+  comment
+    Force desktop sidebar filters layout (Alo-style).
+    We intentionally render facets as vertical to match the required layout.
+  endcomment
+  assign filter_type = 'vertical'
   if results.url
     assign results_url = results.url
   else
@@ -84,10 +89,14 @@
             <script src="{{ 'show-more.js' | asset_url }}" defer="defer"></script>
             {% comment %} Filters for both horizontal and vertical filter {% endcomment %}
             {%- for filter in results.filters -%}
+              {%- comment -%}
+                Skip Price filter per design (only Product Type / Color / Percent Off etc.)
+              {%- endcomment -%}
+              {%- if filter.type == 'price_range' -%}{%- continue -%}{%- endif -%}
               {%- assign total_active_values = total_active_values | plus: filter.active_values.size -%}
               {% case filter.type %}
               {% when 'boolean' or 'list' %}
-                <details id="Details-{{ forloop.index }}-{{ section.id }}" class="{% if filter_type == 'horizontal' %}disclosure-has-popup facets__disclosure{% else %} facets__disclosure-vertical{% endif %} js-filter" data-index="{{ forloop.index }}"{% if filter_type == 'vertical' and forloop.index == 1 %} open{% endif %}>
+                <details id="Details-{{ forloop.index }}-{{ section.id }}" class="{% if filter_type == 'horizontal' %}disclosure-has-popup facets__disclosure{% else %} facets__disclosure-vertical{% endif %} js-filter" data-index="{{ forloop.index }}" data-param-name="{{ filter.param_name | escape }}" data-label="{{ filter.label | escape }}"{% if filter_type == 'vertical' and forloop.index == 1 %} open{% endif %}>
                   <summary class="facets__summary caption-large focus-offset" aria-label="{{ filter.label }} ({{ 'products.facets.filters_selected.one' | t: count: filter.active_values.size }})">
                     <div>
                       <span>{{ filter.label | escape }}{%- if filter_type == 'vertical' -%}<span class="facets__selected no-js-hidden{% if filter.active_values.size == 0 %} hidden{% endif %}"> ({{ filter.active_values.size }})</span>{% endif %}</span>
@@ -199,7 +208,7 @@
                     assign uses_comma_decimals = true
                   endif
                 %}
-                <details id="Details-{{ forloop.index }}-{{ section.id }}" class="{% if filter_type == 'horizontal' %}disclosure-has-popup facets__disclosure{% else %} facets__disclosure-vertical{% endif %} js-filter" data-index="{{ forloop.index }}"{% if filter_type == 'vertical' and  forloop.index == 1 %} open{% endif %}>
+                <details id="Details-{{ forloop.index }}-{{ section.id }}" class="{% if filter_type == 'horizontal' %}disclosure-has-popup facets__disclosure{% else %} facets__disclosure-vertical{% endif %} js-filter" data-index="{{ forloop.index }}" data-param-name="{{ filter.param_name | escape }}" data-label="{{ filter.label | escape }}"{% if filter_type == 'vertical' and  forloop.index == 1 %} open{% endif %}>
                   <summary class="facets__summary caption-large focus-offset">
                     <div>
                       <span>{{ filter.label | escape }}</span>
@@ -444,9 +453,11 @@
             <div class="mobile-facets__main has-submenu gradient">
               {%- if enable_filtering -%}
                 {%- for filter in results.filters -%}
+                  {%- comment -%} Skip Price filter on mobile too {%- endcomment -%}
+                  {%- if filter.type == 'price_range' -%}{%- continue -%}{%- endif -%}
                   {% case filter.type %}
                   {% when 'boolean' or 'list' %}
-                    <details id="Details-Mobile-{{ forloop.index }}-{{ section.id }}" class="mobile-facets__details js-filter" data-index="mobile-{{ forloop.index }}">
+                    <details id="Details-Mobile-{{ forloop.index }}-{{ section.id }}" class="mobile-facets__details js-filter" data-index="mobile-{{ forloop.index }}" data-param-name="{{ filter.param_name | escape }}" data-label="{{ filter.label | escape }}">
                       <summary class="mobile-facets__summary focus-inset">
                         <div>
                           <span>{{ filter.label | escape }}</span>
@@ -496,7 +507,7 @@
                       </div>
                     </details>
                   {% when 'price_range' %}
-                    <details id="Details-Mobile-{{ forloop.index }}-{{ section.id }}" class="mobile-facets__details js-filter" data-index="mobile-{{ forloop.index }}">
+                    <details id="Details-Mobile-{{ forloop.index }}-{{ section.id }}" class="mobile-facets__details js-filter" data-index="mobile-{{ forloop.index }}" data-param-name="{{ filter.param_name | escape }}" data-label="{{ filter.label | escape }}">
                       <summary class="mobile-facets__summary focus-inset">
                         <div>
                           <span>{{ filter.label | escape }}</span>

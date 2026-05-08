@@ -971,3 +971,9 @@ if (document.readyState === 'loading') {
   document.addEventListener('click', onClick);
   update();
 })();
+
+// (Filter visibility is now controlled directly in Liquid: price_range is skipped.
+// We intentionally do NOT prune by param_name here, because Shopify filter
+// param_names/labels vary per shop and pruning client-side previously hid all
+// facets. Use Online Store > Search & Discovery to add Product Type / Color /
+// Percent Off filters and they will show up automatically.)

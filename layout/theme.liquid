@@ -439,8 +439,17 @@
       /* ── Unified page-width ── */
       .page-width { max-width: var(--site-max-width) !important; }
 
-      /* ── Logo ── */
-      #shopify-section-header .header__heading-logo { max-width: 70px !important; }
+      /* ── Logo: lock width so the nav (and FILTER below) stay aligned ── */
+      #shopify-section-header .header__heading-logo {
+        max-width: 70px !important;
+        width: 70px !important;
+        height: auto !important;
+      }
+      #shopify-section-header .header__heading,
+      #shopify-section-header .header__heading-link {
+        width: 70px !important;
+        flex: 0 0 70px !important;
+      }
 
       /* ── Nav font ── */
       .header__inline-menu .list-menu__item,
@@ -459,20 +468,86 @@
       .template-collection { background: #FAF8F5 !important; }
 
       /* ── Collection container aligned with header ── */
-      .collection,
-      .collection.page-width {
-        max-width: var(--site-max-width) !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-        padding-left: var(--site-padding-desktop) !important;
-        padding-right: var(--site-padding-desktop) !important;
+      /* On collection / search pages we use a wider container that matches the reference layout (Alo-style).
+         The inner `.collection` block sits inside `.facets-vertical` and must not be re-limited to 1220px,
+         otherwise the product grid gets pushed to the centre and the sidebar appears empty on the left. */
+      .template-collection .collection,
+      .template-collection .collection.page-width,
+      .template-search .collection,
+      .template-search .collection.page-width {
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
       }
       .facets-wrapper.page-width {
-        max-width: var(--site-max-width) !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-        padding-left: var(--site-padding-desktop) !important;
-        padding-right: var(--site-padding-desktop) !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+
+      /* ── Collection layout (match reference: left filters + wide 4-col grid) ──
+         Align with the top header so the FILTER label lines up with the "S" of
+         "Shop" in the nav, and the right edge of the 4th column lines up with
+         the search icon. The header has:
+           - left/right padding: 48px
+           - logo width: 70px
+           - column gap (logo → nav): 22px
+           - icon size: 44px each, gap: 10px, cart has margin-right: -12px
+         => Shop's "S" starts at  48 + 70 + 22 = 140px from the left edge
+         => Search icon centre is 48 - 12 + 44 + 10 + 44 + 10 + 22 = 166px from right */
+      .template-collection .facets-vertical.page-width,
+      .template-collection .facets-vertical-sort.page-width,
+      .template-search .facets-vertical.page-width,
+      .template-search .facets-vertical-sort.page-width {
+        max-width: none !important;
+        width: 100% !important;
+        padding-left: 140px !important;
+        padding-right: 166px !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Keep the same alignment on medium screens. The grid will simply have
+         narrower columns, but FILTER must still line up with the "S" of Shop. */
+
+      @media screen and (min-width: 990px) {
+        /* Fixed-width left sidebar (matches Alo-style ~200px) */
+        .template-collection .facets-vertical .facets-wrapper,
+        .template-search .facets-vertical .facets-wrapper {
+          flex: 0 0 200px !important;
+          width: 200px !important;
+          max-width: 200px !important;
+          padding-right: 24px !important;
+          margin-top: 0 !important;
+        }
+        .template-collection .facets-vertical .facets__form-vertical,
+        .template-search .facets-vertical .facets__form-vertical {
+          width: 100% !important;
+        }
+        /* Product grid fills the rest */
+        .template-collection .facets-vertical .product-grid-container,
+        .template-search .facets-vertical .product-grid-container {
+          flex: 1 1 auto !important;
+          min-width: 0 !important;
+          width: auto !important;
+          margin-top: 0 !important;
+        }
+        /* Sort bar aligned with the product area (right side) */
+        .template-collection .facets-vertical-sort,
+        .template-search .facets-vertical-sort {
+          padding-top: 8px !important;
+          padding-bottom: 8px !important;
+        }
+        /* Tighten the gap between the sort bar and the products below */
+        .template-collection .facets-vertical,
+        .template-search .facets-vertical {
+          padding-top: 4px !important;
+        }
       }
 
       /* ── Facets: reduced spacing ── */
@@ -511,44 +586,73 @@
         }
       }
 
-      /* ── Product card ── */
-      .product-grid .card {
+      /* ── Product card: square / no radius / no inner padding ──
+         Wrapper / meta area MUST stay transparent so the page background shows
+         through under swatches / title / price. Only the image card gets a
+         (non-visible) white background since the photo fills the whole card. */
+      .product-grid .card-wrapper,
+      .product-grid .card-wrapper--alo,
+      .product-grid .card-wrapper--split-alo {
+        background: transparent !important;
         border: none !important;
         box-shadow: none !important;
-        background: #FFFFFF !important;
-        border-radius: 22px !important;
+        border-radius: 0 !important;
+      }
+      .product-grid .card,
+      .product-grid .card--media {
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        border-radius: 0 !important;
         overflow: hidden;
-        transition: transform 0.35s ease, box-shadow 0.35s ease;
       }
       .product-grid .grid__item:hover .card {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 40px rgba(31,41,51,0.06) !important;
+        transform: none !important;
+        box-shadow: none !important;
+      }
+      /* Meta area (swatches, title, color name, price) is naked on the page bg */
+      .product-grid .card__alo-meta,
+      .product-grid .card__alo-swatches,
+      .product-grid .card__alo-color-row,
+      .product-grid .card-information,
+      .product-grid .card__heading {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
       }
 
-      /* ── Product image ── */
+      /* ── Product image: fill the whole card (margin / padding = 0) ── */
       .product-grid .card__inner {
-        background: #F5F3EF !important;
-        border-radius: 22px 22px 0 0 !important;
+        background: #FFFFFF !important;
+        border-radius: 0 !important;
         overflow: hidden;
         aspect-ratio: 1 / 1.1 !important;
+        padding: 0 !important;
+        margin: 0 !important;
       }
-      .product-grid .card__inner .card__media { aspect-ratio: 1 / 1.1 !important; }
+      .product-grid .card__inner .card__media { aspect-ratio: 1 / 1.1 !important; margin: 0 !important; }
+      .product-grid .card__media,
       .product-grid .card__media .media {
         aspect-ratio: 1 / 1.1 !important;
-        padding: 32px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
       }
       .product-grid .card__media .media img {
-        object-fit: contain !important;
+        object-fit: cover !important;
         border-radius: 0 !important;
-        transform: scale(0.88) !important;
-        transition: transform 0.45s ease;
-        max-height: 100% !important;
+        transform: none !important;
+        transition: none !important;
+        width: 100% !important;
+        height: 100% !important;
+        max-height: none !important;
+        display: block !important;
       }
       .product-grid .grid__item:hover .card__media .media img {
-        transform: scale(0.91) !important;
+        transform: none !important;
       }
 
       /* ── Card content: left aligned ── */
@@ -717,7 +821,7 @@
     </script>
   </head>
 
-  <body class="gradient">
+  <body class="gradient template-{{ template.name | handle }}{% if template.suffix %} template-{{ template.name | handle }}-{{ template.suffix | handle }}{% endif %}">
     <a class="skip-to-content-link button visually-hidden" href="#MainContent">
       {{ "accessibility.skip_to_text" | t }}
     </a>

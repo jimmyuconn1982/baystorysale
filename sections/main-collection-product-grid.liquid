@@ -12,6 +12,11 @@
 {%- endif -%}
 <noscript>{{ 'component-rte.css' | asset_url | stylesheet_tag }}</noscript>
 
+{%- liquid
+  assign force_filter_type = 'vertical'
+  assign force_enable_filtering = true
+-%}
+
 {%- style -%}
   .section-{{ section.id }}-padding {
     padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
@@ -28,7 +33,7 @@
 
 <div class="section-{{ section.id }}-padding">
   {% comment %} Sort is the first tabbable element when filter type is vertical {% endcomment %}
-  {%- if section.settings.enable_sorting and section.settings.filter_type == 'vertical' -%}
+  {%- if section.settings.enable_sorting and force_filter_type == 'vertical' -%}
     <facet-filters-form class="facets facets-vertical-sort page-width small-hide no-js-hidden">
       <form class="facets-vertical-form" id="FacetSortForm">
         <div class="facet-filters sorting caption">
@@ -73,12 +78,12 @@
     </facet-filters-form>
   {%- endif -%}
 
-  <div class="{% if section.settings.filter_type == 'vertical' %} facets-vertical page-width{% endif %}">
+  <div class="{% if force_filter_type == 'vertical' %} facets-vertical page-width{% endif %}">
     {{ 'component-facets.css' | asset_url | stylesheet_tag }}
     <script src="{{ 'facets.js' | asset_url }}" defer="defer"></script>
-    {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
-      <aside aria-labelledby="verticalTitle" class="facets-wrapper{% unless section.settings.enable_filtering %} facets-wrapper--no-filters{% endunless %}{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}" id="main-collection-filters" data-id="{{ section.id }}">
-        {% render 'facets', results: collection, enable_filtering: section.settings.enable_filtering, enable_sorting: section.settings.enable_sorting, filter_type: section.settings.filter_type %}
+    {%- if force_enable_filtering or section.settings.enable_sorting -%}
+      <aside aria-labelledby="verticalTitle" class="facets-wrapper" id="main-collection-filters" data-id="{{ section.id }}">
+        {% render 'facets', results: collection, enable_filtering: force_enable_filtering, enable_sorting: section.settings.enable_sorting, filter_type: force_filter_type %}
       </aside>
     {%- endif -%}
 
@@ -95,7 +100,7 @@
             </div>
           </div>
         {%- else -%}
-          <div class="collection{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}">
+          <div class="collection">
             <div class="loading-overlay gradient"></div>
     
             <ul id="product-grid" data-id="{{ section.id }}" class="
