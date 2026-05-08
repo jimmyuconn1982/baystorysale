@@ -134,7 +134,7 @@
           "announcement_LMnQgn"
         ],
         "settings": {
-          "bar_bg_color": "#243B53",
+          "bar_bg_color": "#243b53",
           "bar_padding_y": 8
         }
       },
@@ -146,12 +146,11 @@
           " /* 悬停颜色 */.header__inline-menu .list-menu__item a:hover {color: #000000 !important;}"
         ],
         "settings": {
-          "bg_color": "#F8F6F2",
+          "bg_color": "#f8f6f2",
           "color_scheme": "background-1",
-          "logo": "shopify://shop_images/55555.jpg",
+          "logo": "shopify://shop_images/logo_cdd93b4c-efd6-4876-b943-f9667f5e7ae3.png",
           "logo_width": 110,
           "logo_position": "middle-left",
-          "menu": "main-menu",
           "menu_type_desktop": "dropdown",
           "show_line_separator": true,
           "enable_sticky_header": false,
@@ -348,7 +347,6 @@
             "logo": "{{ shop.brand.logo }}",
             "logo_width": 90,
             "logo_position": "middle-left",
-            "menu": "main-menu",
             "show_line_separator": true,
             "enable_sticky_header": true,
             "margin_bottom": 0,
