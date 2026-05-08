@@ -49,7 +49,25 @@
               <div class="active-facets active-facets-desktop">
                 <div class="active-facets-vertical-filter">
                   {%- unless results.filters == empty -%}
-                    <h2 class="facets__heading facets__heading--vertical caption-large text-body" id="verticalTitle" tabindex="-1">{{ 'products.facets.filter_by_label' | t }}</h2>
+                    {%- comment -%}
+                      Show only overall selected count after "FILTERS".
+                      IMPORTANT: we must compute the count BEFORE rendering the heading,
+                      otherwise `total_active_values` is still 0 at this point.
+                    {%- endcomment -%}
+                    {%- liquid
+                      assign _total_active_values = 0
+                      for _f in results.filters
+                        assign _total_active_values = _total_active_values | plus: _f.active_values.size
+                        if _f.type == 'price_range'
+                          if _f.min_value.value != nil or _f.max_value.value != nil
+                            assign _total_active_values = _total_active_values | plus: 1
+                          endif
+                        endif
+                      endfor
+                    -%}
+                    <h2 class="facets__heading facets__heading--vertical caption-large text-body" id="verticalTitle" tabindex="-1">
+                      FILTERS{%- if _total_active_values > 0 -%} ({{ _total_active_values }}){%- endif -%}
+                    </h2>
                   {%- endunless -%}
                   <facet-remove class="active-facets__button-wrapper">
                     <a href="{{ results_url }}" class="active-facets__button-remove underlined-link">
@@ -57,32 +75,10 @@
                     </a>
                   </facet-remove>
                 </div>
-                {%- for filter in results.filters -%}
-                  {%- for value in filter.active_values -%}
-                    <facet-remove>
-                      <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
-                        <span class="active-facets__button-inner button button--tertiary">
-                          {{ filter.label }}: {{ value.label | escape }}
-                          {% render 'icon-close-small' %}
-                          <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
-                        </span>
-                      </a>
-                    </facet-remove>
-                  {%- endfor -%}
-                  {% if filter.type == "price_range" %}
-                    {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
-                      <facet-remove>
-                        <a href="{{ filter.url_to_remove }}" class="active-facets__button active-facets__button--light">
-                          <span class="active-facets__button-inner button button--tertiary">
-                            {%- if filter.min_value.value -%}{{ filter.min_value.value | money }}{%- else -%}{{ 0 | money }}{%- endif -%}-{%- if filter.max_value.value -%}{{ filter.max_value.value | money }}{%- else -%}{{ filter.range_max | money }}{%- endif -%}
-                            {% render 'icon-close-small' %}
-                            <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
-                          </span>
-                        </a>
-                      </facet-remove>
-                    {%- endif -%}
-                  {% endif %}
-                {%- endfor -%}
+                {%- comment -%}
+                  Per design, do NOT render active filter pills under FILTERS.
+                  Only show the overall selected count (FILTERS (n)) + Remove all.
+                {%- endcomment -%}
               </div>
             {%- endif -%}
 
@@ -99,7 +95,7 @@
                 <details id="Details-{{ forloop.index }}-{{ section.id }}" class="{% if filter_type == 'horizontal' %}disclosure-has-popup facets__disclosure{% else %} facets__disclosure-vertical{% endif %} js-filter" data-index="{{ forloop.index }}" data-param-name="{{ filter.param_name | escape }}" data-label="{{ filter.label | escape }}"{% if filter_type == 'vertical' and forloop.index == 1 %} open{% endif %}>
                   <summary class="facets__summary caption-large focus-offset" aria-label="{{ filter.label }} ({{ 'products.facets.filters_selected.one' | t: count: filter.active_values.size }})">
                     <div>
-                      <span>{{ filter.label | escape }}{%- if filter_type == 'vertical' -%}<span class="facets__selected no-js-hidden{% if filter.active_values.size == 0 %} hidden{% endif %}"> ({{ filter.active_values.size }})</span>{% endif %}</span>
+                      <span>{{ filter.label | escape }}</span>
                       {% render 'icon-caret' %}
                     </div>
                   </summary>
@@ -128,23 +124,20 @@
                                 {% if value.count == 0 and value.active == false %}disabled{% endif %}
                               >
 
-                              <svg width="1.6rem" height="1.6rem" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                                <rect width="16" height="16" stroke="currentColor" fill="none" stroke-width="1"></rect>
-                              </svg>
-
-                              <svg class="icon icon-checkmark"
-                                width="1.1rem"
-                                height="0.7rem"
-                                viewBox="0 0 11 7"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-
-                                <path d="M1.5 3.5L2.83333 4.75L4.16667 6L9.5 1"
-                                  stroke="currentColor"
-                                  stroke-width="1.75"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round" />
-                              </svg>
+                              <span class="facet-checkbox__box" aria-hidden="true">
+                                <svg class="facet-checkbox__box-outline" width="1.6rem" height="1.6rem" viewBox="0 0 16 16" focusable="false">
+                                  <rect width="16" height="16" stroke="currentColor" fill="none" stroke-width="1"></rect>
+                                </svg>
+                                {%- comment -%}
+                                  IMPORTANT: do NOT use Dawn's `.icon-checkmark` class here.
+                                  Dawn positions `.icon-checkmark` with hard-coded top/left
+                                  which breaks centering. We control centering via
+                                  `.facet-checkbox__box-check` in our CSS.
+                                {%- endcomment -%}
+                                <svg class="facet-checkbox__box-check icon" width="1.6rem" height="1.6rem" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                                  <path d="M4 8.5L7 11.5L12.5 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                              </span>
 
                               <span aria-hidden="true">{{ value.label | escape }} ({{ value.count }})</span>
                               <span class="visually-hidden">{{ value.label | escape }} ({% if value.count == 1 %}{{ 'products.facets.product_count_simple.one' | t: count: value.count }}{% else %}{{ 'products.facets.product_count_simple.other' | t: count: value.count }}{% endif %})</span>
@@ -165,23 +158,14 @@
                                 {% if value.count == 0 and value.active == false %}disabled{% endif %}
                               >
 
-                              <svg width="1.6rem" height="1.6rem" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                                <rect width="16" height="16" stroke="currentColor" fill="none" stroke-width="1"></rect>
-                              </svg>
-
-                              <svg class="icon icon-checkmark"
-                                width="1.1rem"
-                                height="0.7rem"
-                                viewBox="0 0 11 7"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-
-                                <path d="M1.5 3.5L2.83333 4.75L4.16667 6L9.5 1"
-                                  stroke="currentColor"
-                                  stroke-width="1.75"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round" />
-                              </svg>
+                              <span class="facet-checkbox__box" aria-hidden="true">
+                                <svg class="facet-checkbox__box-outline" width="1.6rem" height="1.6rem" viewBox="0 0 16 16" focusable="false">
+                                  <rect width="16" height="16" stroke="currentColor" fill="none" stroke-width="1"></rect>
+                                </svg>
+                                <svg class="facet-checkbox__box-check icon" width="1.6rem" height="1.6rem" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                                  <path d="M4 8.5L7 11.5L12.5 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                              </span>
 
                               <span aria-hidden="true">{{ value.label | escape }} ({{ value.count }})</span>
                               <span class="visually-hidden">{{ value.label | escape }} ({% if value.count == 1 %}{{ 'products.facets.product_count_simple.one' | t: count: value.count }}{% else %}{{ 'products.facets.product_count_simple.other' | t: count: value.count }}{% endif %})</span>
@@ -281,7 +265,12 @@
                   <facet-remove>
                     <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
                       <span class="active-facets__button-inner button button--tertiary">
-                        {{ filter.label }}: {{ value.label | escape }}
+                        {%- assign _facet_label = filter.label | downcase -%}
+                        {%- if _facet_label contains 'availability' -%}
+                          {{ value.label | escape }}
+                        {%- else -%}
+                          {{ filter.label }}: {{ value.label | escape }}
+                        {%- endif -%}
                         {% render 'icon-close-small' %}
                         <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
                       </span>
@@ -624,7 +613,12 @@
         <facet-remove>
           <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
             <span class="active-facets__button-inner button button--tertiary">
-              {{ filter.label }}: {{ value.label | escape }}
+              {%- assign _facet_label = filter.label | downcase -%}
+              {%- if _facet_label contains 'availability' -%}
+                {{ value.label | escape }}
+              {%- else -%}
+                {{ filter.label }}: {{ value.label | escape }}
+              {%- endif -%}
               {% render 'icon-close-small' %}
               <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
             </span>

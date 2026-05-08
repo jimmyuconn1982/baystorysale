@@ -102,6 +102,10 @@
             </div>
           </a>
 
+          <div class="card__alo-soldout-badge" data-soldout-badge{% if current_available %} hidden{% endif %}>
+            {{ 'products.product.sold_out' | t }}
+          </div>
+
           {%- if show_quick_add -%}
             <div class="card__quick-add-overlay">
               <div class="quick-add quick-add--overlay">
@@ -242,7 +246,7 @@
           swatches / title / color name / price aligned across the grid.
         {%- endcomment -%}
         <div class="card__alo-color-name">{{ current_color | escape }}</div>
-        <div class="card__alo-color-status" aria-live="polite">{% if current_color != blank and current_available == false %}Sold out{% endif %}</div>
+        <div class="card__alo-color-status" aria-live="polite"></div>
       </div>
 
       {%- if show_vendor -%}
@@ -252,14 +256,6 @@
 
       <div class="card-information">
         {% render 'price', product: card_product, price_class: '' %}
-      </div>
-
-      <div class="card__badge {{ settings.badge_position }}">
-        {%- if card_product.available == false -%}
-          <span id="Badge-{{ section_id }}-{{ card_product.id }}" class="badge badge--bottom-left color-{{ settings.sold_out_badge_color_scheme }}">{{ 'products.product.sold_out' | t }}</span>
-        {%- elsif card_product.compare_at_price > card_product.price and card_product.available -%}
-          <span id="Badge-{{ section_id }}-{{ card_product.id }}" class="badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}">{{ 'products.product.on_sale' | t }}</span>
-        {%- endif -%}
       </div>
     </div>
   </div>

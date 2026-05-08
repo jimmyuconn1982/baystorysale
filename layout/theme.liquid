@@ -584,10 +584,12 @@
         font-size: 12.5px !important;
         line-height: 1.4 !important;
         align-items: center !important;
-        gap: 8px !important;
+        gap: 6px !important;
         padding: 6px 0 !important;
         display: flex !important;
         flex-wrap: nowrap !important;
+        justify-content: flex-start !important;
+        text-align: left !important;
       }
       .facets-vertical .facet-checkbox > *,
       .facets-wrapper .facet-checkbox > *,
@@ -595,9 +597,11 @@
         white-space: nowrap !important;
         flex-shrink: 0 !important;
       }
-      .facets-vertical .facet-checkbox span,
-      .facets-wrapper .facet-checkbox span,
-      #FacetFiltersForm .facet-checkbox span {
+      /* Only style the visible label text. Do NOT touch `.visually-hidden`,
+         otherwise screen-reader-only text becomes visible (bug). */
+      .facets-vertical .facet-checkbox span[aria-hidden="true"],
+      .facets-wrapper .facet-checkbox span[aria-hidden="true"],
+      #FacetFiltersForm .facet-checkbox span[aria-hidden="true"] {
         white-space: nowrap !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
@@ -605,13 +609,96 @@
         letter-spacing: 0 !important;
         flex: 1 1 auto !important;
         min-width: 0 !important;
+        text-align: left !important;
+      }
+
+      /* Ensure `.visually-hidden` stays hidden even if other rules leak in */
+      .facets-vertical .facet-checkbox .visually-hidden,
+      .facets-wrapper .facet-checkbox .visually-hidden,
+      #FacetFiltersForm .facet-checkbox .visually-hidden {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
       }
       .facets-vertical .facet-checkbox svg,
       .facets-wrapper .facet-checkbox svg,
       #FacetFiltersForm .facet-checkbox svg {
         flex: 0 0 auto !important;
-        width: 1.4rem !important;
-        height: 1.4rem !important;
+        width: 1.6rem !important;
+        height: 1.6rem !important;
+      }
+
+      /* Rewritten checkbox visuals (hard-fix centering + thinner checkmark)
+         We render a dedicated `.facet-checkbox__box` wrapper in Liquid and
+         fully control its layout here, instead of relying on theme's fixed
+         absolute top/left offsets. */
+      .facets-vertical .facet-checkbox__box {
+        width: 1.6rem !important;
+        height: 1.6rem !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        position: relative !important;
+        margin-right: 0.6rem !important;
+        flex: 0 0 auto !important;
+      }
+
+      /* Ensure the whole list is left-aligned (no accidental centering) */
+      .facets-vertical .facets-wrap-vertical,
+      .facets-vertical .facets__item,
+      .facets-vertical .parent-wrap {
+        text-align: left !important;
+        justify-content: flex-start !important;
+      }
+      .facets-vertical .facet-checkbox__box-outline {
+        position: absolute !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: rgb(var(--color-background)) !important;
+      }
+      .facets-vertical .facet-checkbox__box-check {
+        position: absolute !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        transform: none !important;
+        visibility: hidden !important;
+      }
+      .facets-vertical .facet-checkbox > input[type='checkbox']:checked ~ .facet-checkbox__box .facet-checkbox__box-check {
+        visibility: visible !important;
+      }
+      .facets-vertical .facet-checkbox__box-check path {
+        stroke-width: 1.4 !important;
+      }
+
+      /* Hide per-filter selected count in the summary (Availability (2) etc.) */
+      .facets-vertical .facets__selected {
+        display: none !important;
+      }
+
+      /* Make the actual <input> clickable area match the 1.6rem box exactly,
+         and remove Dawn's negative offsets that can misalign the checkmark. */
+      .facets-vertical .facet-checkbox {
+        position: relative !important;
+      }
+      .facets-vertical .facet-checkbox > input[type='checkbox'] {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 1.6rem !important;
+        height: 1.6rem !important;
+        opacity: 0 !important;
+        z-index: 2 !important;
+        margin: 0 !important;
+        appearance: none !important;
+        -webkit-appearance: none !important;
       }
 
       /* ═════════════════════════════════════════════════════════════════

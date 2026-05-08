@@ -930,7 +930,14 @@ function initCardColorSwatches() {
     }
 
     const status = wrapper.querySelector('.card__alo-color-status');
-    if (status) status.textContent = available ? '' : 'Sold out';
+    if (status) status.textContent = '';
+
+    // Toggle sold-out badge on the image (top-left)
+    const soldoutBadge = wrapper.querySelector('[data-soldout-badge]');
+    if (soldoutBadge) {
+      if (available) soldoutBadge.setAttribute('hidden', '');
+      else soldoutBadge.removeAttribute('hidden');
+    }
 
     // Swap main product image to selected color
     if (imgSrc) {

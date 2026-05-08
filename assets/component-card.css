@@ -510,6 +510,25 @@
   position: relative;
 }
 
+/* Sold out badge pinned to image top-left (per selected swatch) */
+.card-wrapper--split-alo .card__alo-soldout-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  background: rgba(17, 24, 39, 0.82);
+  color: rgba(255, 255, 255, 0.96);
+  font-family: var(--font-sans), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  border-radius: 2px;
+  line-height: 1;
+  pointer-events: none;
+}
+
 /* Meta (title/price) is NOT a card.
    Use a flex column with FIXED min-heights per row so swatches / title /
    color name / price line up across all cards even when a product has no
@@ -646,8 +665,10 @@
 }
 
 .card-wrapper--split-alo .card__alo-swatches .color-swatch.is-selected {
+  /* Selected indicator stays INSIDE the swatch so the visual diameter is
+     identical to all other swatches → swatches stay perfectly aligned. */
   border-color: rgba(0, 0, 0, 0.85);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.95), 0 0 0 3px rgba(0, 0, 0, 0.85);
+  box-shadow: inset 0 0 0 2px #ffffff;
 }
 
 .card-wrapper--split-alo .card__alo-swatches .color-swatch.is-soldout::after {
