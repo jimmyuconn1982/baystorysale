@@ -611,14 +611,32 @@
         box-shadow: none !important;
       }
       /* Meta area (swatches, title, color name, price) is naked on the page bg */
+      .product-grid .grid__item,
+      .product-grid .grid__item > *,
       .product-grid .card__alo-meta,
+      .product-grid .card__alo-meta *,
       .product-grid .card__alo-swatches,
       .product-grid .card__alo-color-row,
       .product-grid .card-information,
-      .product-grid .card__heading {
+      .product-grid .card__heading,
+      .product-grid .card__content,
+      .product-grid .card__information {
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
+      }
+      /* Strip inherited background-image (gradient class on .card) and color
+         scheme background that paints the image card white. The photo fills
+         the whole card so a transparent card has the same visible result. */
+      .product-grid .card,
+      .product-grid .card--media,
+      .product-grid .card--standard,
+      .product-grid .card--card,
+      .product-grid .card.gradient,
+      .product-grid .card-wrapper.gradient,
+      .product-grid .card[class*="color-"] {
+        background-image: none !important;
+        background-color: transparent !important;
       }
 
       /* ── Product image: fill the whole card (margin / padding = 0) ── */
