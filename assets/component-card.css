@@ -640,6 +640,9 @@
   appearance: none;
   cursor: pointer;
   position: relative;
+  /* Clip the sold-out diagonal stroke to the inside of the circle so the
+     line never overshoots the rim (matches the reference). */
+  overflow: hidden;
 }
 
 .card-wrapper--split-alo .card__alo-swatches .color-swatch.is-selected {
@@ -648,16 +651,23 @@
 }
 
 .card-wrapper--split-alo .card__alo-swatches .color-swatch.is-soldout::after {
+  /* "/" stroke from bottom-left to top-right; the swatch has overflow:hidden
+     so the line gets cleanly clipped to the circle edge (no overshoot).
+     Semi-transparent black blends on every swatch colour the same way the
+     reference does (dark dot pattern shows through dark swatches because
+     of the alpha + the natural border ring). */
   content: '';
   position: absolute;
-  left: -3px;
-  right: -3px;
+  left: -8px;
+  right: -8px;
   top: 50%;
-  height: 1.5px;
-  background: rgba(0, 0, 0, 0.35);
-  transform: rotate(45deg);
+  height: 2px;
+  margin-top: -1px;
+  background: rgba(0, 0, 0, 0.45);
+  transform: rotate(-45deg);
   transform-origin: center;
-  border-radius: 2px;
+  border-radius: 0;
+  pointer-events: none;
 }
 
 .card-wrapper--split-alo .card__alo-swatches .color-swatch:focus-visible {

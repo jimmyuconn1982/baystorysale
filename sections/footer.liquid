@@ -64,7 +64,7 @@
     margin: 0;
     gap: 0;
     border: 1px solid rgba(255,255,255,0.26);
-    border-radius: 8px;
+    border-radius: 2px;
     overflow: hidden;
     background: rgba(255,255,255,0.10);
     transition: border-color 0.2s;
@@ -81,6 +81,7 @@
     font-family: inherit;
     color: rgba(255, 255, 255, 0.92);
     background: transparent;
+    border-radius: 0;
     min-width: 0;
   }
   .fp-newsletter__input::placeholder { color: rgba(255,255,255,0.62); }
@@ -101,9 +102,11 @@
   .fp-newsletter__btn:hover { background: rgba(255,255,255,0.92); }
   .fp-newsletter__disclaimer {
     font-size: 11px;
-    color: rgba(255,255,255,0.72);
+    color: rgba(255,255,255,0.62);
     margin: 12px 0 0;
     letter-spacing: 0.2px;
+    line-height: 1.55;
+    max-width: 380px;
   }
 
   /* ── Main grid: asymmetric ── */
@@ -117,36 +120,43 @@
     align-items: start;
   }
 
-  /* ── Column headings ── */
+  /* ── Column headings (Quick links / Shop / Why BaystoryBag) ──
+     Use the site sans-serif so all column titles share one consistent voice
+     with the rest of the footer (links + brand body). Slight uppercase +
+     letter-spacing reads as a small cap title without the visual weight of
+     the previous serif treatment. */
   .fp-col__heading {
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    font-size: 15px;
+    font-family: var(--font-sans), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 12px;
     font-weight: 600;
-    letter-spacing: 0.02em;
-    text-transform: none;
-    color: rgba(255,255,255,0.96) !important;
-    margin: 0 0 14px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.92) !important;
+    margin: 0 0 16px;
     line-height: 1.3;
   }
+  /* Brand title gets the same family but is sized to read as the brand
+     statement rather than a section label. */
   .fp-col__heading--brand {
-    font-size: 16px;
-    letter-spacing: 0.01em;
-    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.96) !important;
+    margin-bottom: 14px;
+    line-height: 1.4;
   }
 
-  /* ── Brand column ── */
-  .fp-col--brand .fp-brand-text {
-    font-size: 12px;
-    color: rgba(255,255,255,0.80);
-    line-height: 1.65;
-    margin: 0;
-    letter-spacing: 0.15px;
-  }
+  /* ── Brand column body ── */
+  .fp-col--brand .fp-brand-text,
   .fp-col--brand .fp-brand-text p {
+    font-family: var(--font-sans), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 13px;
+    color: rgba(255,255,255,0.72);
+    line-height: 1.7;
     margin: 0;
-    font-size: 12px;
-    color: rgba(255,255,255,0.80);
-    line-height: 1.65;
+    letter-spacing: 0.1px;
+    font-weight: 400;
   }
 
   /* ── Social ── */
@@ -402,7 +412,7 @@
               >
               <button type="submit" class="fp-newsletter__btn" name="commit" aria-label="Subscribe">Subscribe</button>
             </div>
-            <p class="fp-newsletter__disclaimer">No spam. Unsubscribe anytime.</p>
+            <p class="fp-newsletter__disclaimer">By entering your email address, you agree to our Privacy Policy and will receive BaystoryBag offers, promotions and other commercial messages. You may unsubscribe at any time.</p>
             {%- if form.errors -%}
               <small class="newsletter-form__message form__message" id="ContactFooter-error">{% render 'icon-error' %}{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}</small>
             {%- endif -%}
