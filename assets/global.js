@@ -1015,6 +1015,15 @@ if (document.readyState === 'loading') {
   };
 
   const onClick = (event) => {
+    // Open mobile filters drawer from Alo-style bar
+    const openFiltersBtn = event.target.closest('[data-open-mobile-filters]');
+    if (openFiltersBtn) {
+      event.preventDefault();
+      const drawerSummary = document.querySelector('.mobile-facets__wrapper summary.mobile-facets__open-wrapper');
+      if (drawerSummary) drawerSummary.click();
+      return;
+    }
+
     // Toggle: click the trigger
     const trigger = event.target.closest('[data-sort-trigger]');
     if (trigger) {
@@ -1032,9 +1041,10 @@ if (document.readyState === 'loading') {
       event.preventDefault();
       const dropdown = option.closest('.sort-dropdown-alo');
       const form = dropdown ? dropdown.closest('form') : null;
+      // Support both desktop hidden select (sort-by-native) and the mobile bar's hidden input[name=sort_by]
       const select = form ? form.querySelector('select.sort-by-native') : null;
+      const sortInput = form ? form.querySelector('input[name="sort_by"]') : null;
       const value = option.getAttribute('data-sort-value') || '';
-      if (!select) return;
 
       // Update visual selected state
       dropdown.querySelectorAll('.sort-dropdown-alo__option.is-selected').forEach((el) => {
@@ -1045,10 +1055,20 @@ if (document.readyState === 'loading') {
       option.setAttribute('aria-selected', 'true');
 
       // Sync the hidden native <select> and trigger facets.js auto-submit
-      if (select.value !== value) {
-        select.value = value;
-        select.dispatchEvent(new Event('input', { bubbles: true }));
-        select.dispatchEvent(new Event('change', { bubbles: true }));
+      if (select) {
+        if (select.value !== value) {
+          select.value = value;
+          select.dispatchEvent(new Event('input', { bubbles: true }));
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      } else if (sortInput) {
+        if (sortInput.value !== value) {
+          sortInput.value = value;
+          sortInput.dispatchEvent(new Event('input', { bubbles: true }));
+          sortInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      } else {
+        return;
       }
       setOpen(dropdown, false);
       return;

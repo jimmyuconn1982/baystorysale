@@ -569,6 +569,74 @@
         pointer-events: none !important;
       }
 
+      /* ── Mobile collection bar (rewrite): FILTERS(n) + SORT ── */
+      @media screen and (max-width: 749px) {
+        /* Hide Dawn's default "Filter and sort" trigger row (we use our own bar). */
+        .mobile-facets__open-wrapper {
+          display: none !important;
+        }
+
+        .facets-alo-mobile-bar {
+          width: 100% !important;
+          box-sizing: border-box !important;
+          /* Align exactly with the product grid/page-width padding (no extra inset) */
+          padding: 8px 0 10px !important;
+          margin: 0 !important;
+        }
+        .facets-alo-mobile-bar__form {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 10px !important;
+          align-items: center !important;
+          width: 100% !important;
+        }
+        .facets-alo-mobile-bar__form > * {
+          width: 100% !important;
+          min-width: 0 !important;
+        }
+
+        /* Single source of truth: both controls share the exact same styles. */
+        .alo-mobile-control {
+          all: unset !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+          padding: 10px 12px !important;
+          background: #ffffff !important;
+          border: 1px solid rgba(0,0,0,0.12) !important;
+          border-radius: 2px !important;
+          font-family: var(--font-sans), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+          font-size: 12px !important;
+          font-weight: 600 !important;
+          letter-spacing: 0.08em !important;
+          text-transform: uppercase !important;
+          color: #111111 !important;
+          line-height: 1 !important;
+          cursor: pointer !important;
+        }
+        .alo-mobile-control .icon-caret {
+          width: 12px !important;
+          height: 12px !important;
+          opacity: 0.9 !important;
+        }
+
+        /* SORT dropdown: container and panel widths are derived from button width. */
+        .sort-dropdown-alo--mobile {
+          width: 100% !important;
+          display: block !important;
+        }
+        .sort-dropdown-alo--mobile .sort-dropdown-alo__trigger {
+          text-decoration: none !important;
+        }
+        .sort-dropdown-alo--mobile .sort-dropdown-alo__panel {
+          left: auto !important;
+          right: 0 !important;
+          width: 100% !important;
+        }
+      }
+
       /* Keep the same alignment on medium screens. The grid will simply have
          narrower columns, but FILTER must still line up with the "S" of Shop. */
 
@@ -576,9 +644,9 @@
         /* Fixed-width left sidebar (matches Alo-style ~200px) */
         .template-collection .facets-vertical .facets-wrapper,
         .template-search .facets-vertical .facets-wrapper {
-          flex: 0 0 200px !important;
-          width: 200px !important;
-          max-width: 200px !important;
+          flex: 0 0 240px !important;
+          width: 240px !important;
+          max-width: 240px !important;
           padding-right: 24px !important;
           margin-top: 0 !important;
         }
@@ -628,6 +696,72 @@
          `.facets__list` class (per snippets/facets.liquid), so we target the
          label directly. Force nowrap + a slightly smaller font so labels like
          "Out of stock (10)" never break to 2 lines. */
+      /* Desktop sidebar options (rewrite): hard left alignment for Availability etc. */
+      .template-collection .facets-vertical .alo-facet-option,
+      .template-search .facets-vertical .alo-facet-option {
+        position: relative !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 10px !important;
+        padding: 6px 0 !important;
+        margin: 0 !important;
+        font-family: var(--font-sans), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        font-size: 14px !important;
+        line-height: 1.4 !important;
+        color: rgba(17,17,17,0.88) !important;
+        text-align: left !important;
+        white-space: nowrap !important;
+      }
+      .template-collection .facets-vertical .alo-facet-option--disabled,
+      .template-search .facets-vertical .alo-facet-option--disabled {
+        opacity: 0.5 !important;
+      }
+      .template-collection .facets-vertical .alo-facet-option > input[type='checkbox'],
+      .template-search .facets-vertical .alo-facet-option > input[type='checkbox'] {
+        position: absolute !important;
+        inset: 0 auto auto 0 !important;
+        width: 16px !important;
+        height: 16px !important;
+        opacity: 0 !important;
+        margin: 0 !important;
+        cursor: pointer !important;
+      }
+      .template-collection .facets-vertical .alo-facet-option__box,
+      .template-search .facets-vertical .alo-facet-option__box {
+        width: 16px !important;
+        height: 16px !important;
+        position: relative !important;
+        flex: 0 0 16px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: rgba(17,17,17,0.55) !important;
+      }
+      .template-collection .facets-vertical .alo-facet-option__box-check,
+      .template-search .facets-vertical .alo-facet-option__box-check {
+        position: absolute !important;
+        inset: 0 !important;
+        width: 16px !important;
+        height: 16px !important;
+        opacity: 0 !important;
+      }
+      .template-collection .facets-vertical .alo-facet-option > input[type='checkbox']:checked ~ .alo-facet-option__box .alo-facet-option__box-check,
+      .template-search .facets-vertical .alo-facet-option > input[type='checkbox']:checked ~ .alo-facet-option__box .alo-facet-option__box-check {
+        opacity: 1 !important;
+        color: rgba(17,17,17,0.85) !important;
+      }
+      .template-collection .facets-vertical .alo-facet-option__text,
+      .template-search .facets-vertical .alo-facet-option__text {
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        text-align: left !important;
+      }
+
       .facets-vertical .facet-checkbox,
       .facets-wrapper .facet-checkbox,
       #FacetFiltersForm .facet-checkbox,
@@ -652,6 +786,15 @@
       .facets-wrapper .facet-checkbox > *,
       #FacetFiltersForm .facet-checkbox > * {
         white-space: nowrap !important;
+      }
+      /* Only the checkbox visuals should be non-shrinking.
+         Allow the label text to flex so it stays left-aligned. */
+      .facets-vertical .facet-checkbox > input[type='checkbox'],
+      .facets-wrapper .facet-checkbox > input[type='checkbox'],
+      #FacetFiltersForm .facet-checkbox > input[type='checkbox'],
+      .facets-vertical .facet-checkbox .facet-checkbox__box,
+      .facets-wrapper .facet-checkbox .facet-checkbox__box,
+      #FacetFiltersForm .facet-checkbox .facet-checkbox__box {
         flex-shrink: 0 !important;
       }
       /* Only style the visible label text. Do NOT touch `.visually-hidden`,
@@ -667,6 +810,18 @@
         flex: 1 1 auto !important;
         min-width: 0 !important;
         text-align: left !important;
+        margin-left: 0 !important;
+      }
+
+      /* Desktop vertical sidebar: remove list padding so option text aligns left. */
+      .template-collection .facets-vertical .facets-wrap-vertical > ul,
+      .template-search .facets-vertical .facets-wrap-vertical > ul,
+      .template-collection .facets-vertical .facets-wrap-vertical > ul.list-unstyled,
+      .template-search .facets-vertical .facets-wrap-vertical > ul.list-unstyled {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
       }
 
       /* Ensure `.visually-hidden` stays hidden even if other rules leak in */
@@ -790,12 +945,21 @@
         gap: 0 !important;
         padding: 0 !important;
         margin: 0 !important;
+        width: 100% !important;
       }
 
       /* Container */
       .sort-dropdown-alo {
         position: relative !important;
         display: inline-block !important;
+        width: auto !important;
+      }
+
+      /* Desktop only: keep dropdown wide enough so options don't truncate */
+      @media screen and (min-width: 750px) {
+        .sort-dropdown-alo:not(.sort-dropdown-alo--mobile) {
+          width: 220px !important;
+        }
       }
 
       /* Trigger ("Sort by ⌃") */
@@ -804,15 +968,42 @@
         display: inline-flex !important;
         align-items: center !important;
         gap: 6px !important;
+        width: 100% !important;
+        justify-content: flex-end !important;
         cursor: pointer !important;
         font-family: var(--font-sans) !important;
-        font-size: 15px !important;
-        font-weight: 700 !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
         color: #111111 !important;
         text-decoration: underline !important;
         text-underline-offset: 3px !important;
         line-height: 1.5 !important;
         padding: 4px 2px !important;
+      }
+
+      /* Mobile: force boxed "input" look (match reference) */
+      @media screen and (max-width: 749px) {
+        .sort-dropdown-alo--mobile .sort-dropdown-alo__trigger {
+          all: unset !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+          padding: 10px 12px !important;
+          background: #ffffff !important;
+          border: 1px solid rgba(0,0,0,0.12) !important;
+          border-radius: 2px !important;
+          font-family: var(--font-sans), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+          font-size: 12px !important;
+          font-weight: 600 !important;
+          letter-spacing: 0.08em !important;
+          text-transform: uppercase !important;
+          color: #111111 !important;
+          line-height: 1 !important;
+          text-decoration: none !important;
+          cursor: pointer !important;
+        }
       }
       .sort-dropdown-alo__trigger:hover { opacity: 0.7 !important; }
       .sort-dropdown-alo__trigger .sort-dropdown-alo__caret {
@@ -829,7 +1020,8 @@
         position: absolute !important;
         top: calc(100% + 10px) !important;
         right: 0 !important;
-        width: 240px !important;
+        /* Panel width must NOT exceed the trigger width */
+        width: 100% !important;
         box-sizing: border-box !important;
         margin: 0 !important;
         padding: 6px 0 !important;
@@ -875,6 +1067,136 @@
         font-weight: 600 !important;
         text-decoration: underline !important;
         text-underline-offset: 3px !important;
+      }
+
+      /* Mobile filter drawer should slide in from LEFT (match reference). */
+      @media screen and (max-width: 989px) {
+        .mobile-facets__inner {
+          margin-left: 0 !important;
+          margin-right: auto !important;
+          border-width: 0 var(--drawer-border-width) 0 0 !important;
+        }
+        .js .disclosure-has-popup:not(.menu-opening) .mobile-facets__inner {
+          transform: translateX(-105vw) !important;
+        }
+
+        /* Make each filter section expand downward (accordion),
+           instead of the default slide-in submenu. */
+        .mobile-facets__main.has-submenu {
+          overflow: visible !important;
+        }
+        .js .mobile-facets__submenu {
+          position: static !important;
+          transform: none !important;
+          visibility: visible !important;
+          display: none !important;
+          height: auto !important;
+        }
+        .js details[open] > .mobile-facets__submenu {
+          display: block !important;
+        }
+        .mobile-facets__close-button {
+          display: none !important;
+        }
+
+        /* Remove the extra border around the Apply button */
+        .mobile-facets__footer .button,
+        .mobile-facets__footer .button--primary {
+          border: 0 !important;
+          box-shadow: none !important;
+          outline: 0 !important;
+        }
+
+        /* Avoid duplicate Apply bars inside opened submenus */
+        .mobile-facets__submenu .mobile-facets__footer {
+          display: none !important;
+        }
+
+        /* Mobile facets header (match reference: left title + close icon) */
+        .mobile-facets__header {
+          padding: 14px 18px 10px !important;
+          text-align: left !important;
+        }
+        .mobile-facets__header-inner {
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 10px !important;
+        }
+        .mobile-facets__header-row {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          width: 100% !important;
+        }
+        .mobile-facets__header-left {
+          display: inline-flex !important;
+          align-items: center !important;
+          gap: 10px !important;
+          min-width: 0 !important;
+        }
+        .mobile-facets__header-left .icon-filter {
+          width: 16px !important;
+          height: 16px !important;
+          opacity: 0.85 !important;
+        }
+        .mobile-facets__heading {
+          margin: 0 !important;
+          font-family: var(--font-sans), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+          font-size: 12px !important;
+          font-weight: 700 !important;
+          letter-spacing: 0.10em !important;
+          text-transform: uppercase !important;
+          line-height: 1.2 !important;
+        }
+        .mobile-facets__header-close {
+          all: unset !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          width: 32px !important;
+          height: 32px !important;
+          cursor: pointer !important;
+        }
+        .mobile-facets__header-close svg {
+          width: 18px !important;
+          height: 18px !important;
+        }
+        .mobile-facets__header-row--sub {
+          padding-top: 2px !important;
+        }
+        .mobile-facets__count {
+          margin: 0 !important;
+          font-size: 12px !important;
+          color: rgba(17,17,17,0.65) !important;
+        }
+        .mobile-facets__clear-wrapper--top {
+          width: auto !important;
+        }
+        .mobile-facets__clear-wrapper--top .mobile-facets__clear {
+          font-size: 12px !important;
+          color: rgba(17,17,17,0.65) !important;
+          text-decoration-thickness: 1px !important;
+          text-underline-offset: 3px !important;
+        }
+
+        /* Footer: single full-width APPLY button, no border */
+        .mobile-facets__footer {
+          padding: 14px 18px !important;
+          border-top: 0.1rem solid rgba(0,0,0,0.08) !important;
+        }
+        .mobile-facets__footer > * {
+          width: 100% !important;
+          margin-left: 0 !important;
+        }
+        .mobile-facets__footer .button--primary {
+          width: 100% !important;
+          border-radius: 0 !important;
+          background: #000 !important;
+          color: #fff !important;
+          font-weight: 700 !important;
+          letter-spacing: 0.12em !important;
+          text-transform: uppercase !important;
+        }
       }
 
       /* Tighten the gap between Sort bar and the products below */
@@ -1057,11 +1379,17 @@
       /* ── Price ── */
       .product-grid .price,
       .product-grid .price .price-item {
-        color: #24324A !important;
+        /* Stronger hierarchy vs product title */
+        color: #1F2937 !important;
         font-family: var(--font-sans) !important;
         font-size: 17px !important;
         font-weight: 500 !important;
         letter-spacing: 0.01em !important;
+      }
+      /* Sale price accent (match reference feel) */
+      .product-grid .price__sale .price-item--sale {
+        color: #1F9D8A !important;
+        font-weight: 600 !important;
       }
       .product-grid .price__sale .price-item--regular {
         color: #9CA3AF !important;
@@ -1109,13 +1437,21 @@
           padding-right: var(--site-padding-mobile) !important;
         }
         .product-grid { gap: 28px 16px !important; }
-        .product-grid .card { border-radius: 16px !important; }
-        .product-grid .card__inner { border-radius: 16px 16px 0 0 !important; }
-        .product-grid .card__content { padding: 12px 14px 16px !important; }
+        /* Mobile: image should NOT sit inside a padded card */
+        .product-grid .card { border-radius: 0 !important; }
+        .product-grid .card__inner { border-radius: 0 !important; background: transparent !important; }
+        .product-grid .card__content { padding: 12px 0 16px !important; }
         .product-grid .card__heading { font-size: 14px !important; }
-        .product-grid .card__media .media { padding: 20px !important; }
-        .product-grid .card__media .media img { transform: scale(0.85) !important; }
-        .product-grid .grid__item:hover .card__media .media img { transform: scale(0.88) !important; }
+        .product-grid .card__media,
+        .product-grid .card__media .media {
+          padding: 0 !important;
+          margin: 0 !important;
+          background: transparent !important;
+        }
+        .product-grid .card__media .media img {
+          transform: none !important;
+        }
+        .product-grid .grid__item:hover .card__media .media img { transform: none !important; }
         .product-grid .price, .product-grid .price .price-item { font-size: 14px !important; }
       }
 

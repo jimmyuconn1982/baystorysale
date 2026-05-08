@@ -69,13 +69,21 @@
               <div class="sort-dropdown-alo__panel" data-sort-panel role="listbox" aria-label="{{ 'products.facets.sort_by_label' | t }}" hidden>
                 {%- for option in collection.sort_options -%}
                   {%- comment -%}
-                    Hide the two date-based sort options per design.
-                    `created-ascending` = Date, old to new
-                    `created-descending` = Date, new to old
+                    Limit to the required 5 options only:
+                    - Featured/Default: manual
+                    - Price low to high: price-ascending
+                    - Price high to low: price-descending
+                    - Newest: created-descending
+                    - Best selling: best-selling
                   {%- endcomment -%}
-                  {%- if option.value == 'created-ascending' or option.value == 'created-descending' -%}
+                  {%- unless option.value == 'manual'
+                    or option.value == 'price-ascending'
+                    or option.value == 'price-descending'
+                    or option.value == 'created-descending'
+                    or option.value == 'best-selling'
+                  -%}
                     {%- continue -%}
-                  {%- endif -%}
+                  {%- endunless -%}
                   <button
                     type="button"
                     class="sort-dropdown-alo__option{% if option.value == sort_by %} is-selected{% endif %}"
