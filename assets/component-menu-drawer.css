@@ -74,6 +74,88 @@ details[open].menu-opening > .menu-drawer__submenu {
   visibility: hidden; /* hide menus from screen readers when hidden by submenu */
 }
 
+/* Mobile: accordion submenu (expand downward) instead of slide-in panels */
+@media screen and (max-width: 989px) {
+  /* Show a small down-caret on the right, hide the right arrow */
+  .menu-drawer__menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .menu-drawer__menu-item > .icon-arrow {
+    display: none !important;
+  }
+  .menu-drawer__submenu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex: 0 0 auto;
+  }
+  .menu-drawer__submenu-toggle .icon-caret {
+    display: inline-block !important;
+    width: 12px;
+    height: 12px;
+    opacity: 0.9;
+  }
+  details[open] > summary .menu-drawer__submenu-toggle .icon-caret {
+    transform: rotate(180deg);
+  }
+
+  /* Never hide the parent list when a submenu is opened */
+  .js .menu-drawer__navigation .submenu-open {
+    visibility: visible;
+  }
+
+  /* Make submenus part of the normal flow */
+  .js .menu-drawer__submenu {
+    position: static;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    transform: none;
+    visibility: visible;
+    border-left: none;
+    z-index: auto;
+    background-color: transparent;
+    overflow: hidden;
+    max-height: 0;
+    padding: 0;
+    transition: max-height 220ms ease;
+  }
+
+  /* When the details is open, expand downward */
+  details[open] > .menu-drawer__submenu {
+    max-height: 60vh;
+    padding-bottom: 0.8rem;
+  }
+
+  /* Hide the back/close button inside submenus (not needed for accordion) */
+  .menu-drawer__close-button {
+    display: none;
+  }
+
+  /* Make nested submenu container not force full height */
+  .menu-drawer__inner-submenu {
+    height: auto;
+    overflow: visible;
+  }
+
+  /* Caret animation */
+  .menu-drawer__submenu-toggle .icon-caret {
+    transition: transform 160ms ease;
+  }
+
+  /* Reduce the big top padding so the list starts higher */
+  .menu-drawer__navigation {
+    padding: 2.4rem 0;
+  }
+}
+
 @media screen and (min-width: 750px) {
   .menu-drawer {
     width: 40rem;

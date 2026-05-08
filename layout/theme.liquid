@@ -499,17 +499,58 @@
            - icon size: 44px each, gap: 10px, cart has margin-right: -12px
          => Shop's "S" starts at  48 + 70 + 22 = 140px from the left edge
          => Search icon centre is 48 - 12 + 44 + 10 + 44 + 10 + 22 = 166px from right */
+      /* Collection/search container padding:
+         - Mobile/tablet: normal page padding (prevents the grid from collapsing)
+         - Desktop (>= 990px): align with header nav/icons (Alo reference) */
       .template-collection .facets-vertical.page-width,
       .template-collection .facets-vertical-sort.page-width,
       .template-search .facets-vertical.page-width,
       .template-search .facets-vertical-sort.page-width {
         max-width: none !important;
         width: 100% !important;
-        padding-left: 140px !important;
-        padding-right: 166px !important;
+        padding-left: var(--site-padding-mobile) !important;
+        padding-right: var(--site-padding-mobile) !important;
         margin-left: 0 !important;
         margin-right: 0 !important;
         box-sizing: border-box !important;
+      }
+
+      @media screen and (min-width: 750px) {
+        .template-collection .facets-vertical.page-width,
+        .template-collection .facets-vertical-sort.page-width,
+        .template-search .facets-vertical.page-width,
+        .template-search .facets-vertical-sort.page-width {
+          padding-left: var(--site-padding-tablet) !important;
+          padding-right: var(--site-padding-tablet) !important;
+        }
+      }
+
+      @media screen and (min-width: 990px) {
+        .template-collection .facets-vertical.page-width,
+        .template-collection .facets-vertical-sort.page-width,
+        .template-search .facets-vertical.page-width,
+        .template-search .facets-vertical-sort.page-width {
+          padding-left: 140px !important;
+          padding-right: 166px !important;
+        }
+      }
+
+      /* Mobile header: smaller logo and slightly more left aligned */
+      @media screen and (max-width: 989px) {
+        #shopify-section-header .header {
+          padding-left: 8px !important;
+          padding-right: 12px !important;
+          column-gap: 1rem !important;
+        }
+        #shopify-section-header .header__heading-logo {
+          width: 40px !important; /* ~30% smaller than 56px */
+          max-width: 40px !important;
+        }
+        #shopify-section-header .header__heading,
+        #shopify-section-header .header__heading-link {
+          width: 40px !important;
+          flex: 0 0 40px !important;
+        }
       }
 
       /* Keep the same alignment on medium screens. The grid will simply have
@@ -835,6 +876,20 @@
       .product-grid.grid--4-col-desktop { gap: 36px 22px !important; }
       .product-grid.grid--3-col-desktop { gap: 48px 32px !important; }
       .product-grid .grid__item { padding-bottom: 8px; }
+
+      /* Mobile: always 2 products per row */
+      @media screen and (max-width: 749px) {
+        .product-grid.grid--2-col-tablet-down:not(.slider) {
+          display: grid !important;
+          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          column-gap: 14px !important;
+          row-gap: 26px !important;
+        }
+        .product-grid.grid--2-col-tablet-down:not(.slider) > .grid__item {
+          width: auto !important;
+          max-width: none !important;
+        }
+      }
 
       @media screen and (min-width: 990px) {
         /* Force 4 columns even if flex widths get overridden */

@@ -316,6 +316,7 @@ class MenuDrawer extends HTMLElement {
     const parentMenuElement = detailsElement.closest('.has-submenu');
     const isOpen = detailsElement.hasAttribute('open');
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const isMobile = window.matchMedia("(max-width: 989px)").matches;
 
     function addTrapFocus() {
       trapFocus(summaryElement.nextElementSibling, detailsElement.querySelector('button'));
@@ -326,6 +327,34 @@ class MenuDrawer extends HTMLElement {
       if(isOpen) event.preventDefault();
       isOpen ? this.closeMenuDrawer(event, summaryElement) : this.openMenuDrawer(summaryElement);
     } else {
+      // Mobile: accordion (expand downward) instead of sliding panels
+      if (isMobile) {
+        // Only expand/collapse when clicking the small caret on the right
+        if (!event.target.closest('.menu-drawer__submenu-toggle')) {
+          event.preventDefault();
+          return;
+        }
+        event.preventDefault();
+        const willOpen = !isOpen;
+        // Optional: close siblings for a cleaner accordion feel
+        const siblingDetails = detailsElement.parentNode && detailsElement.parentNode.querySelectorAll
+          ? detailsElement.parentNode.querySelectorAll(':scope > details[open]')
+          : [];
+        siblingDetails.forEach((d) => {
+          if (d !== detailsElement) {
+            d.removeAttribute('open');
+            d.classList.remove('menu-opening');
+            const s = d.querySelector('summary');
+            if (s) s.setAttribute('aria-expanded', false);
+          }
+        });
+
+        if (willOpen) detailsElement.setAttribute('open', '');
+        else detailsElement.removeAttribute('open');
+        summaryElement.setAttribute('aria-expanded', willOpen);
+        return;
+      }
+
       setTimeout(() => {
         detailsElement.classList.add('menu-opening');
         summaryElement.setAttribute('aria-expanded', true);
