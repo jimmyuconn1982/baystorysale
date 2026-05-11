@@ -182,25 +182,28 @@
         {%- if color_options -%}
           {%- for value in color_options.values -%}
             {%- if forloop.index <= 6 -%}
-              {%- assign color_available = false -%}
-              {%- assign color_media = blank -%}
+              {%- liquid
+                assign value_label = value.name | default: value
+                assign color_available = false
+                assign color_media = blank
+              -%}
               {%- for v in card_product.variants -%}
-                {%- if color_position == 1 and v.option1 == value and v.available -%}
+                {%- if color_position == 1 and v.option1 == value_label and v.available -%}
                   {%- assign color_available = true -%}
-                {%- elsif color_position == 2 and v.option2 == value and v.available -%}
+                {%- elsif color_position == 2 and v.option2 == value_label and v.available -%}
                   {%- assign color_available = true -%}
-                {%- elsif color_position == 3 and v.option3 == value and v.available -%}
+                {%- elsif color_position == 3 and v.option3 == value_label and v.available -%}
                   {%- assign color_available = true -%}
                 {%- endif -%}
               {%- endfor -%}
 
               {%- for v in card_product.variants -%}
                 {%- if color_media == blank -%}
-                  {%- if color_position == 1 and v.option1 == value and v.featured_media -%}
+                  {%- if color_position == 1 and v.option1 == value_label and v.featured_media -%}
                     {%- assign color_media = v.featured_media -%}
-                  {%- elsif color_position == 2 and v.option2 == value and v.featured_media -%}
+                  {%- elsif color_position == 2 and v.option2 == value_label and v.featured_media -%}
                     {%- assign color_media = v.featured_media -%}
-                  {%- elsif color_position == 3 and v.option3 == value and v.featured_media -%}
+                  {%- elsif color_position == 3 and v.option3 == value_label and v.featured_media -%}
                     {%- assign color_media = v.featured_media -%}
                   {%- endif -%}
                 {%- endif -%}
@@ -209,25 +212,16 @@
                 {%- assign color_media = card_product.featured_media -%}
               {%- endif -%}
 
-              {%- assign color_code = value | downcase | replace: ' ', '' -%}
-              {%- if color_code == 'deeppurple' -%}{%- assign color_code = '#36013f' -%}{%- endif -%}
-              {%- if color_code == 'vibrantyellow' -%}{%- assign color_code = '#ffd700' -%}{%- endif -%}
-              {%- if color_code == 'classicblack' -%}{%- assign color_code = '#000000' -%}{%- endif -%}
-              {%- if color_code == 'khaki' -%}{%- assign color_code = '#f0e68c' -%}{%- endif -%}
-              {%- if color_code == 'beige' -%}{%- assign color_code = '#f5f5dc' -%}{%- endif -%}
-              {%- if color_code == 'grey' or color_code == 'gray' -%}{%- assign color_code = '#808080' -%}{%- endif -%}
-              {%- if color_code == 'black' -%}{%- assign color_code = '#000000' -%}{%- endif -%}
-
               <button
                 type="button"
-                class="color-swatch{% if current_color != blank and value == current_color %} is-selected{% endif %}{% unless color_available %} is-soldout{% endunless %}"
-                style="background-color: {{ color_code }};"
-                data-color="{{ value | escape }}"
+                class="color-swatch{% if current_color != blank and value_label == current_color %} is-selected{% endif %}{% unless color_available %} is-soldout{% endunless %}"
+                style="{% render 'option-value-swatch-style', option_value: value %}"
+                data-color="{{ value_label | escape }}"
                 data-available="{% if color_available %}true{% else %}false{% endif %}"
                 data-img-src="{{ color_media | image_url: width: 533 }}"
                 data-img-srcset="{%- if color_media.width >= 165 -%}{{ color_media | image_url: width: 165 }} 165w,{%- endif -%}{%- if color_media.width >= 360 -%}{{ color_media | image_url: width: 360 }} 360w,{%- endif -%}{%- if color_media.width >= 533 -%}{{ color_media | image_url: width: 533 }} 533w,{%- endif -%}{%- if color_media.width >= 720 -%}{{ color_media | image_url: width: 720 }} 720w,{%- endif -%}{%- if color_media.width >= 940 -%}{{ color_media | image_url: width: 940 }} 940w,{%- endif -%}{%- if color_media.width >= 1066 -%}{{ color_media | image_url: width: 1066 }} 1066w,{%- endif -%}{{ color_media | image_url }} {{ color_media.width }}w"
                 data-img-alt="{{ color_media.alt | escape }}"
-                aria-label="{{ value | escape }}"
+                aria-label="{{ value_label | escape }}"
               ></button>
             {%- endif -%}
           {%- endfor -%}
@@ -282,15 +276,8 @@
               <div class="card__colors" style="display: flex; flex-wrap: nowrap; gap: 8px; margin-bottom: 10px; align-items: center; justify-content: center; overflow: hidden; height: 30px;">
                 {%- for value in color_options.values -%}
                   {%- if forloop.index <= 4 -%}
-                    {%- assign color_code = value | downcase | replace: ' ', '' -%}
-                    {%- if color_code == 'deeppurple' -%}{%- assign color_code = '#36013f' -%}{%- endif -%}
-                    {%- if color_code == 'vibrantyellow' -%}{%- assign color_code = '#ffd700' -%}{%- endif -%}
-                    {%- if color_code == 'classicblack' -%}{%- assign color_code = '#000000' -%}{%- endif -%}
-                    {%- if color_code == 'khaki' -%}{%- assign color_code = '#f0e68c' -%}{%- endif -%}
-                    {%- if color_code == 'beige' -%}{%- assign color_code = '#f5f5dc' -%}{%- endif -%}
-                    {%- if color_code == 'grey' or color_code == 'gray' -%}{%- assign color_code = '#808080' -%}{%- endif -%}
-                    {%- if color_code == 'black' -%}{%- assign color_code = '#000000' -%}{%- endif -%}
-                    <span class="color-swatch" style="display: inline-block; width: 24px; height: 24px; border-radius: 50%; background-color: {{ color_code }}; border: 1.5px solid #dcdcdc; flex-shrink: 0;" title="{{ value }}"></span>
+                    {%- assign value_label = value.name | default: value -%}
+                    <span class="color-swatch" style="display: inline-block; width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid #dcdcdc; flex-shrink: 0; {% render 'option-value-swatch-style', option_value: value %}" title="{{ value_label | escape }}"></span>
                   {%- elsif forloop.index == 5 -%}
                     <span class="color-more" style="font-size: 1.2rem; color: #666; margin-left: 4px; flex-shrink: 0; font-weight: 500;">+{{ color_options.values.size | minus: 4 }} more</span>
                   {%- endif -%}
@@ -325,15 +312,8 @@
               <div class="card__colors" style="display: flex; flex-wrap: nowrap; gap: 8px; margin-bottom: 10px; align-items: center; justify-content: center; overflow: hidden; height: 30px;">
                 {%- for value in color_options.values -%}
                   {%- if forloop.index <= 4 -%}
-                    {%- assign color_code = value | downcase | replace: ' ', '' -%}
-                    {%- if color_code == 'deeppurple' -%}{%- assign color_code = '#36013f' -%}{%- endif -%}
-                    {%- if color_code == 'vibrantyellow' -%}{%- assign color_code = '#ffd700' -%}{%- endif -%}
-                    {%- if color_code == 'classicblack' -%}{%- assign color_code = '#000000' -%}{%- endif -%}
-                    {%- if color_code == 'khaki' -%}{%- assign color_code = '#f0e68c' -%}{%- endif -%}
-                    {%- if color_code == 'beige' -%}{%- assign color_code = '#f5f5dc' -%}{%- endif -%}
-                    {%- if color_code == 'grey' or color_code == 'gray' -%}{%- assign color_code = '#808080' -%}{%- endif -%}
-                    {%- if color_code == 'black' -%}{%- assign color_code = '#000000' -%}{%- endif -%}
-                    <span class="color-swatch" style="display: inline-block; width: 24px; height: 24px; border-radius: 50%; background-color: {{ color_code }}; border: 1.5px solid #dcdcdc; flex-shrink: 0;" title="{{ value }}"></span>
+                    {%- assign value_label = value.name | default: value -%}
+                    <span class="color-swatch" style="display: inline-block; width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid #dcdcdc; flex-shrink: 0; {% render 'option-value-swatch-style', option_value: value %}" title="{{ value_label | escape }}"></span>
                   {%- elsif forloop.index == 5 -%}
                     <span class="color-more" style="font-size: 1.2rem; color: #666; margin-left: 4px; flex-shrink: 0; font-weight: 500;">+{{ color_options.values.size | minus: 4 }} more</span>
                   {%- endif -%}

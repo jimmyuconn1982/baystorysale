@@ -1,0 +1,13 @@
+{%- comment -%}
+  Inline CSS for one product option value swatch (syncs with Shopify admin / taxonomy swatches).
+  Accepts: option_value — item from product_option.values (product_option_value)
+
+  See: https://shopify.dev/docs/api/liquid/objects/product_option_value
+{%- endcomment -%}
+{%- if option_value.swatch.image -%}
+  background-image: url({{ option_value.swatch.image | image_url: width: 100 }}); background-size: cover; background-position: center; background-repeat: no-repeat; background-color: transparent;
+{%- elsif option_value.swatch.color -%}
+  background-color: rgb({{ option_value.swatch.color.rgb }});
+{%- else -%}
+  background-color: #e6e6e6;
+{%- endif -%}

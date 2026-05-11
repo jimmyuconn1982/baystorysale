@@ -1267,10 +1267,8 @@
         transform: none !important;
         box-shadow: none !important;
       }
-      /* Meta area (swatches container, title, color name, price) is naked on
-         the page bg. We deliberately do NOT touch `.color-swatch` itself —
-         each swatch needs its inline background-color: <color> to display the
-         color dot. So we only target container / text elements, not "*". */
+      /* Meta area (swatches, title, color name, price). Swatch fill comes from
+         `option-value-swatch-style` (Shopify option_value.swatch color/image). */
       .product-grid .grid__item,
       .product-grid .card__alo-meta,
       .product-grid .card__alo-swatches,
