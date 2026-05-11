@@ -1448,6 +1448,43 @@
         box-shadow: none !important;
       }
 
+      /* About Us: tighten space between story block and grid / lists (overrides Dawn headings + scoped section CSS) */
+      .about-us .about-us-story {
+        margin-bottom: 1.25rem !important;
+      }
+      .about-us .about-us-grid {
+        padding-top: 1rem !important;
+        gap: 2rem !important;
+        row-gap: 1.25rem !important;
+      }
+      @media screen and (min-width: 769px) {
+        .about-us .about-us-grid {
+          gap: 3rem !important;
+          row-gap: 2rem !important;
+        }
+      }
+      .about-us .about-us-story-text h3,
+      .about-us .about-us-grid-item h3 {
+        margin-top: 0 !important;
+        margin-bottom: 0.5rem !important;
+        line-height: 1.25 !important;
+      }
+      .about-us .about-us-story-text h3:first-of-type {
+        margin-top: 0.75rem !important;
+      }
+      .about-us .commitment-list {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+      }
+      .about-us .commitment-list li {
+        margin-bottom: 0.4rem !important;
+        line-height: 1.45 !important;
+        font-size: 1.4rem !important;
+      }
+      .about-us .commitment-list li:last-child {
+        margin-bottom: 0 !important;
+      }
+
       /* ── Responsive ── */
       @media (min-width: 750px) and (max-width: 989px) {
         .header,

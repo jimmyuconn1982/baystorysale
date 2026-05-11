@@ -191,6 +191,30 @@
     color: #6e6e73 !important;
     background-color: rgba(0, 0, 0, 0.02);
   }
+  /* Primary dropdown: first row “Shop All [Primary]” (aligns with reference mega menu) */
+  #shopify-section-{{ section.id }} .header__submenu a.menu__shop-all-primary {
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+  }
+
+  /* Desktop inline nav: no caret, hover-open menus (see details-disclosure.js HeaderMenu) */
+  @media screen and (min-width: 990px) {
+    #shopify-section-{{ section.id }} .header__inline-menu .icon-caret {
+      display: none !important;
+    }
+    #shopify-section-{{ section.id }} .header__inline-menu summary.list-menu__item,
+    #shopify-section-{{ section.id }} .header__inline-menu summary.header__menu-item {
+      padding-right: 1.2rem !important;
+    }
+    #shopify-section-{{ section.id }} .header__inline-menu .header__submenu.list-menu {
+      min-width: max(22rem, fit-content);
+    }
+    #shopify-section-{{ section.id }} .header__submenu a.menu__shop-all-primary {
+      white-space: nowrap !important;
+    }
+  }
 
   /* ── Header icons (search, account, cart) ── */
   #shopify-section-{{ section.id }} .header__icon {
@@ -222,6 +246,12 @@
     font-size: 15px !important;
     letter-spacing: 0.3px !important;
     color: #1d1d1f !important;
+  }
+  #shopify-section-{{ section.id }} .menu-drawer__menu a.menu__shop-all-primary {
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
   }
 </style>
 

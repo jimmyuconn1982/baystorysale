@@ -36,6 +36,67 @@ class HeaderMenu extends DetailsDisclosure {
   constructor() {
     super();
     this.header = document.querySelector('.header-wrapper');
+    this.hoverMql = window.matchMedia('(min-width: 990px) and (hover: hover)');
+    this.summary = this.mainDetailsToggle.querySelector('summary');
+    this.closeTimer = null;
+    this.onHeaderMenuEnter = this.onHeaderMenuEnter.bind(this);
+    this.onHeaderMenuLeave = this.onHeaderMenuLeave.bind(this);
+    this.onSummaryClickCapture = this.onSummaryClickCapture.bind(this);
+    this.setupHoverMenu();
+    this.hoverMql.addEventListener('change', () => this.setupHoverMenu());
+  }
+
+  setupHoverMenu() {
+    this.removeEventListener('mouseenter', this.onHeaderMenuEnter);
+    this.removeEventListener('mouseleave', this.onHeaderMenuLeave);
+    if (this.summary) {
+      this.summary.removeEventListener('click', this.onSummaryClickCapture, true);
+    }
+    if (this.hoverMql.matches) {
+      this.addEventListener('mouseenter', this.onHeaderMenuEnter);
+      this.addEventListener('mouseleave', this.onHeaderMenuLeave);
+      if (this.summary) {
+        this.summary.addEventListener('click', this.onSummaryClickCapture, true);
+      }
+    }
+  }
+
+  /**
+   * Desktop + fine pointer: menus open on hover. Block mouse-only summary clicks while open
+   * so a click does not toggle the panel closed (keyboard keeps native toggle via detail === 0).
+   */
+  onSummaryClickCapture(event) {
+    if (!this.hoverMql.matches) return;
+    if (event.detail === 0) return;
+    if (!this.mainDetailsToggle.hasAttribute('open')) return;
+    event.preventDefault();
+  }
+
+  onHeaderMenuEnter() {
+    if (!this.hoverMql.matches) return;
+    window.clearTimeout(this.closeTimer);
+    this.closeSiblings();
+    if (!this.mainDetailsToggle.hasAttribute('open')) {
+      this.mainDetailsToggle.setAttribute('open', '');
+      if (this.summary) this.summary.setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  onHeaderMenuLeave() {
+    if (!this.hoverMql.matches) return;
+    this.closeTimer = window.setTimeout(() => {
+      if (!this.matches(':hover')) {
+        this.close();
+      }
+    }, 180);
+  }
+
+  closeSiblings() {
+    const root = this.closest('.header__inline-menu');
+    if (!root) return;
+    root.querySelectorAll('header-menu').forEach((hm) => {
+      if (hm !== this && typeof hm.close === 'function') hm.close();
+    });
   }
 
   onToggle() {

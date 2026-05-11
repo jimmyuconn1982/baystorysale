@@ -1,11 +1,14 @@
 {%- comment -%}
-  Code-owned top header navigation with fixed order:
-  1. Shop (dropdown: All Products, New Arrivals, Best Sellers)
-  2. Everyday Bags (metafield dropdown)
-  3. Travel (metafield dropdown)
-  4. Pet Travel (metafield dropdown)
-  5. Accessories (metafield dropdown)
-  6. About
+  Top header: Shop + Primary Category dropdowns + About us.
+
+  Data model (must be on **collections**, not only products — Liquid cannot scan all products):
+  - `custom.primary_category` — same value as on products (e.g. Handbags). Single value or list.
+  - `custom.sub_category` — optional; shown as the dropdown link label (e.g. Crossbody Bags).
+    If blank, the collection title is used.
+
+  Each row in the menu = one collection URL → that collection’s products (smart collection rules can mirror product metafields).
+
+  Order of primary columns: edit `preferred_primary_order` below. Only primaries that exist on at least one collection appear.
 {%- endcomment -%}
 
 {%- liquid
@@ -26,9 +29,10 @@
   assign shop_all_url = '/collections/all'
   assign about_us_url = '/pages/about-us'
 
-  assign category_order = "Everyday Bags,Travel,Pet Travel,Accessories" | split: ','
+  assign preferred_primary_order = 'Handbags,Backpacks,Travel Bags,Pet Carriers' | split: ','
 -%}
 
+{%- comment -%} ---------- Mobile ---------- {%- endcomment -%}
 {%- if code_menu_mode == 'mobile' -%}
   <li>
     <details id="Details-menu-drawer-shop">
@@ -39,94 +43,107 @@
         </span>
       </summary>
       <div class="mobile-accordion-submenu" tabindex="-1">
-          <ul class="menu-drawer__menu list-menu" role="list">
-            <li>
-              <a href="{{ shop_all_url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset">
-                All Products
-              </a>
-            </li>
-            <li>
-              <a href="{{ new_arrivals_url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset">
-                New Arrivals
-              </a>
-            </li>
-            <li>
-              <a href="{{ best_sellers_url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset">
-                Best Sellers
-              </a>
-            </li>
-          </ul>
+        <ul class="menu-drawer__menu list-menu" role="list">
+          <li>
+            <a href="{{ shop_all_url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset">All Products</a>
+          </li>
+          <li>
+            <a href="{{ new_arrivals_url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset">New Arrivals</a>
+          </li>
+          <li>
+            <a href="{{ best_sellers_url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset">Best Sellers</a>
+          </li>
+        </ul>
       </div>
     </details>
   </li>
   {%- if category_menu_collections != blank -%}
-    {%- for category_label in category_order -%}
-      {%- assign category_label_clean = category_label | strip -%}
-      {%- assign category_handle = category_label_clean | handleize -%}
+    {%- for primary_label in preferred_primary_order -%}
+      {%- assign primary_label_clean = primary_label | strip -%}
+      {%- if primary_label_clean == blank -%}{%- continue -%}{%- endif -%}
+      {%- assign primary_category_key = primary_label_clean | downcase -%}
+      {%- assign primary_category_token = '||' | append: primary_category_key | append: '||' -%}
+      {%- assign primary_category_handle = primary_label_clean | handleize -%}
       {%- assign has_children = false -%}
       {%- for category_collection in category_menu_collections -%}
-        {%- assign primary_cat = category_collection.metafields.custom.primary_category -%}
-        {%- if primary_cat != blank -%}
-          {%- assign cat_value = primary_cat.value -%}
-          {%- if primary_cat.type contains 'list.' -%}
-            {%- assign cat_value = primary_cat.value | join: ', ' -%}
-          {%- endif -%}
-          {%- if cat_value contains category_label_clean -%}
-            {%- assign has_children = true -%}
-            {%- break -%}
-          {%- endif -%}
+        {%- assign pc_mf = category_collection.metafields.custom.primary_category -%}
+        {%- if pc_mf != blank -%}
+          {%- liquid
+            assign _pk = ''
+            if pc_mf.type contains 'list.'
+              assign _pv = pc_mf.value | join: '||'
+            else
+              assign _pv = pc_mf.value
+            endif
+            assign _pv = _pv | replace: ' • ', '||' | replace: '•', '||' | replace: ', ', '||' | replace: ',', '||' | replace: '; ', '||' | replace: ';', '||'
+            assign _plist = _pv | split: '||'
+          -%}
+          {%- for _p in _plist -%}
+            {%- assign _k = _p | strip | downcase -%}
+            {%- if _k == primary_category_key -%}
+              {%- assign has_children = true -%}
+              {%- break -%}
+            {%- endif -%}
+          {%- endfor -%}
         {%- endif -%}
+        {%- if has_children -%}{%- break -%}{%- endif -%}
       {%- endfor -%}
       {%- if has_children -%}
         <li>
-          <details id="Details-menu-drawer-metafield-category-{{ category_handle }}">
+          <details id="Details-menu-drawer-primary-{{ primary_category_handle }}">
             <summary class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
-              {{ category_label_clean | escape }}
-              <span class="menu-drawer__submenu-toggle mobile-accordion-toggle" aria-hidden="true">
-                {% render 'icon-caret' %}
-              </span>
+              {{ primary_label_clean | escape }}
+              <span class="menu-drawer__submenu-toggle mobile-accordion-toggle" aria-hidden="true">{% render 'icon-caret' %}</span>
             </summary>
             <div class="mobile-accordion-submenu" tabindex="-1">
-                <ul class="menu-drawer__menu list-menu" role="list">
-                  {%- if child_order != blank -%}
-                    {%- for child_label in child_order -%}
-                      {%- assign child_label_clean = child_label | strip -%}
-                      {%- for child_collection in category_menu_collections -%}
-                        {%- assign child_primary = child_collection.metafields.custom.primary_category -%}
-                        {%- if child_primary != blank -%}
-                          {%- assign child_value = child_primary.value -%}
-                          {%- if child_primary.type contains 'list.' -%}
-                            {%- assign child_value = child_primary.value | join: ', ' -%}
-                          {%- endif -%}
-                          {%- if child_value contains category_label_clean and child_collection.title contains child_label_clean -%}
-                            <li>
-                              <a href="{{ child_collection.url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset">
-                                {{ child_collection.title | escape }}
-                              </a>
-                            </li>
-                          {%- endif -%}
-                        {%- endif -%}
-                      {%- endfor -%}
-                    {%- endfor -%}
-                  {%- else -%}
-                    {%- for child_collection in category_menu_collections -%}
-                      {%- assign child_primary = child_collection.metafields.custom.primary_category -%}
-                      {%- if child_primary != blank -%}
-                        {%- assign child_value = child_primary.value -%}
-                        {%- if child_primary.type contains 'list.' -%}
-                          {%- assign child_value = child_primary.value | join: ', ' -%}
-                        {%- endif -%}
-                        {%- if child_value contains category_label_clean -%}
-                          <li>
-                            <a href="{{ child_collection.url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset">
-                              {{ child_collection.title | escape }}
-                            </a>
-                          </li>
-                        {%- endif -%}
+              <ul class="menu-drawer__menu list-menu" role="list">
+                {%- assign shop_all_primary_handle = primary_label_clean | handleize -%}
+                {%- assign shop_all_primary_url = collections[shop_all_primary_handle].url -%}
+                {%- if shop_all_primary_url == blank -%}
+                  {%- assign shop_all_primary_url = '/collections/' | append: shop_all_primary_handle -%}
+                {%- endif -%}
+                <li>
+                  <a href="{{ shop_all_primary_url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset menu__shop-all-primary">
+                    Shop All {{ primary_label_clean | escape }}
+                  </a>
+                </li>
+                {%- for child_collection in category_menu_collections -%}
+                  {%- assign child_pc = child_collection.metafields.custom.primary_category -%}
+                  {%- if child_pc == blank -%}{%- continue -%}{%- endif -%}
+                  {%- liquid
+                    assign child_primary_category_keys = ''
+                    if child_pc.type contains 'list.'
+                      assign child_primary_category_values = child_pc.value | join: '||'
+                    else
+                      assign child_primary_category_values = child_pc.value
+                    endif
+                    assign child_primary_category_values = child_primary_category_values | replace: ' • ', '||' | replace: '•', '||' | replace: ', ', '||' | replace: ',', '||' | replace: '; ', '||' | replace: ';', '||'
+                    assign child_primary_category_list = child_primary_category_values | split: '||'
+                  -%}
+                  {%- for child_primary_category in child_primary_category_list -%}
+                    {%- assign child_primary_category_key = child_primary_category | strip | downcase -%}
+                    {%- if child_primary_category_key != blank -%}
+                      {%- assign child_primary_category_keys = child_primary_category_keys | append: '||' | append: child_primary_category_key | append: '||' -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                  {%- if child_primary_category_keys contains primary_category_token -%}
+                    {%- assign nav_link_label = child_collection.title -%}
+                    {%- assign sub_mf = child_collection.metafields.custom.sub_category -%}
+                    {%- if sub_mf != blank -%}
+                      {%- if sub_mf.type contains 'list.' -%}
+                        {%- assign nav_link_label = sub_mf.value | join: ', ' -%}
+                      {%- else -%}
+                        {%- assign nav_link_label = sub_mf.value -%}
                       {%- endif -%}
-                    {%- endfor -%}
+                    {%- endif -%}
+                    <li>
+                      <a href="{{ child_collection.url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset">
+                        {{ nav_link_label | escape }}
+                      </a>
+                    </li>
                   {%- endif -%}
-                </ul>
+                {%- endfor -%}
+              </ul>
             </div>
           </details>
         </li>
@@ -134,10 +151,10 @@
     {%- endfor -%}
   {%- endif -%}
   <li>
-    <a href="{{ about_us_url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
-      About
-    </a>
+    <a href="{{ about_us_url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">About us</a>
   </li>
+
+{%- comment -%} ---------- Desktop ---------- {%- endcomment -%}
 {%- else -%}
   <li>
     <header-menu>
@@ -148,89 +165,104 @@
         </summary>
         <ul id="HeaderMenu-Shop" class="header__submenu list-menu list-menu--disclosure gradient caption-large motion-reduce global-settings-popup" role="list" tabindex="-1">
           <li>
-            <a href="{{ shop_all_url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large">
-              All Products
-            </a>
+            <a href="{{ shop_all_url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large">All Products</a>
           </li>
           <li>
-            <a href="{{ new_arrivals_url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large">
-              New Arrivals
-            </a>
+            <a href="{{ new_arrivals_url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large">New Arrivals</a>
           </li>
           <li>
-            <a href="{{ best_sellers_url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large">
-              Best Sellers
-            </a>
+            <a href="{{ best_sellers_url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large">Best Sellers</a>
           </li>
         </ul>
       </details>
     </header-menu>
   </li>
   {%- if category_menu_collections != blank -%}
-    {%- for category_label in category_order -%}
-      {%- assign category_label_clean = category_label | strip -%}
-      {%- assign category_handle = category_label_clean | handleize -%}
+    {%- for primary_label in preferred_primary_order -%}
+      {%- assign primary_label_clean = primary_label | strip -%}
+      {%- if primary_label_clean == blank -%}{%- continue -%}{%- endif -%}
+      {%- assign primary_category_key = primary_label_clean | downcase -%}
+      {%- assign primary_category_token = '||' | append: primary_category_key | append: '||' -%}
+      {%- assign primary_category_handle = primary_label_clean | handleize -%}
       {%- assign has_children = false -%}
       {%- for category_collection in category_menu_collections -%}
-        {%- assign primary_cat = category_collection.metafields.custom.primary_category -%}
-        {%- if primary_cat != blank -%}
-          {%- assign cat_value = primary_cat.value -%}
-          {%- if primary_cat.type contains 'list.' -%}
-            {%- assign cat_value = primary_cat.value | join: ', ' -%}
-          {%- endif -%}
-          {%- if cat_value contains category_label_clean -%}
-            {%- assign has_children = true -%}
-            {%- break -%}
-          {%- endif -%}
+        {%- assign pc_mf = category_collection.metafields.custom.primary_category -%}
+        {%- if pc_mf != blank -%}
+          {%- liquid
+            assign _pk = ''
+            if pc_mf.type contains 'list.'
+              assign _pv = pc_mf.value | join: '||'
+            else
+              assign _pv = pc_mf.value
+            endif
+            assign _pv = _pv | replace: ' • ', '||' | replace: '•', '||' | replace: ', ', '||' | replace: ',', '||' | replace: '; ', '||' | replace: ';', '||'
+            assign _plist = _pv | split: '||'
+          -%}
+          {%- for _p in _plist -%}
+            {%- assign _k = _p | strip | downcase -%}
+            {%- if _k == primary_category_key -%}
+              {%- assign has_children = true -%}
+              {%- break -%}
+            {%- endif -%}
+          {%- endfor -%}
         {%- endif -%}
+        {%- if has_children -%}{%- break -%}{%- endif -%}
       {%- endfor -%}
       {%- if has_children -%}
         <li>
           <header-menu>
-            <details id="Details-HeaderMenu-MetafieldCategory-{{ category_handle }}">
+            <details id="Details-HeaderMenu-Primary-{{ primary_category_handle }}">
               <summary class="header__menu-item list-menu__item link focus-inset">
-                <span>{{ category_label_clean | escape }}</span>
+                <span>{{ primary_label_clean | escape }}</span>
                 {% render 'icon-caret' %}
               </summary>
-              <ul id="HeaderMenu-MetafieldCategory-{{ category_handle }}" class="header__submenu list-menu list-menu--disclosure gradient caption-large motion-reduce global-settings-popup" role="list" tabindex="-1">
-                {%- if child_order != blank -%}
-                  {%- for child_label in child_order -%}
-                    {%- assign child_label_clean = child_label | strip -%}
-                    {%- for child_collection in category_menu_collections -%}
-                      {%- assign child_primary = child_collection.metafields.custom.primary_category -%}
-                      {%- if child_primary != blank -%}
-                        {%- assign child_value = child_primary.value -%}
-                        {%- if child_primary.type contains 'list.' -%}
-                          {%- assign child_value = child_primary.value | join: ', ' -%}
-                        {%- endif -%}
-                        {%- if child_value contains category_label_clean and child_collection.title contains child_label_clean -%}
-                          <li>
-                            <a href="{{ child_collection.url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large">
-                              {{ child_collection.title | escape }}
-                            </a>
-                          </li>
-                        {%- endif -%}
-                      {%- endif -%}
-                    {%- endfor -%}
-                  {%- endfor -%}
-                {%- else -%}
-                  {%- for child_collection in category_menu_collections -%}
-                    {%- assign child_primary = child_collection.metafields.custom.primary_category -%}
-                    {%- if child_primary != blank -%}
-                      {%- assign child_value = child_primary.value -%}
-                      {%- if child_primary.type contains 'list.' -%}
-                        {%- assign child_value = child_primary.value | join: ', ' -%}
-                      {%- endif -%}
-                      {%- if child_value contains category_label_clean -%}
-                        <li>
-                          <a href="{{ child_collection.url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large">
-                            {{ child_collection.title | escape }}
-                          </a>
-                        </li>
-                      {%- endif -%}
+              <ul id="HeaderMenu-Primary-{{ primary_category_handle }}" class="header__submenu list-menu list-menu--disclosure gradient caption-large motion-reduce global-settings-popup" role="list" tabindex="-1">
+                {%- assign shop_all_primary_handle = primary_label_clean | handleize -%}
+                {%- assign shop_all_primary_url = collections[shop_all_primary_handle].url -%}
+                {%- if shop_all_primary_url == blank -%}
+                  {%- assign shop_all_primary_url = '/collections/' | append: shop_all_primary_handle -%}
+                {%- endif -%}
+                <li>
+                  <a href="{{ shop_all_primary_url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large menu__shop-all-primary">
+                    Shop All {{ primary_label_clean | escape }}
+                  </a>
+                </li>
+                {%- for child_collection in category_menu_collections -%}
+                  {%- assign child_pc = child_collection.metafields.custom.primary_category -%}
+                  {%- if child_pc == blank -%}{%- continue -%}{%- endif -%}
+                  {%- liquid
+                    assign child_primary_category_keys = ''
+                    if child_pc.type contains 'list.'
+                      assign child_primary_category_values = child_pc.value | join: '||'
+                    else
+                      assign child_primary_category_values = child_pc.value
+                    endif
+                    assign child_primary_category_values = child_primary_category_values | replace: ' • ', '||' | replace: '•', '||' | replace: ', ', '||' | replace: ',', '||' | replace: '; ', '||' | replace: ';', '||'
+                    assign child_primary_category_list = child_primary_category_values | split: '||'
+                  -%}
+                  {%- for child_primary_category in child_primary_category_list -%}
+                    {%- assign child_primary_category_key = child_primary_category | strip | downcase -%}
+                    {%- if child_primary_category_key != blank -%}
+                      {%- assign child_primary_category_keys = child_primary_category_keys | append: '||' | append: child_primary_category_key | append: '||' -%}
                     {%- endif -%}
                   {%- endfor -%}
-                {%- endif -%}
+                  {%- if child_primary_category_keys contains primary_category_token -%}
+                    {%- assign nav_link_label = child_collection.title -%}
+                    {%- assign sub_mf = child_collection.metafields.custom.sub_category -%}
+                    {%- if sub_mf != blank -%}
+                      {%- if sub_mf.type contains 'list.' -%}
+                        {%- assign nav_link_label = sub_mf.value | join: ', ' -%}
+                      {%- else -%}
+                        {%- assign nav_link_label = sub_mf.value -%}
+                      {%- endif -%}
+                    {%- endif -%}
+                    <li>
+                      <a href="{{ child_collection.url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large">
+                        {{ nav_link_label | escape }}
+                      </a>
+                    </li>
+                  {%- endif -%}
+                {%- endfor -%}
               </ul>
             </details>
           </header-menu>
@@ -239,8 +271,8 @@
     {%- endfor -%}
   {%- endif -%}
   <li>
-    <a href="{{ about_us_url }}" class="header__menu-item header__menu-item list-menu__item link link--text focus-inset">
-      <span>About</span>
+    <a href="{{ about_us_url }}" class="header__menu-item list-menu__item link link--text focus-inset">
+      <span>About us</span>
     </a>
   </li>
 {%- endif -%}
