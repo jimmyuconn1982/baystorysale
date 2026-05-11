@@ -1,0 +1,45 @@
+{%- comment -%}
+  Footer Shop column: All Products, New Arrivals, then each primary category that
+  exists on collections (custom.primary_category). Order matches the header —
+  keep `preferred_primary_order` in sync with `snippets/header-code-menu-items.liquid`.
+{%- endcomment -%}
+{%- liquid
+  assign new_arrivals_url = collections['new-arrivals'].url | default: '/collections/new-arrivals'
+  assign all_products_url = routes.all_products_collection_url
+  assign preferred_primary_order = 'Handbags,Backpacks,Travel Bags,Pet Carriers' | split: ','
+  assign category_menu_collections = collections
+-%}
+<li><a href="{{ all_products_url }}" class="link--text">All Products</a></li>
+<li><a href="{{ new_arrivals_url }}" class="link--text">New Arrivals</a></li>
+{%- for primary_label in preferred_primary_order -%}
+  {%- assign primary_label_clean = primary_label | strip -%}
+  {%- if primary_label_clean == blank -%}{%- continue -%}{%- endif -%}
+  {%- assign primary_category_key = primary_label_clean | downcase -%}
+  {%- assign has_children = false -%}
+  {%- for category_collection in category_menu_collections -%}
+    {%- assign pc_mf = category_collection.metafields.custom.primary_category -%}
+    {%- if pc_mf != blank -%}
+      {%- liquid
+        if pc_mf.type contains 'list.'
+          assign _pv = pc_mf.value | join: '||'
+        else
+          assign _pv = pc_mf.value
+        endif
+        assign _pv = _pv | replace: ' • ', '||' | replace: '•', '||' | replace: ', ', '||' | replace: ',', '||' | replace: '; ', '||' | replace: ';', '||'
+        assign _plist = _pv | split: '||'
+      -%}
+      {%- for _p in _plist -%}
+        {%- assign _k = _p | strip | downcase -%}
+        {%- if _k == primary_category_key -%}
+          {%- assign has_children = true -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+    {%- if has_children -%}{%- break -%}{%- endif -%}
+  {%- endfor -%}
+  {%- if has_children -%}
+    {%- capture shop_all_primary_url -%}{%- render 'shop-all-url-for-primary', primary_label_clean: primary_label_clean, category_menu_collections: category_menu_collections -%}{%- endcapture -%}
+    <li><a href="{{ shop_all_primary_url | strip }}" class="link--text">{{ primary_label_clean | escape }}</a></li>
+  {%- endif -%}
+{%- endfor -%}

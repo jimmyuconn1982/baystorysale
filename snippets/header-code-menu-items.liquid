@@ -8,7 +8,7 @@
 
   Each row in the menu = one collection URL → that collection’s products (smart collection rules can mirror product metafields).
 
-  Order of primary columns: edit `preferred_primary_order` below. Only primaries that exist on at least one collection appear.
+  Order of primary columns: edit below (keep in sync with snippets/footer-shop-primary-list.liquid).
 {%- endcomment -%}
 
 {%- liquid
@@ -97,13 +97,9 @@
             </summary>
             <div class="mobile-accordion-submenu" tabindex="-1">
               <ul class="menu-drawer__menu list-menu" role="list">
-                {%- assign shop_all_primary_handle = primary_label_clean | handleize -%}
-                {%- assign shop_all_primary_url = collections[shop_all_primary_handle].url -%}
-                {%- if shop_all_primary_url == blank -%}
-                  {%- assign shop_all_primary_url = '/collections/' | append: shop_all_primary_handle -%}
-                {%- endif -%}
+                {%- capture shop_all_primary_url -%}{%- render 'shop-all-url-for-primary', primary_label_clean: primary_label_clean, category_menu_collections: category_menu_collections -%}{%- endcapture -%}
                 <li>
-                  <a href="{{ shop_all_primary_url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset menu__shop-all-primary">
+                  <a href="{{ shop_all_primary_url | strip }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset menu__shop-all-primary">
                     Shop All {{ primary_label_clean | escape }}
                   </a>
                 </li>
@@ -217,13 +213,9 @@
                 {% render 'icon-caret' %}
               </summary>
               <ul id="HeaderMenu-Primary-{{ primary_category_handle }}" class="header__submenu list-menu list-menu--disclosure gradient caption-large motion-reduce global-settings-popup" role="list" tabindex="-1">
-                {%- assign shop_all_primary_handle = primary_label_clean | handleize -%}
-                {%- assign shop_all_primary_url = collections[shop_all_primary_handle].url -%}
-                {%- if shop_all_primary_url == blank -%}
-                  {%- assign shop_all_primary_url = '/collections/' | append: shop_all_primary_handle -%}
-                {%- endif -%}
+                {%- capture shop_all_primary_url -%}{%- render 'shop-all-url-for-primary', primary_label_clean: primary_label_clean, category_menu_collections: category_menu_collections -%}{%- endcapture -%}
                 <li>
-                  <a href="{{ shop_all_primary_url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large menu__shop-all-primary">
+                  <a href="{{ shop_all_primary_url | strip }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large menu__shop-all-primary">
                     Shop All {{ primary_label_clean | escape }}
                   </a>
                 </li>

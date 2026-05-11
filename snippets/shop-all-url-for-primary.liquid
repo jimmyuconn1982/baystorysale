@@ -1,0 +1,198 @@
+{%- comment -%}
+  "Shop All [Primary]" — 与「该主类下所有子集合里的商品并集」一致的首选做法：
+
+  **优先** 使用约定 handle 的集合：`{{ 主类名 | handleize }}-all`
+  例：Travel Bags → `travel-bags-all`。请在后台创建该智能集合，规则设为
+  「商品属于集合 cosmetic-bags **或** 属于集合 duffel」（或与你的子集合 handle 等价的 OR），
+  则点击 Shop All 即严格等于图2+图3 的总和。
+
+  若不存在该集合或商品数为 0，再回退为全店 + primary（AND）+ sub_category（OR）的筛选 URL（依赖商品 metafield）。
+
+  Accepts: primary_label_clean, category_menu_collections
+{%- endcomment -%}
+{%- liquid
+  assign _pl = primary_label_clean | strip
+  assign primary_key = _pl | downcase
+  assign primary_token = '||' | append: primary_key | append: '||'
+  assign aggregate_handle = _pl | handleize | append: '-all'
+  assign aggregate_col = collections[aggregate_handle]
+  assign final_url = blank
+
+  if aggregate_col != blank and aggregate_col.all_products_count > 0
+    assign final_url = aggregate_col.url
+  endif
+
+  if final_url == blank
+    assign all_catalog = collections.all
+    assign sub_value_bucket = blank
+    assign seen_sub_keys = '||'
+
+    for child_collection in category_menu_collections
+      assign child_pc = child_collection.metafields.custom.primary_category
+      if child_pc != blank
+        assign child_primary_category_keys = ''
+        if child_pc.type contains 'list.'
+          assign child_primary_category_values = child_pc.value | join: '||'
+        else
+          assign child_primary_category_values = child_pc.value
+        endif
+        assign child_primary_category_values = child_primary_category_values | replace: ' • ', '||' | replace: '•', '||' | replace: ', ', '||' | replace: ',', '||' | replace: '; ', '||' | replace: ';', '||'
+        assign child_primary_category_list = child_primary_category_values | split: '||'
+        for child_primary_category in child_primary_category_list
+          assign child_primary_category_key = child_primary_category | strip | downcase
+          if child_primary_category_key != blank
+            assign child_primary_category_keys = child_primary_category_keys | append: '||' | append: child_primary_category_key | append: '||'
+          endif
+        endfor
+        if child_primary_category_keys contains primary_token
+          assign sub_mf = child_collection.metafields.custom.sub_category
+          if sub_mf != blank
+            if sub_mf.type contains 'list.'
+              for sv in sub_mf.value
+                assign vclean = sv | strip
+                if vclean != blank
+                  assign dk = vclean | downcase
+                  assign dtag = '||' | append: dk | append: '||'
+                  unless seen_sub_keys contains dtag
+                    assign seen_sub_keys = seen_sub_keys | append: dk | append: '||'
+                    if sub_value_bucket == blank
+                      assign sub_value_bucket = vclean
+                    else
+                      assign sub_value_bucket = sub_value_bucket | append: '|||SUB|||' | append: vclean
+                    endif
+                  endunless
+                endif
+              endfor
+            else
+              assign vclean = sub_mf.value | strip
+              if vclean != blank
+                assign dk = vclean | downcase
+                assign dtag = '||' | append: dk | append: '||'
+                unless seen_sub_keys contains dtag
+                  assign seen_sub_keys = seen_sub_keys | append: dk | append: '||'
+                  if sub_value_bucket == blank
+                    assign sub_value_bucket = vclean
+                  else
+                    assign sub_value_bucket = sub_value_bucket | append: '|||SUB|||' | append: vclean
+                  endif
+                endunless
+              endif
+            endif
+          else
+            assign vclean = child_collection.title | strip
+            if vclean != blank
+              assign dk = vclean | downcase
+              assign dtag = '||' | append: dk | append: '||'
+              unless seen_sub_keys contains dtag
+                assign seen_sub_keys = seen_sub_keys | append: dk | append: '||'
+                if sub_value_bucket == blank
+                  assign sub_value_bucket = vclean
+                else
+                  assign sub_value_bucket = sub_value_bucket | append: '|||SUB|||' | append: vclean
+                endif
+              endunless
+            endif
+          endif
+        endif
+      endif
+    endfor
+
+    assign sub_filter_obj = blank
+    if all_catalog.filters.size > 0
+      for f in all_catalog.filters
+        assign fpname = f.param_name | default: ''
+        assign fplabel = f.label | downcase
+        if fpname contains 'sub_category' or fpname contains 'sub-category' or fplabel contains 'sub category' or fplabel contains 'subcategory'
+          assign sub_filter_obj = f
+          break
+        endif
+      endfor
+    endif
+
+    assign query_string = blank
+
+    if sub_value_bucket != blank and sub_filter_obj != blank
+      assign sub_splits = sub_value_bucket | split: '|||SUB|||'
+      for part in sub_splits
+        assign pstrip = part | strip
+        if pstrip != blank
+          assign pd = pstrip | downcase
+          for fv in sub_filter_obj.values
+            assign fl = fv.label | strip | downcase
+            assign fvv = fv.value | strip | downcase
+            if fl == pd or fvv == pd
+              assign encv = fv.value | url_encode
+              assign seg = sub_filter_obj.param_name | append: '=' | append: encv
+              if query_string == blank
+                assign query_string = seg
+              else
+                assign query_string = query_string | append: '&' | append: seg
+              endif
+              break
+            endif
+          endfor
+        endif
+      endfor
+    endif
+
+    if query_string == blank and sub_value_bucket != blank
+      assign sub_splits = sub_value_bucket | split: '|||SUB|||'
+      for part in sub_splits
+        assign pstrip = part | strip
+        if pstrip != blank
+          assign enc = pstrip | url_encode
+          assign seg = 'filter.p.m.custom.sub_category=' | append: enc
+          if query_string == blank
+            assign query_string = seg
+          else
+            assign query_string = query_string | append: '&' | append: seg
+          endif
+        endif
+      endfor
+    endif
+
+    assign primary_seg = blank
+    if query_string != blank
+      assign prim_filter_obj = blank
+      if all_catalog.filters.size > 0
+        for f in all_catalog.filters
+          assign fpname = f.param_name | default: ''
+          assign fplabel = f.label | downcase
+          if fpname contains 'primary_category' or fplabel contains 'primary category' or fplabel contains 'primarycategory'
+            assign prim_filter_obj = f
+            break
+          endif
+        endfor
+      endif
+      if prim_filter_obj != blank
+        assign pk = _pl | downcase
+        for fv in prim_filter_obj.values
+          assign fl = fv.label | strip | downcase
+          assign fvv = fv.value | strip | downcase
+          if fl == pk or fvv == pk
+            assign encpv = fv.value | url_encode
+            assign primary_seg = prim_filter_obj.param_name | append: '=' | append: encpv
+            break
+          endif
+        endfor
+      endif
+      if primary_seg == blank
+        assign primary_seg = 'filter.p.m.custom.primary_category=' | append: _pl | url_encode
+      endif
+      assign query_string = primary_seg | append: '&' | append: query_string
+    endif
+
+    if query_string == blank
+      assign encp = _pl | url_encode
+      assign query_string = 'filter.p.m.custom.primary_category=' | append: encp
+    endif
+
+    assign all_base = routes.all_products_collection_url
+    if all_base contains '?'
+      assign final_url = all_base | append: '&' | append: query_string
+    else
+      assign final_url = all_base | append: '?' | append: query_string
+    endif
+  endif
+-%}
+{{- final_url -}}
