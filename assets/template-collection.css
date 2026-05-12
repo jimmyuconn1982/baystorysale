@@ -78,3 +78,68 @@
 .collection__view-all a:not(.link) {
   margin-top: 1rem;
 }
+
+/* Product type 多选合并：加载中仅显示 spinner，不露出旧列表 */
+#ProductGridContainer.bay-pt-pending-merge {
+  position: relative;
+  min-height: 45vh;
+}
+
+#ProductGridContainer.bay-pt-pending-merge .bay-pt-pending-shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 45vh;
+  width: 100%;
+}
+
+#ProductGridContainer.bay-pt-pending-merge .bay-pt-pending-shell[hidden] {
+  display: none !important;
+}
+
+#ProductGridContainer.bay-pt-pending-merge .bay-pt-pending-shell .loading-overlay__spinner {
+  width: 3rem;
+}
+
+#ProductGridContainer.bay-pt-pending-merge > .collection {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+#ProductGridContainer.bay-pt-pending-merge .pagination-wrapper {
+  display: none !important;
+}
+
+.collection.bay-pt-merge-loading .pagination-wrapper {
+  display: none !important;
+}
+
+.collection.bay-pt-merge-loading .pagination-wrapper {
+  display: none !important;
+}
+
+.collection.bay-pt-merge-loading .loading-overlay {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 45vh;
+  width: 100%;
+  left: 0;
+  right: 0;
+  opacity: 1;
+  padding: 3rem 1.5rem;
+}
+
+.collection.bay-pt-merge-loading .loading-overlay__spinner {
+  width: 3rem;
+}
+
+.collection.bay-pt-merge-loading #product-grid:empty {
+  display: none;
+}

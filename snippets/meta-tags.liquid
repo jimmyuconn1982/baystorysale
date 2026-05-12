@@ -18,6 +18,16 @@
 <meta property="og:title" content="{{ og_title | escape }}">
 <meta property="og:type" content="{{ og_type }}">
 <meta property="og:description" content="{{ og_description | escape }}">
+<meta property="og:locale" content="{{ request.locale.iso_code | replace: '-', '_' }}">
+{%- if shop.published_locales.size > 1 -%}
+  {%- for locale in shop.published_locales -%}
+    {%- unless locale.iso_code == request.locale.iso_code -%}
+      <meta property="og:locale:alternate" content="{{ locale.iso_code | replace: '-', '_' }}">
+    {%- endunless -%}
+  {%- endfor -%}
+  {%- comment -%} x-default 辅助多语言收录；各语言 URL 请在 Markets / 翻译应用中与 canonical 对齐后必要时再补全 hreflang {%- endcomment -%}
+  <link rel="alternate" hreflang="x-default" href="{{ canonical_url }}">
+{%- endif -%}
 
 {%- if page_image -%}
   <meta property="og:image" content="http:{{ page_image | image_url: width: 1200 }}">
@@ -47,42 +57,15 @@
   <meta name="twitter:image:alt" content="{{ page_image.alt | default: shop.name | escape }}">
 {%- endif -%}
 
-{%- comment -%} Additional SEO meta tags {%- endcomment -%}
-<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+{%- comment -%} 勿全局强制 index：交给 Shopify / 模板；密码页明确 noindex {%- endcomment -%}
+{%- if request.page_type == 'password' -%}
+  <meta name="robots" content="noindex,nofollow">
+{%- endif -%}
 {%- if request.page_type == 'product' -%}
   <meta name="google" content="nositelinkssearchbox">
 {%- endif -%}
 
-{%- comment -%} GEO: Structured data for LLMs - Organization with detailed info {%- endcomment -%}
-{%- if request.page_type == 'index' -%}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": {{ shop.name | json }},
-  "alternateName": "BaystoryBag",
-  "description": {{ shop.description | default: "BaystoryBag offers stylish, lightweight women's handbags designed for daily use. Featuring novel, fashion-forward designs in tote bags, crossbody bags, shoulder bags, and clutches. Free shipping on orders over $49 and 15% off your first order." | json }},
-  "url": {{ request.origin | json }},
-  "logo": {{ section.settings.logo | image_url: width: 500 | prepend: "https:" | json }},
-  "sameAs": [
-    {{ settings.social_twitter_link | json }},
-    {{ settings.social_facebook_link | json }},
-    {{ settings.social_pinterest_link | json }},
-    {{ settings.social_instagram_link | json }},
-    {{ settings.social_tiktok_link | json }}
-  ],
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "contactType": "customer service",
-    "url": {{ request.origin | append: "/pages/contact" | json }}
-  },
-  "priceRange": "$$",
-  "areaServed": "US"
-}
-</script>
-{%- endif -%}
-
-{%- comment -%} GEO: BreadcrumbList for all pages {%- endcomment -%}
+{%- comment -%} BreadcrumbList（非首页）{%- endcomment -%}
 {%- unless request.page_type == 'index' -%}
 <script type="application/ld+json">
 {
@@ -92,27 +75,58 @@
     {
       "@type": "ListItem",
       "position": 1,
-      "name": "Home",
-      "item": {{ request.origin | json }}
-    }{%- if request.page_type == 'product' -%},
-    {
+      "name": {{ 'general.breadcrumb_home' | t | json }},
+      "item": {{ shop.url | default: request.origin | json }}
+    }
+    {%- if request.page_type == 'product' -%}
+    ,{
       "@type": "ListItem",
       "position": 2,
       "name": {{ product.title | json }},
       "item": {{ request.origin | append: product.url | json }}
-    }{%- elsif request.page_type == 'collection' -%},
-    {
+    }
+    {%- elsif request.page_type == 'collection' -%}
+    ,{
       "@type": "ListItem",
       "position": 2,
       "name": {{ collection.title | json }},
       "item": {{ request.origin | append: collection.url | json }}
-    }{%- elsif request.page_type == 'page' -%},
-    {
+    }
+    {%- elsif request.page_type == 'page' -%}
+    ,{
       "@type": "ListItem",
       "position": 2,
       "name": {{ page.title | json }},
       "item": {{ request.origin | append: page.url | json }}
-    }{%- endif -%}
+    }
+    {%- elsif request.page_type == 'blog' -%}
+    ,{
+      "@type": "ListItem",
+      "position": 2,
+      "name": {{ blog.title | json }},
+      "item": {{ request.origin | append: blog.url | json }}
+    }
+    {%- elsif request.page_type == 'article' -%}
+    ,{
+      "@type": "ListItem",
+      "position": 2,
+      "name": {{ blog.title | json }},
+      "item": {{ request.origin | append: blog.url | json }}
+    }
+    ,{
+      "@type": "ListItem",
+      "position": 3,
+      "name": {{ article.title | json }},
+      "item": {{ request.origin | append: article.url | json }}
+    }
+    {%- elsif request.page_type == 'search' -%}
+    ,{
+      "@type": "ListItem",
+      "position": 2,
+      "name": {{ 'templates.search.title' | t | json }},
+      "item": {{ canonical_url | json }}
+    }
+    {%- endif -%}
   ]
 }
 </script>

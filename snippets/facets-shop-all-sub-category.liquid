@@ -1,0 +1,295 @@
+{%- comment -%}
+  Product type 多选（与子集合对应）：
+  - 不依赖 filter.p.m.custom.sub_category（在 all-handbags 等聚合页不可靠）。
+  - 复选框无 name，由 product-type-ms-nav.js 处理：0→清除 pt 回 Shop All；在 all-backpacks 等聚合页上 1 项→本页 ?pt= 合并子集合商品（不跳转）；非聚合页 1 项→跳转子集合；≥2→合并并写入 ?pt=
+  - change 在捕获阶段 stopPropagation，避免触发 facets.js。
+  Accepts: mode, section, primary_label_clean, results, category_menu_collections, sort_by
+{%- endcomment -%}
+{%- liquid
+  assign product_type_heading = 'Product type'
+  assign _pl = primary_label_clean | strip
+  assign primary_key = _pl | downcase
+  assign primary_token = '||' | append: primary_key | append: '||'
+  assign agg_token = '||all-handbags||all-backpacks||all-travel-bags||all-pet-carriers||'
+
+  assign sap_ct = 0
+  for child_collection in category_menu_collections
+    assign dh = child_collection.handle | prepend: '||' | append: '||'
+    if agg_token contains dh
+      continue
+    endif
+    assign child_pc = child_collection.metafields.custom.primary_category
+    if child_pc == blank
+      continue
+    endif
+    assign child_primary_category_keys = ''
+    if child_pc.type contains 'list.'
+      assign child_primary_category_values = child_pc.value | join: '||'
+    else
+      assign child_primary_category_values = child_pc.value
+    endif
+    assign child_primary_category_values = child_primary_category_values | replace: ' • ', '||' | replace: '•', '||' | replace: ', ', '||' | replace: ',', '||' | replace: '; ', '||' | replace: ';', '||'
+    assign child_primary_category_list = child_primary_category_values | split: '||'
+    for child_primary_category in child_primary_category_list
+      assign child_primary_category_key = child_primary_category | strip | downcase
+      if child_primary_category_key != blank
+        assign child_primary_category_keys = child_primary_category_keys | append: '||' | append: child_primary_category_key | append: '||'
+      endif
+    endfor
+    if child_primary_category_keys contains primary_token
+      assign sap_ct = sap_ct | plus: 1
+    endif
+  endfor
+
+  assign strip_agg_filters = false
+  if results.handle == 'all-handbags' or results.handle == 'all-backpacks' or results.handle == 'all-travel-bags' or results.handle == 'all-pet-carriers'
+    assign strip_agg_filters = true
+  endif
+-%}
+{%- capture _cap_pt_clear -%}
+  {%- render 'shop-all-url-for-primary', primary_label_clean: primary_label_clean, category_menu_collections: category_menu_collections -%}
+{%- endcapture -%}
+{%- assign pt_clear_url = _cap_pt_clear | strip -%}
+{%- if strip_agg_filters -%}
+  {%- assign pt_clear_url = results.url -%}
+{%- endif -%}
+{%- if sap_ct > 0 -%}
+  {%- if mode == 'desktop' -%}
+    <details
+      id="Details-shop-all-sub-{{ section.id }}"
+      class="facets__disclosure-vertical"
+      open
+    >
+      <summary class="facets__summary caption-large focus-offset" aria-label="{{ product_type_heading | escape }}">
+        <div>
+          <span>{{ product_type_heading | escape }}</span>
+          {% render 'icon-caret' %}
+        </div>
+      </summary>
+      <div id="Facet-shop-all-sub-{{ section.id }}" class="parent-display facets__display-vertical">
+        <div
+          class="facets-wrap parent-wrap facets-wrap-vertical product-type-ms-nav"
+          data-allow-merge="true"
+          data-clear-url="{{ pt_clear_url | escape }}"
+          {% if strip_agg_filters %}data-stay-on-aggregate="true"{% endif %}
+        >
+          <p class="visually-hidden">{{ product_type_heading | escape }}</p>
+          <ul class="list-unstyled" role="list">
+            {%- assign sap_i = 0 -%}
+            {%- for child_collection in category_menu_collections -%}
+              {%- assign dh = child_collection.handle | prepend: '||' | append: '||' -%}
+              {%- if agg_token contains dh -%}{%- continue -%}{%- endif -%}
+              {%- assign child_pc = child_collection.metafields.custom.primary_category -%}
+              {%- if child_pc == blank -%}{%- continue -%}{%- endif -%}
+              {%- liquid
+                assign child_primary_category_keys = ''
+                if child_pc.type contains 'list.'
+                  assign child_primary_category_values = child_pc.value | join: '||'
+                else
+                  assign child_primary_category_values = child_pc.value
+                endif
+                assign child_primary_category_values = child_primary_category_values | replace: ' • ', '||' | replace: '•', '||' | replace: ', ', '||' | replace: ',', '||' | replace: '; ', '||' | replace: ';', '||'
+                assign child_primary_category_list = child_primary_category_values | split: '||'
+              -%}
+              {%- for child_primary_category in child_primary_category_list -%}
+                {%- assign child_primary_category_key = child_primary_category | strip | downcase -%}
+                {%- if child_primary_category_key != blank -%}
+                  {%- assign child_primary_category_keys = child_primary_category_keys | append: '||' | append: child_primary_category_key | append: '||' -%}
+                {%- endif -%}
+              {%- endfor -%}
+              {%- unless child_primary_category_keys contains primary_token -%}{%- continue -%}{%- endunless -%}
+              {%- assign nav_link_label = child_collection.title -%}
+              {%- assign sub_mf = child_collection.metafields.custom.sub_category -%}
+              {%- if sub_mf != blank -%}
+                {%- if sub_mf.type contains 'list.' -%}
+                  {%- assign nav_link_label = sub_mf.value | join: ', ' -%}
+                {%- else -%}
+                  {%- assign nav_link_label = sub_mf.value -%}
+                {%- endif -%}
+              {%- endif -%}
+              {%- liquid
+                assign is_current = false
+                if child_collection.handle == results.handle
+                  assign is_current = true
+                endif
+                assign fv_disabled = false
+                if child_collection.all_products_count == 0 and is_current == false
+                  assign fv_disabled = true
+                endif
+                assign row_child_url = child_collection.url
+                if sort_by != blank
+                  assign row_sort_q = sort_by | url_encode
+                  assign row_child_url = row_child_url | append: '?sort_by=' | append: row_sort_q
+                endif
+              -%}
+              {%- assign sap_i = sap_i | plus: 1 -%}
+              <li class="list-menu__item facets__item">
+                {%- if fv_disabled -%}
+                  <span class="alo-facet-option alo-facet-option--disabled" aria-disabled="true">
+                    <span class="alo-facet-option__box" aria-hidden="true">
+                      <svg class="alo-facet-option__box-outline" width="16" height="16" viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+                        <rect x="0.5" y="0.5" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1"></rect>
+                      </svg>
+                      <svg class="alo-facet-option__box-check" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
+                        <path d="M4 8.5L7 11.5L12.5 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </span>
+                    <span class="alo-facet-option__text">{{ nav_link_label | escape }} ({{ child_collection.all_products_count }})</span>
+                  </span>
+                {%- else -%}
+                  <label class="alo-facet-option{% if is_current %} is-current{% endif %}" for="Filter-pt-desktop-{{ section.id }}-{{ sap_i }}">
+                    <input
+                      type="checkbox"
+                      id="Filter-pt-desktop-{{ section.id }}-{{ sap_i }}"
+                      data-pt-child-handle="{{ child_collection.handle | escape }}"
+                      data-pt-child-url="{{ child_collection.url | escape }}"
+                      {% if is_current %}checked{% endif %}
+                    >
+                    <span class="alo-facet-option__box" aria-hidden="true">
+                      <svg class="alo-facet-option__box-outline" width="16" height="16" viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+                        <rect x="0.5" y="0.5" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1"></rect>
+                      </svg>
+                      <svg class="alo-facet-option__box-check" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
+                        <path d="M4 8.5L7 11.5L12.5 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </span>
+                    <span class="alo-facet-option__text">{{ nav_link_label | escape }} ({{ child_collection.all_products_count }})</span>
+                  </label>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      </div>
+    </details>
+    <script src="{{ 'product-type-ms-nav.js' | asset_url }}" defer="defer"></script>
+  {%- else -%}
+    <details
+      id="Details-Mobile-shop-all-sub-{{ section.id }}"
+      class="mobile-facets__details"
+      open
+    >
+      <summary class="mobile-facets__summary focus-inset">
+        <div>
+          <span>{{ product_type_heading | escape }}</span>
+          <span class="mobile-facets__arrow no-js-hidden">{% render 'icon-caret' %}</span>
+          <noscript>{% render 'icon-caret' %}</noscript>
+        </div>
+      </summary>
+      <div id="FacetMobile-shop-all-sub-{{ section.id }}" class="mobile-facets__submenu gradient">
+        <button class="mobile-facets__close-button link link--text focus-inset" aria-expanded="true" type="button">
+          {% render 'icon-arrow' %}
+          {{ product_type_heading | escape }}
+        </button>
+        <div
+          class="product-type-ms-nav"
+          data-allow-merge="true"
+          data-clear-url="{{ pt_clear_url | escape }}"
+          {% if strip_agg_filters %}data-stay-on-aggregate="true"{% endif %}
+        >
+          <ul class="mobile-facets__list list-unstyled" role="list">
+            {%- assign sap_i = 0 -%}
+            {%- for child_collection in category_menu_collections -%}
+              {%- assign dh = child_collection.handle | prepend: '||' | append: '||' -%}
+              {%- if agg_token contains dh -%}{%- continue -%}{%- endif -%}
+              {%- assign child_pc = child_collection.metafields.custom.primary_category -%}
+              {%- if child_pc == blank -%}{%- continue -%}{%- endif -%}
+              {%- liquid
+                assign child_primary_category_keys = ''
+                if child_pc.type contains 'list.'
+                  assign child_primary_category_values = child_pc.value | join: '||'
+                else
+                  assign child_primary_category_values = child_pc.value
+                endif
+                assign child_primary_category_values = child_primary_category_values | replace: ' • ', '||' | replace: '•', '||' | replace: ', ', '||' | replace: ',', '||' | replace: '; ', '||' | replace: ';', '||'
+                assign child_primary_category_list = child_primary_category_values | split: '||'
+              -%}
+              {%- for child_primary_category in child_primary_category_list -%}
+                {%- assign child_primary_category_key = child_primary_category | strip | downcase -%}
+                {%- if child_primary_category_key != blank -%}
+                  {%- assign child_primary_category_keys = child_primary_category_keys | append: '||' | append: child_primary_category_key | append: '||' -%}
+                {%- endif -%}
+              {%- endfor -%}
+              {%- unless child_primary_category_keys contains primary_token -%}{%- continue -%}{%- endunless -%}
+              {%- assign nav_link_label = child_collection.title -%}
+              {%- assign sub_mf = child_collection.metafields.custom.sub_category -%}
+              {%- if sub_mf != blank -%}
+                {%- if sub_mf.type contains 'list.' -%}
+                  {%- assign nav_link_label = sub_mf.value | join: ', ' -%}
+                {%- else -%}
+                  {%- assign nav_link_label = sub_mf.value -%}
+                {%- endif -%}
+              {%- endif -%}
+              {%- liquid
+                assign is_current = false
+                if child_collection.handle == results.handle
+                  assign is_current = true
+                endif
+                assign fv_disabled = false
+                if child_collection.all_products_count == 0 and is_current == false
+                  assign fv_disabled = true
+                endif
+                assign row_child_url = child_collection.url
+                if sort_by != blank
+                  assign row_sort_q = sort_by | url_encode
+                  assign row_child_url = row_child_url | append: '?sort_by=' | append: row_sort_q
+                endif
+              -%}
+              {%- assign sap_i = sap_i | plus: 1 -%}
+              <li class="mobile-facets__item list-menu__item">
+                {%- if fv_disabled -%}
+                  <span class="mobile-facets__label mobile-facets__label--disabled" aria-disabled="true">
+                    <span class="mobile-facets__highlight" aria-hidden="true"></span>
+                    <svg width="1.6rem" height="1.6rem" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                      <rect width="16" height="16" stroke="currentColor" fill="none" stroke-width="1"></rect>
+                    </svg>
+                    <svg class="icon icon-checkmark" width="1.1rem" height="0.7rem" viewBox="0 0 11 7" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M1.5 3.5L2.83333 4.75L4.16667 6L9.5 1" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <span>{{ nav_link_label | escape }} ({{ child_collection.all_products_count }})</span>
+                  </span>
+                {%- else -%}
+                  <label class="mobile-facets__label{% if is_current %} is-current{% endif %}" for="Filter-pt-mobile-{{ section.id }}-{{ sap_i }}">
+                    <input
+                      class="mobile-facets__checkbox"
+                      type="checkbox"
+                      id="Filter-pt-mobile-{{ section.id }}-{{ sap_i }}"
+                      data-pt-child-handle="{{ child_collection.handle | escape }}"
+                      data-pt-child-url="{{ child_collection.url | escape }}"
+                      {% if is_current %}checked{% endif %}
+                    >
+                    <span class="mobile-facets__highlight" aria-hidden="true"></span>
+                    <svg width="1.6rem" height="1.6rem" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                      <rect width="16" height="16" stroke="currentColor" fill="none" stroke-width="1"></rect>
+                    </svg>
+                    <svg class="icon icon-checkmark" width="1.1rem" height="0.7rem" viewBox="0 0 11 7" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M1.5 3.5L2.83333 4.75L4.16667 6L9.5 1" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <span>{{ nav_link_label | escape }} ({{ child_collection.all_products_count }})</span>
+                  </label>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      </div>
+    </details>
+  {%- endif -%}
+
+  {%- if strip_agg_filters -%}
+    <script>
+      (function () {
+        if (!location.search || location.search.indexOf('sub_category') === -1) return;
+        var u = new URL(location.href);
+        var changed = false;
+        u.searchParams.forEach(function (_v, k) {
+          if (k.indexOf('sub_category') !== -1) {
+            u.searchParams.delete(k);
+            changed = true;
+          }
+        });
+        if (changed) location.replace(u.toString());
+      })();
+    </script>
+  {%- endif -%}
+{%- endif -%}

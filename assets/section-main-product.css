@@ -610,6 +610,12 @@ a.product__text {
   position: relative !important;
 }
 
+/* 产品主图：完整显示（避免横向钱包等在 .media 的 cover 下被裁切） */
+.product .product__media.media > img {
+  object-fit: contain !important;
+  object-position: center center;
+}
+
 .product__media-item img {
   width: 100% !important;
   height: auto !important;
@@ -1586,7 +1592,7 @@ a.product__text {
   width: 100%;
   height: auto;
   aspect-ratio: 1;
-  object-fit: cover;
+  object-fit: contain;
   border-bottom: 1px solid rgba(var(--color-foreground), 0.05);
 }
 

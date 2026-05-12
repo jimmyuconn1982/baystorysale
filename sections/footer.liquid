@@ -436,7 +436,7 @@
           {%- if links_block -%}
             {%- for link in links_block.settings.menu.links -%}
               {%- if link.title == "Search" or link.title == "搜索" or link.title == "Shipping Policy" or link.title == "Refund Policy" or link.title == "退款政策" or link.title == "退換貨政策" -%}{%- continue -%}{%- endif -%}
-              <li><a {% assign link_title_clean = link.title | strip | downcase %}{% if link_title_clean == "about us" %}href="/pages/about-us"{% else %}href="{{ link.url }}"{% endif %} class="link--text{% if link.active %} list-menu__item--active{% endif %}">{{ link.title }}</a></li>
+              <li><a {% assign link_title_clean = link.title | strip | downcase %}{% if link_title_clean == "about us" or link_title_clean == "about" %}href="/pages/about-us"{% else %}href="{{ link.url }}"{% endif %} class="link--text{% if link.active %} list-menu__item--active{% endif %}">{{ link.title }}</a></li>
             {%- endfor -%}
           {%- endif -%}
           <li><a href="/pages/faq" class="link--text">FAQ</a></li>
@@ -507,7 +507,7 @@
           {%- for link in block.settings.menu.links -%}
             {%- if link.title == "Search" or link.title == "搜索" or link.title == "Shipping Policy" or link.title == "Refund Policy" or link.title == "退款政策" or link.title == "退換貨政策" -%}{%- continue -%}{%- endif -%}
             <li>
-              <a {% assign link_title_clean = link.title | strip | downcase %}{% if link_title_clean == "about us" %}href="/pages/about-us"{% else %}href="{{ link.url }}"{% endif %} class="link--text{% if link.active %} list-menu__item--active{% endif %}">{{ link.title }}</a>
+              <a {% assign link_title_clean = link.title | strip | downcase %}{% if link_title_clean == "about us" or link_title_clean == "about" %}href="/pages/about-us"{% else %}href="{{ link.url }}"{% endif %} class="link--text{% if link.active %} list-menu__item--active{% endif %}">{{ link.title }}</a>
             </li>
           {%- endfor -%}
           <li><a href="/pages/faq" class="link--text">FAQ</a></li>

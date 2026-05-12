@@ -1,7 +1,6 @@
 {%- comment -%}
-  Footer Shop column: All Products, New Arrivals, then each primary category that
-  exists on collections (custom.primary_category). Order matches the header —
-  keep `preferred_primary_order` in sync with `snippets/header-code-menu-items.liquid`.
+  Footer Shop column: All Products, New Arrivals, then each primary category（顺序与顶栏一致）。
+  preferred 与 snippets/header-code-menu-items.liquid 中 assign 保持一致；其余 primary 由 primary-nav-order-csv 自动追加。
 {%- endcomment -%}
 {%- liquid
   assign new_arrivals_url = collections['new-arrivals'].url | default: '/collections/new-arrivals'
@@ -9,10 +8,17 @@
   assign preferred_primary_order = 'Handbags,Backpacks,Travel Bags,Pet Carriers' | split: ','
   assign category_menu_collections = collections
 -%}
+{%- capture _primary_nav_order_csv -%}
+  {%- render 'primary-nav-order-csv',
+    category_menu_collections: category_menu_collections,
+    preferred_primary_order: preferred_primary_order,
+    primary_category_order_menu: settings.primary_category_order_menu
+  -%}
+{%- endcapture -%}
+{%- assign final_primary_nav_labels = _primary_nav_order_csv | strip | split: '###' -%}
 <li><a href="{{ all_products_url }}" class="link--text">All Products</a></li>
 <li><a href="{{ new_arrivals_url }}" class="link--text">New Arrivals</a></li>
-{%- for primary_label in preferred_primary_order -%}
-  {%- assign primary_label_clean = primary_label | strip -%}
+{%- for primary_label_clean in final_primary_nav_labels -%}
   {%- if primary_label_clean == blank -%}{%- continue -%}{%- endif -%}
   {%- assign primary_category_key = primary_label_clean | downcase -%}
   {%- assign has_children = false -%}

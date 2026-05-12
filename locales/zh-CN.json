@@ -37,6 +37,7 @@
         "tiktok": "TikTok"
       }
     },
+    "breadcrumb_home": "首页",
     "continue_shopping": "继续购物",
     "pagination": {
       "label": "分页",
@@ -156,6 +157,7 @@
       "view_full_details": "查看完整详细信息",
       "include_taxes": "含税费。",
       "shipping_policy_html": "结账时计算的<a href=\"{{ link }}\">运费</a>。",
+      "shipping_at_checkout": "结账时计算运费。",
       "choose_options": "选择选项",
       "choose_product_options": "选择用于 {{ product_name }} 的选项"
     },
@@ -199,6 +201,10 @@
       "results_with_count": {
         "one": "{{ count }} 条结果",
         "other": "{{ count }} 条结果"
+      },
+      "results_for_quoted_term_prefix": {
+        "one": "{{ count }} 条结果，",
+        "other": "{{ count }} 条结果，"
       },
       "title": "搜索结果",
       "page": "页面",

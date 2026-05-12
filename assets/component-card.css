@@ -203,26 +203,27 @@
   outline: 0;
 }
 
-@media screen and (min-width: 990px) {
+@media screen and (min-width: 750px) {
   .card .media.media--hover-effect > img:only-child,
   .card-wrapper .media.media--hover-effect > img:only-child {
     transition: transform var(--duration-long) ease;
   }
 
+  /* 仅悬停在图片链接区域时切换主图/第二张图（不扫过标题、色块也切换） */
   .card:hover .media.media--hover-effect > img:first-child:only-child,
-  .card-wrapper:hover .media.media--hover-effect > img:first-child:only-child {
+  .card-wrapper .card__media-link:hover .media.media--hover-effect > img:first-child:only-child {
     transform: scale(1.03);
   }
 
-  .card-wrapper:hover
+  .card-wrapper .card__media-link:hover
     .media.media--hover-effect
     > img:first-child:not(:only-child) {
     opacity: 0;
   }
 
-  .card-wrapper:hover .media.media--hover-effect > img + img {
+  .card-wrapper .card__media-link:hover .media.media--hover-effect > img + img {
     opacity: 1;
-    transition: transform var(--duration-long) ease;
+    transition: transform var(--duration-long) ease, opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     transform: scale(1.03);
   }
 

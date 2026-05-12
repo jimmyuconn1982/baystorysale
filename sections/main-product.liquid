@@ -265,7 +265,7 @@
                   {{ 'products.product.include_taxes' | t }}
                 {%- endif -%}
                 {%- if shop.shipping_policy.body != blank -%}
-                  {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                  {{ 'products.product.shipping_at_checkout' | t }}
                 {%- endif -%}
               </div>
             {%- endif -%}
@@ -380,10 +380,13 @@
                             >
                             <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}" class="{% if variant_image %}label-with-image{% endif %}">
                               {%- if variant_image -%}
-                                <img src="{{ variant_image | image_url: width: 150, height: 150, crop: 'center' }}" 
-                                     alt="{{ value }}" 
-                                     width="75" height="75" 
-                                     loading="lazy"
+                                {%- assign _viw = 360 -%}
+                                <img
+                                  src="{{ variant_image | image_url: width: _viw }}"
+                                  alt="{{ value | escape }}"
+                                  width="90"
+                                  height="{{ 90 | divided_by: variant_image.aspect_ratio | round }}"
+                                  loading="lazy"
                                 >
                               {%- endif -%}
                               <span>{{ value }}</span>
@@ -764,43 +767,51 @@
 
   <script type="application/ld+json">
     {
-      "@context": "http://schema.org/",
+      "@context": "https://schema.org",
       "@type": "Product",
       "name": {{ product.title | json }},
       "url": {{ request.origin | append: product.url | json }},
-      {% if seo_media -%}
-        "image": [
-          {{ seo_media | image_url: width: seo_media.preview_image.width | prepend: "https:" | json }}
-        ],
-      {%- endif %}
+      "image": [
+        {%- assign first_ld_img = true -%}
+        {%- for media in product.media -%}
+          {%- if media.media_type == 'image' and forloop.index <= 10 -%}
+            {%- unless first_ld_img -%},{%- endunless -%}
+            {{- media | image_url: width: 1200 | prepend: 'https:' | json -}}
+            {%- assign first_ld_img = false -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if first_ld_img and seo_media -%}
+          {{- seo_media | image_url: width: 1200 | prepend: 'https:' | json -}}
+        {%- endif -%}
+      ],
       "description": {{ product.description | strip_html | json }},
-      {% if product.selected_or_first_available_variant.sku != blank -%}
-        "sku": {{ product.selected_or_first_available_variant.sku | json }},
-      {%- endif %}
+      {%- if product.selected_or_first_available_variant.sku != blank -%}
+      "sku": {{ product.selected_or_first_available_variant.sku | json }},
+      {%- endif -%}
       "brand": {
         "@type": "Brand",
-        "name": {{ product.vendor | json }}
+        "name": {{ product.vendor | default: shop.name | json }}
       },
       "offers": [
         {%- for variant in product.variants -%}
           {
-            "@type" : "Offer",
+            "@type": "Offer",
             {%- if variant.sku != blank -%}
               "sku": {{ variant.sku | json }},
             {%- endif -%}
             {%- if variant.barcode.size == 12 -%}
-              "gtin12": {{ variant.barcode }},
+              "gtin12": {{ variant.barcode | json }},
             {%- endif -%}
             {%- if variant.barcode.size == 13 -%}
-              "gtin13": {{ variant.barcode }},
+              "gtin13": {{ variant.barcode | json }},
             {%- endif -%}
             {%- if variant.barcode.size == 14 -%}
-              "gtin14": {{ variant.barcode }},
+              "gtin14": {{ variant.barcode | json }},
             {%- endif -%}
-            "availability" : "http://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
-            "price" : {{ variant.price | divided_by: 100.00 | json }},
-            "priceCurrency" : {{ cart.currency.iso_code | json }},
-            "url" : {{ request.origin | append: variant.url | json }}
+            "availability": "https://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
+            "price": {{ variant.price | divided_by: 100.00 | json }},
+            "priceCurrency": {{ cart.currency.iso_code | json }},
+            "url": {{ request.origin | append: variant.url | json }}
           }{% unless forloop.last %},{% endunless %}
         {%- endfor -%}
       ]

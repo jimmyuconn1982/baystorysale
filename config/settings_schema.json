@@ -1145,6 +1145,21 @@
     ]
   },
   {
+    "name": "Primary category navigation / 顶栏主类顺序",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "在「在线商店 → 导航」新建菜单，添加若干项：每项标题须与集合 metafield「custom.primary_category」中的文字一致（不区分大小写，如 Wallets、Handbags）。拖拽菜单项 = 顶栏一级目录顺序（位于 Shop 与 About 之间）。链接可填 #。未列入菜单的主类仍会按首次出现顺序自动追加在末尾。留空则使用下方代码中的默认顺序。"
+      },
+      {
+        "type": "link_list",
+        "id": "primary_category_order_menu",
+        "label": "Primary category order menu / 主类顺序菜单",
+        "info": "Choose a navigation menu; each item title = one primary column. Leave empty for built-in default order."
+      }
+    ]
+  },
+  {
     "name": "t:settings_schema.cart.name",
     "settings": [
       {

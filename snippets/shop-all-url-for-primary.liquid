@@ -2,11 +2,13 @@
   "Shop All [Primary]" — 与「该主类下所有子集合里的商品并集」一致的首选做法：
 
   **优先** 使用约定 handle 的集合：`{{ 主类名 | handleize }}-all`
-  例：Travel Bags → `travel-bags-all`。请在后台创建该智能集合，规则设为
-  「商品属于集合 cosmetic-bags **或** 属于集合 duffel」（或与你的子集合 handle 等价的 OR），
-  则点击 Shop All 即严格等于图2+图3 的总和。
+  （例外：Handbags → `all-handbags`，Wallets → `all-wallets`，Pet Carriers → `all-pet-carriers`，Backpacks → `all-backpacks`，Travel Bags → `all-travel-bags`，与后台集合 handle 一致。）
+  其它主类仍用 `{{ 主类名 | handleize }}-all`。智能集合规则示例：
+  「商品属于集合 A **或** 属于集合 B」等价的 OR。
 
-  若不存在该集合或商品数为 0，再回退为全店 + primary（AND）+ sub_category（OR）的筛选 URL（依赖商品 metafield）。
+  若不存在该集合，再回退为全店 + primary（AND）+ sub_category（OR）的筛选 URL（依赖商品 metafield）。
+  `all-handbags` / `all-wallets` / `all-pet-carriers` / `all-backpacks` / `all-travel-bags` 只要集合存在即使用该集合 URL（不要求先有商品）。
+  其它 `*-all` 集合在商品数为 0 时仍会回退，以免链到空壳集合。
 
   Accepts: primary_label_clean, category_menu_collections
 {%- endcomment -%}
@@ -14,12 +16,31 @@
   assign _pl = primary_label_clean | strip
   assign primary_key = _pl | downcase
   assign primary_token = '||' | append: primary_key | append: '||'
-  assign aggregate_handle = _pl | handleize | append: '-all'
+  assign aggregate_handle = blank
+  if primary_key == 'handbags'
+    assign aggregate_handle = 'all-handbags'
+  elsif primary_key == 'wallets'
+    assign aggregate_handle = 'all-wallets'
+  elsif primary_key == 'pet carriers'
+    assign aggregate_handle = 'all-pet-carriers'
+  elsif primary_key == 'backpacks'
+    assign aggregate_handle = 'all-backpacks'
+  elsif primary_key == 'travel bags'
+    assign aggregate_handle = 'all-travel-bags'
+  else
+    assign aggregate_handle = _pl | handleize | append: '-all'
+  endif
   assign aggregate_col = collections[aggregate_handle]
   assign final_url = blank
+  assign aggregate_skip_count_check = false
+  if primary_key == 'handbags' or primary_key == 'wallets' or primary_key == 'pet carriers' or primary_key == 'backpacks' or primary_key == 'travel bags'
+    assign aggregate_skip_count_check = true
+  endif
 
-  if aggregate_col != blank and aggregate_col.all_products_count > 0
-    assign final_url = aggregate_col.url
+  if aggregate_col != blank
+    if aggregate_skip_count_check or aggregate_col.all_products_count > 0
+      assign final_url = aggregate_col.url
+    endif
   endif
 
   if final_url == blank

@@ -1,5 +1,5 @@
 {%- comment -%}
-  Top header: Shop + Primary Category dropdowns + About us.
+  Top header: Shop + Primary Category dropdowns + About.
 
   Data model (must be on **collections**, not only products — Liquid cannot scan all products):
   - `custom.primary_category` — same value as on products (e.g. Handbags). Single value or list.
@@ -8,7 +8,8 @@
 
   Each row in the menu = one collection URL → that collection’s products (smart collection rules can mirror product metafields).
 
-  Order of primary columns: edit below (keep in sync with snippets/footer-shop-primary-list.liquid).
+  顶栏结构：Shop | 所有 Primary 列 | About。主类顺序：主题设置 →「Primary category order menu」选择导航菜单
+  即可在后台拖拽排序（见 config/settings_schema.json）；未选菜单时用 preferred_primary_order 默认顺序，并追加未列主类。
 {%- endcomment -%}
 
 {%- liquid
@@ -31,6 +32,14 @@
 
   assign preferred_primary_order = 'Handbags,Backpacks,Travel Bags,Pet Carriers' | split: ','
 -%}
+{%- capture _primary_nav_order_csv -%}
+  {%- render 'primary-nav-order-csv',
+    category_menu_collections: category_menu_collections,
+    preferred_primary_order: preferred_primary_order,
+    primary_category_order_menu: settings.primary_category_order_menu
+  -%}
+{%- endcapture -%}
+{%- assign final_primary_nav_labels = _primary_nav_order_csv | strip | split: '###' -%}
 
 {%- comment -%} ---------- Mobile ---------- {%- endcomment -%}
 {%- if code_menu_mode == 'mobile' -%}
@@ -58,8 +67,7 @@
     </details>
   </li>
   {%- if category_menu_collections != blank -%}
-    {%- for primary_label in preferred_primary_order -%}
-      {%- assign primary_label_clean = primary_label | strip -%}
+    {%- for primary_label_clean in final_primary_nav_labels -%}
       {%- if primary_label_clean == blank -%}{%- continue -%}{%- endif -%}
       {%- assign primary_category_key = primary_label_clean | downcase -%}
       {%- assign primary_category_token = '||' | append: primary_category_key | append: '||' -%}
@@ -147,7 +155,7 @@
     {%- endfor -%}
   {%- endif -%}
   <li>
-    <a href="{{ about_us_url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">About us</a>
+    <a href="{{ about_us_url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">About</a>
   </li>
 
 {%- comment -%} ---------- Desktop ---------- {%- endcomment -%}
@@ -174,8 +182,7 @@
     </header-menu>
   </li>
   {%- if category_menu_collections != blank -%}
-    {%- for primary_label in preferred_primary_order -%}
-      {%- assign primary_label_clean = primary_label | strip -%}
+    {%- for primary_label_clean in final_primary_nav_labels -%}
       {%- if primary_label_clean == blank -%}{%- continue -%}{%- endif -%}
       {%- assign primary_category_key = primary_label_clean | downcase -%}
       {%- assign primary_category_token = '||' | append: primary_category_key | append: '||' -%}
@@ -264,7 +271,7 @@
   {%- endif -%}
   <li>
     <a href="{{ about_us_url }}" class="header__menu-item list-menu__item link link--text focus-inset">
-      <span>About us</span>
+      <span>About</span>
     </a>
   </li>
 {%- endif -%}

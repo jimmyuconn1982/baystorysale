@@ -27,8 +27,40 @@
     assign terms = results.terms | escape
     assign results_url = '?q=' | append: terms | append: '&options%5Bprefix%5D=last&sort_by=' | append: sort_by
   endif
--%}
 
+  assign facets_shop_all_primary = blank
+  if results.url
+    case results.handle
+      when 'all-handbags'
+        assign facets_shop_all_primary = 'Handbags'
+      when 'all-backpacks'
+        assign facets_shop_all_primary = 'Backpacks'
+      when 'all-travel-bags'
+        assign facets_shop_all_primary = 'Travel Bags'
+      when 'all-pet-carriers'
+        assign facets_shop_all_primary = 'Pet Carriers'
+    endcase
+  endif
+  if facets_shop_all_primary == blank and results.url
+    assign col_pc = results.metafields.custom.primary_category
+    if col_pc != blank
+      if col_pc.type contains 'list.'
+        assign col_pc_vals = col_pc.value | join: '||'
+      else
+        assign col_pc_vals = col_pc.value
+      endif
+      assign col_pc_vals = col_pc_vals | replace: ' • ', '||' | replace: '•', '||' | replace: ', ', '||' | replace: ',', '||' | replace: '; ', '||' | replace: ';', '||'
+      assign col_pc_list = col_pc_vals | split: '||'
+      for pe in col_pc_list
+        assign pet = pe | strip
+        if pet != blank
+          assign facets_shop_all_primary = pet
+          break
+        endif
+      endfor
+    endif
+  endif
+-%}
 {%- comment -%}
   Mobile controls (Alo-style):
   - Top bar shows FILTERS(n) and SORT
@@ -150,9 +182,24 @@
               </div>
             {%- endif -%}
 
+            {%- if facets_shop_all_primary != blank -%}
+              {% render 'facets-shop-all-sub-category', mode: 'desktop', section: section, primary_label_clean: facets_shop_all_primary, results: results, category_menu_collections: collections, sort_by: sort_by %}
+            {%- endif -%}
+
             <script src="{{ 'show-more.js' | asset_url }}" defer="defer"></script>
             {% comment %} Filters for both horizontal and vertical filter {% endcomment %}
             {%- for filter in results.filters -%}
+              {%- if facets_shop_all_primary != blank -%}
+                {%- liquid
+                  assign fpname_skip = filter.param_name | default: ''
+                  assign fplabel_skip = filter.label | downcase
+                  assign facets_skip_native_sub = false
+                  if fpname_skip contains 'sub_category' or fpname_skip contains 'sub-category' or fpname_skip contains 'product_type' or fplabel_skip contains 'sub category' or fplabel_skip contains 'subcategory' or fplabel_skip contains 'product type'
+                    assign facets_skip_native_sub = true
+                  endif
+                -%}
+                {%- if facets_skip_native_sub -%}{%- continue -%}{%- endif -%}
+              {%- endif -%}
               {%- comment -%}
                 Skip Price filter per design (only Product Type / Color / Percent Off etc.)
               {%- endcomment -%}
@@ -393,7 +440,9 @@
           <div class="product-count light" role="status">
             <h2 class="product-count__text text-body">
               <span id="ProductCountDesktop">
-                {%- if results.results_count -%}
+                {%- if results.terms != blank -%}
+                  {% render 'search-results-count-text', results: results %}
+                {%- elsif results.results_count -%}
                   {{ 'templates.search.results_with_count' | t: terms: results.terms, count: results.results_count }}
                 {%- elsif results.products_count == results.all_products_count -%}
                   {{ 'products.facets.product_count_simple' | t: count: results.products_count }}
@@ -508,7 +557,21 @@
             </div>
             <div class="mobile-facets__main has-submenu gradient">
               {%- if enable_filtering -%}
+                {%- if facets_shop_all_primary != blank -%}
+                  {% render 'facets-shop-all-sub-category', mode: 'mobile', section: section, primary_label_clean: facets_shop_all_primary, results: results, category_menu_collections: collections, sort_by: sort_by %}
+                {%- endif -%}
                 {%- for filter in results.filters -%}
+                  {%- if facets_shop_all_primary != blank -%}
+                    {%- liquid
+                      assign fpname_skip_m = filter.param_name | default: ''
+                      assign fplabel_skip_m = filter.label | downcase
+                      assign facets_skip_native_sub_m = false
+                      if fpname_skip_m contains 'sub_category' or fpname_skip_m contains 'sub-category' or fpname_skip_m contains 'product_type' or fplabel_skip_m contains 'sub category' or fplabel_skip_m contains 'subcategory' or fplabel_skip_m contains 'product type'
+                        assign facets_skip_native_sub_m = true
+                      endif
+                    -%}
+                    {%- if facets_skip_native_sub_m -%}{%- continue -%}{%- endif -%}
+                  {%- endif -%}
                   {%- comment -%} Skip Price filter on mobile too {%- endcomment -%}
                   {%- if filter.type == 'price_range' -%}{%- continue -%}{%- endif -%}
                   {% case filter.type %}
@@ -669,7 +732,9 @@
   <div class="product-count light{% if filter_type == 'vertical' or filter_type == 'horizontal' %} medium-hide large-up-hide{% endif %}" role="status">
     <h2 class="product-count__text text-body">
       <span id="ProductCount">
-        {%- if results.results_count -%}
+        {%- if results.terms != blank -%}
+          {% render 'search-results-count-text', results: results %}
+        {%- elsif results.results_count -%}
           {{ 'templates.search.results_with_count' | t: terms: results.terms, count: results.results_count }}
         {%- elsif results.products_count == results.all_products_count -%}
           {{ 'products.facets.product_count_simple' | t: count: results.products_count }}

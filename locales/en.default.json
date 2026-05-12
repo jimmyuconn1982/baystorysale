@@ -37,6 +37,7 @@
         "tiktok": "TikTok"
       }
     },
+    "breadcrumb_home": "Home",
     "continue_shopping": "Continue shopping",
     "pagination": {
       "label": "Pagination",
@@ -157,7 +158,8 @@
       "xr_button": "View in your space",
       "xr_button_label": "View in your space, loads item in augmented reality window",
       "include_taxes": "Tax included.",
-      "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout."
+      "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout.",
+      "shipping_at_checkout": "Shipping calculated at checkout."
     },
     "modal": {
       "label": "Media gallery"
@@ -201,6 +203,10 @@
       "results_with_count": {
         "one": "{{ count }} result",
         "other": "{{ count }} results"
+      },
+      "results_for_quoted_term_prefix": {
+        "one": "{{ count }} result for ",
+        "other": "{{ count }} results for "
       },
       "results_with_count_and_term": {
         "one": "{{ count }} result found for “{{ terms }}”",

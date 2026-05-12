@@ -1,0 +1,12 @@
+{%- comment -%}
+  Search facets + toolbar: synced count line (updates via facets.js #ProductCount → #ProductCountDesktop).
+  Pass: results — Shopify search object.
+{%- endcomment -%}
+{%- if results.results_count -%}
+  {{- 'templates.search.results_for_quoted_term_prefix' | t: count: results.results_count -}}
+  <strong class="template-search__results-query">"{{ results.terms | escape }}"</strong>
+{%- elsif results.products_count == results.all_products_count -%}
+  {{ 'products.facets.product_count_simple' | t: count: results.products_count }}
+{%- else -%}
+  {{ 'products.facets.product_count' | t: product_count: results.products_count, count: results.all_products_count }}
+{%- endif -%}

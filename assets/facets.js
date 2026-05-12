@@ -8,7 +8,8 @@ class FacetFiltersForm extends HTMLElement {
     }, 500);
 
     const facetForm = this.querySelector('form');
-    facetForm.addEventListener('input', this.debouncedOnSubmit.bind(this));
+    facetForm.addEventListener('input', this.debouncedOnSubmit);
+    facetForm.addEventListener('change', this.debouncedOnSubmit);
 
     const facetWrapper = this.querySelector('#FacetsWrapperDesktop');
     if (facetWrapper) facetWrapper.addEventListener('keyup', onKeyUpEscape);
@@ -74,18 +75,40 @@ class FacetFiltersForm extends HTMLElement {
   }
 
   static renderProductGridContainer(html) {
-    document.getElementById('ProductGridContainer').innerHTML = new DOMParser().parseFromString(html, 'text/html').getElementById('ProductGridContainer').innerHTML;
+    const pt = new URLSearchParams(window.location.search).get('pt') || '';
+    const multiPtMerge = pt.indexOf(',') !== -1;
+    const container = document.getElementById('ProductGridContainer');
+    if (!container) return;
+
+    if (multiPtMerge) {
+      // product-type-ms-nav 已合并子集合 DOM；此处若再整段替换会闪「全量→空→再合并」。
+      const col = container.querySelector('.collection');
+      if (col) col.classList.remove('loading');
+      return;
+    }
+
+    container.innerHTML = new DOMParser().parseFromString(html, 'text/html').getElementById('ProductGridContainer').innerHTML;
+    document.dispatchEvent(new CustomEvent('bay-pt-merge-reapply'));
   }
 
   static renderProductCount(html) {
-    const count = new DOMParser().parseFromString(html, 'text/html').getElementById('ProductCount').innerHTML
+    const parsed = new DOMParser().parseFromString(html, 'text/html');
+    const source = parsed.getElementById('ProductCount');
     const container = document.getElementById('ProductCount');
     const containerDesktop = document.getElementById('ProductCountDesktop');
-    container.innerHTML = count;
-    container.classList.remove('loading');
-    if (containerDesktop) {
-      containerDesktop.innerHTML = count;
-      containerDesktop.classList.remove('loading');
+    if (source) {
+      const count = source.innerHTML;
+      if (container) {
+        container.innerHTML = count;
+        container.classList.remove('loading');
+      }
+      if (containerDesktop) {
+        containerDesktop.innerHTML = count;
+        containerDesktop.classList.remove('loading');
+      }
+    } else {
+      if (container) container.classList.remove('loading');
+      if (containerDesktop) containerDesktop.classList.remove('loading');
     }
   }
 
@@ -151,7 +174,12 @@ class FacetFiltersForm extends HTMLElement {
   }
 
   static updateURLHash(searchParams) {
-    history.pushState({ searchParams }, '', `${window.location.pathname}${searchParams && '?'.concat(searchParams)}`);
+    let q = searchParams;
+    const pt = new URLSearchParams(window.location.search).get('pt');
+    if (pt && pt.indexOf(',') !== -1) {
+      q = q ? `${q}&pt=${encodeURIComponent(pt)}` : `pt=${encodeURIComponent(pt)}`;
+    }
+    history.pushState({ searchParams: q }, '', `${window.location.pathname}${q && '?'.concat(q)}`);
   }
 
   static getSections() {

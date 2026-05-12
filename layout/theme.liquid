@@ -6,6 +6,13 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="#243B53">
     <link rel="canonical" href="{{ canonical_url }}">
+    {%- comment -%} 商店不使用运费政策页：直接访问 /policies/shipping-policy 时跳回首页 {%- endcomment -%}
+    {%- unless request.design_mode -%}
+      {%- if request.path contains '/policies/shipping-policy' -%}
+        <meta http-equiv="refresh" content="0;url={{ routes.root_url }}">
+        <script>window.location.replace({{ routes.root_url | json }});</script>
+      {%- endif -%}
+    {%- endunless -%}
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -356,6 +363,14 @@
           padding-top: var(--space-md);
           padding-bottom: var(--space-md);
         }
+      }
+
+      /* 搜索有结果：去掉 main-search 外层的 section 顶内边距 + 顶栏底外边距，消除图2绿区 */
+      body.template-search main .shopify-section.section:has(.template-search:not(.template-search--empty)) {
+        padding-top: 0 !important;
+      }
+      body.template-search #shopify-section-header {
+        margin-bottom: 0 !important;
       }
 
       /* ── Title wrappers ── */
@@ -760,6 +775,50 @@
         margin: 0 !important;
         padding: 0 !important;
         text-align: left !important;
+      }
+      /* Shop All — Product type: 子集合链接（无 checkbox） */
+      .template-collection .facets-vertical a.alo-facet-option--collection-link,
+      .template-search .facets-vertical a.alo-facet-option--collection-link {
+        text-decoration: none !important;
+        color: inherit !important;
+        cursor: pointer !important;
+      }
+      .template-collection .facets-vertical a.alo-facet-option--collection-link:hover .alo-facet-option__text,
+      .template-search .facets-vertical a.alo-facet-option--collection-link:hover .alo-facet-option__text {
+        text-decoration: underline !important;
+      }
+      .template-collection .facets-vertical a.alo-facet-option--collection-link.is-current .alo-facet-option__box-check,
+      .template-search .facets-vertical a.alo-facet-option--collection-link.is-current .alo-facet-option__box-check {
+        opacity: 1 !important;
+        color: rgba(17, 17, 17, 0.85) !important;
+      }
+      .template-collection .facets-vertical .mobile-facets__label--collection-link,
+      .template-search .facets-vertical .mobile-facets__label--collection-link {
+        display: block !important;
+        text-decoration: none !important;
+        color: inherit !important;
+        cursor: pointer !important;
+        font-weight: 500 !important;
+      }
+      .template-collection .facets-vertical .mobile-facets__label--collection-link:hover,
+      .template-search .facets-vertical .mobile-facets__label--collection-link:hover {
+        text-decoration: underline !important;
+      }
+      .template-collection .facets-vertical a.mobile-facets__label--collection-link.is-current .mobile-facets__highlight,
+      .template-search .facets-vertical a.mobile-facets__label--collection-link.is-current .mobile-facets__highlight {
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        display: block !important;
+        background-color: rgba(17, 17, 17, 0.04) !important;
+      }
+      .template-collection .facets-vertical a.mobile-facets__label--collection-link.is-current .icon-checkmark,
+      .template-search .facets-vertical a.mobile-facets__label--collection-link.is-current .icon-checkmark {
+        visibility: visible !important;
       }
 
       .facets-vertical .facet-checkbox,
@@ -1209,6 +1268,23 @@
         }
       }
 
+      /* 搜索页结果条：覆盖下方 Alo sort 的 width:100%，避免左侧计数被挤成单字竖排 */
+      .template-search .template-search__results-toolbar .facets-vertical-form--search-results-toolbar {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        align-items: center !important;
+        gap: 1.5rem !important;
+      }
+      .template-search .template-search__results-toolbar .facet-filters.sorting {
+        justify-self: end !important;
+        width: auto !important;
+        max-width: 100% !important;
+      }
+      .template-search .template-search__results-toolbar .facet-filters__field {
+        width: auto !important;
+        max-width: none !important;
+      }
+
       /* ── Product grid ── */
       /* Keep gaps modest so 4-col doesn't wrap to 3-col on narrower desktops */
       .product-grid.grid--4-col-desktop { gap: 36px 22px !important; }
@@ -1323,7 +1399,8 @@
         height: 100% !important;
       }
       .product-grid .card__media .media img {
-        object-fit: cover !important;
+        object-fit: contain !important;
+        object-position: center center !important;
         border-radius: 0 !important;
         transform: none !important;
         transition: none !important;

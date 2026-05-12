@@ -1,0 +1,112 @@
+{%- comment -%}
+  输出：用 ### 分隔的一级目录显示名（供 header / footer 拆分循环）。
+  顺序（二选一）：
+  1) 主题设置「Primary category order menu」若已选择导航菜单：按菜单项顺序；仅保留「至少有一个集合的 primary_category 含该标题」的项；再追加菜单未列出的其它主类。
+  2) 未选菜单：先在 preferred_primary_order 中、且集合里存在的项；再按集合遍历追加其它主类。
+  依赖：category_menu_collections 上 metafields.custom.primary_category。
+{%- endcomment -%}
+{%- liquid
+  if category_menu_collections == blank
+    assign category_menu_collections = collections
+  endif
+  if preferred_primary_order == blank
+    assign preferred_primary_order = 'Handbags,Backpacks,Travel Bags,Pet Carriers' | split: ','
+  endif
+
+  assign nav_primary_registry = ''
+  for category_collection in category_menu_collections
+    assign pc_mf = category_collection.metafields.custom.primary_category
+    if pc_mf == blank
+      continue
+    endif
+    if pc_mf.type contains 'list.'
+      assign _pv = pc_mf.value | join: '||'
+    else
+      assign _pv = pc_mf.value
+    endif
+    assign _pv = _pv | replace: ' • ', '||' | replace: '•', '||' | replace: ', ', '||' | replace: ',', '||' | replace: '; ', '||' | replace: ';', '||'
+    assign _plist = _pv | split: '||'
+    for lab in _plist
+      assign labt = lab | strip
+      assign key = labt | downcase
+      if key == blank
+        continue
+      endif
+      assign kneedle = key | append: '^^'
+      unless nav_primary_registry contains kneedle
+        assign nav_primary_registry = nav_primary_registry | append: key | append: '^^' | append: labt | append: '~~~'
+      endunless
+    endfor
+  endfor
+
+  assign final_primary_csv = ''
+  assign reg_pieces = nav_primary_registry | split: '~~~'
+
+  if primary_category_order_menu != blank and primary_category_order_menu.links.size > 0
+    assign menu_keys_seen = ''
+    for link in primary_category_order_menu.links
+      assign primary_label_clean = link.title | strip
+      if primary_label_clean == blank
+        continue
+      endif
+      assign k = primary_label_clean | downcase
+      assign kneedle = k | append: '^^'
+      if nav_primary_registry contains kneedle
+        assign final_primary_csv = final_primary_csv | append: primary_label_clean | append: '###'
+        assign tk = '||' | append: k | append: '||'
+        assign menu_keys_seen = menu_keys_seen | append: tk
+      endif
+    endfor
+    for _piece in reg_pieces
+      if _piece == blank
+        continue
+      endif
+      assign _kp = _piece | split: '^^'
+      assign _k = _kp[0] | strip
+      assign _disp = _kp[1] | default: _k
+      if _k == blank
+        continue
+      endif
+      assign tk = '||' | append: _k | append: '||'
+      unless menu_keys_seen contains tk
+        assign final_primary_csv = final_primary_csv | append: _disp | append: '###'
+        assign menu_keys_seen = menu_keys_seen | append: tk
+      endunless
+    endfor
+  else
+    for primary_label in preferred_primary_order
+      assign primary_label_clean = primary_label | strip
+      if primary_label_clean == blank
+        continue
+      endif
+      assign k = primary_label_clean | downcase
+      assign kneedle = k | append: '^^'
+      if nav_primary_registry contains kneedle
+        assign final_primary_csv = final_primary_csv | append: primary_label_clean | append: '###'
+      endif
+    endfor
+    for _piece in reg_pieces
+      if _piece == blank
+        continue
+      endif
+      assign _kp = _piece | split: '^^'
+      assign _k = _kp[0] | strip
+      assign _disp = _kp[1] | default: _k
+      if _k == blank
+        continue
+      endif
+      assign in_preferred = false
+      for primary_label in preferred_primary_order
+        assign pl = primary_label | strip | downcase
+        if pl == _k
+          assign in_preferred = true
+          break
+        endif
+      endfor
+      unless in_preferred
+        assign final_primary_csv = final_primary_csv | append: _disp | append: '###'
+      endunless
+    endfor
+  endif
+-%}
+{{- final_primary_csv -}}

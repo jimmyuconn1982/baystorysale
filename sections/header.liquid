@@ -695,42 +695,21 @@
   customElements.define('sticky-header', StickyHeader);
 {% endjavascript %}
 
-<script type="application/ld+json">
-  {
-    "@context": "http://schema.org",
-    "@type": "Organization",
-    "name": {{ shop.name | json }},
-    {% if section.settings.logo %}
-      "logo": {{ section.settings.logo | image_url: width: section.settings.logo.width | prepend: "https:" | json }},
-    {% endif %}
-    "sameAs": [
-      {{ settings.social_twitter_link | json }},
-      {{ settings.social_facebook_link | json }},
-      {{ settings.social_pinterest_link | json }},
-      {{ settings.social_instagram_link | json }},
-      {{ settings.social_tiktok_link | json }},
-      {{ settings.social_tumblr_link | json }},
-      {{ settings.social_snapchat_link | json }},
-      {{ settings.social_youtube_link | json }},
-      {{ settings.social_vimeo_link | json }}
-    ],
-    "url": {{ request.origin | append: page.url | json }}
-  }
-</script>
+{% render 'seo-organization-jsonld', header_logo: section.settings.logo %}
 
 {%- if request.page_type == 'index' -%}
-  {% assign potential_action_target = request.origin | append: routes.search_url | append: "?q={search_term_string}" %}
+  {%- assign potential_action_target = request.origin | append: routes.search_url | append: '?q={search_term_string}' -%}
   <script type="application/ld+json">
     {
-      "@context": "http://schema.org",
+      "@context": "https://schema.org",
       "@type": "WebSite",
       "name": {{ shop.name | json }},
+      "url": {{ shop.url | default: request.origin | json }},
       "potentialAction": {
         "@type": "SearchAction",
         "target": {{ potential_action_target | json }},
         "query-input": "required name=search_term_string"
-      },
-      "url": {{ request.origin | append: page.url | json }}
+      }
     }
   </script>
 {%- endif -%}
@@ -836,6 +815,14 @@
       "default": "dropdown",
       "label": "t:sections.header.settings.menu_type_desktop.label",
       "info": "t:sections.header.settings.menu_type_desktop.info"
+    },
+    {
+      "type": "header",
+      "content": "顶栏主类顺序（Handbags / Wallets 等）"
+    },
+    {
+      "type": "paragraph",
+      "content": "中间各「主类」下拉顺序不在本 Header 面板里设置。请点主题编辑器左下角「主题设置」（齿轮）→ 分组「Primary category navigation / 顶栏主类顺序」→ 选择「主类顺序菜单」。菜单在「在线商店 → 导航」中创建：每项标题须与集合 metafield custom.primary_category 一致，拖拽菜单项即可排序；链接可填 #。Shop 与 About 位置固定。"
     },
     {
       "type": "checkbox",

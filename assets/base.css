@@ -2199,9 +2199,9 @@ input[type='checkbox'] {
   letter-spacing: 0.1rem;
 }
 
-/* section-header */
+/* section-header — above product cards (e.g. SOLD OUT badge z-index: 3) so nav dropdowns paint on top */
 #shopify-section-header {
-  z-index: 3;
+  z-index: 20;
 }
 
 .shopify-section-header-sticky {
@@ -2553,7 +2553,7 @@ details[open] > .header__icon--menu .icon-hamburger {
 details[open] > .header__submenu {
   animation: animateMenuOpen var(--duration-default) ease;
   animation-fill-mode: forwards;
-  z-index: 1;
+  z-index: 10;
 }
 
 @media (prefers-reduced-motion) {

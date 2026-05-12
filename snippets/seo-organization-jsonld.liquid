@@ -1,0 +1,59 @@
+{%- comment -%}
+  Organization JSON-LD（全站一次：正确 logo/url、过滤空的 sameAs）
+  参数：header_logo — header 的 logo 图片（可为空）
+{%- endcomment -%}
+{%- liquid
+  assign org_url = shop.url | default: request.origin
+  assign logo_https = blank
+  if header_logo != blank
+    assign logo_https = header_logo | image_url: width: 512 | prepend: 'https:'
+  elsif shop.brand.logo != blank
+    assign logo_https = shop.brand.logo | image_url: width: 512 | prepend: 'https:'
+  endif
+-%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": {{ shop.name | json }},
+  {%- if logo_https != blank -%}
+  "logo": {{ logo_https | json }},
+  {%- endif -%}
+  "url": {{ org_url | json }},
+  "description": {{ shop.description | default: shop.name | strip_html | json }}
+  {%- liquid
+    assign has_social = false
+    if settings.social_twitter_link != blank or settings.social_facebook_link != blank or settings.social_pinterest_link != blank or settings.social_instagram_link != blank or settings.social_tiktok_link != blank or settings.social_tumblr_link != blank or settings.social_snapchat_link != blank or settings.social_youtube_link != blank or settings.social_vimeo_link != blank
+      assign has_social = true
+    endif
+  -%}
+  {%- if has_social -%}
+  ,"sameAs": [
+    {%- assign first_sa = true -%}
+    {%- if settings.social_twitter_link != blank -%}{% unless first_sa %},{% endunless %}{{ settings.social_twitter_link | json }}{% assign first_sa = false %}{% endif %}
+    {%- if settings.social_facebook_link != blank -%}{% unless first_sa %},{% endunless %}{{ settings.social_facebook_link | json }}{% assign first_sa = false %}{% endif %}
+    {%- if settings.social_pinterest_link != blank -%}{% unless first_sa %},{% endunless %}{{ settings.social_pinterest_link | json }}{% assign first_sa = false %}{% endif %}
+    {%- if settings.social_instagram_link != blank -%}{% unless first_sa %},{% endunless %}{{ settings.social_instagram_link | json }}{% assign first_sa = false %}{% endif %}
+    {%- if settings.social_tiktok_link != blank -%}{% unless first_sa %},{% endunless %}{{ settings.social_tiktok_link | json }}{% assign first_sa = false %}{% endif %}
+    {%- if settings.social_tumblr_link != blank -%}{% unless first_sa %},{% endunless %}{{ settings.social_tumblr_link | json }}{% assign first_sa = false %}{% endif %}
+    {%- if settings.social_snapchat_link != blank -%}{% unless first_sa %},{% endunless %}{{ settings.social_snapchat_link | json }}{% assign first_sa = false %}{% endif %}
+    {%- if settings.social_youtube_link != blank -%}{% unless first_sa %},{% endunless %}{{ settings.social_youtube_link | json }}{% assign first_sa = false %}{% endif %}
+    {%- if settings.social_vimeo_link != blank -%}{% unless first_sa %},{% endunless %}{{ settings.social_vimeo_link | json }}{% assign first_sa = false %}{% endif %}
+  ]
+  {%- endif -%}
+  {%- if shop.email != blank -%}
+  ,"contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer support",
+    "email": {{ shop.email | json }},
+    "url": {{ org_url | json }}
+  }
+  {%- endif -%}
+  {%- if localization.country.iso_code != blank -%}
+  ,"areaServed": {
+    "@type": "Country",
+    "name": {{ localization.country.name | json }}
+  }
+  {%- endif -%}
+}
+</script>
