@@ -3,7 +3,7 @@
  * - 0 / 1 项：整页跳转或 reload（见 applyProductTypeNav）
  * - 多项：Promise.all 并行拉取各子集合 section，合并后一次写入 DOM；用代数 mergeGeneration 丢弃过期结果。
  * - 不在 fetch 上使用 AbortController，避免中止导致「选第 3、4 个不生效」与闪烁。
- * - 防抖期间与合并请求期间：列表区不展示 SKU，仅 spinner；数据就绪后一次写入。
+ * - 防抖与合并全程：bay-pt-pending-merge 盖住列表（不先清空 grid），数据就绪后一次替换 innerHTML。
  */
 (function () {
   if (window.__bayProductTypeMsNav) return;
@@ -118,10 +118,13 @@
     '<svg aria-hidden="true" focusable="false" role="presentation" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">' +
     '<circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle></svg>';
 
-  /** 防抖等待期间：列表区不展示商品，只显示 spinner（与合并加载同一视觉） */
+  /** 防抖等待期间 + 合并全程：用 pending shell 盖住商品区，避免清空 grid 造成闪烁 */
   function syncPendingMergeShell() {
     var allow = document.querySelector('.product-type-ms-nav[data-allow-merge="true"]');
-    var on = allow && getCheckedHandles().length >= 2;
+    var n = getCheckedHandles().length;
+    var on =
+      (allow && n >= 2) ||
+      (stayOnAggregatePage() && allow && n === 1);
     setPendingMergeShell(!!on);
   }
 
@@ -147,23 +150,20 @@
     shell.hidden = false;
   }
 
+  /**
+   * 不再清空 #product-grid：合并期间由 bay-pt-pending-merge 隐藏旧列表，仅替换 innerHTML 时一次切换。
+   * 保留 class 以便主题 CSS 可扩展（分页隐藏等）。
+   */
   function setGridMergeLoading(on) {
     var grid = document.getElementById('product-grid');
     var container = document.getElementById('ProductGridContainer');
     if (!grid || !container || grid.tagName !== 'UL') return null;
     var col = container.querySelector('.collection');
     if (!col) return null;
-    var overlay = col.querySelector('.loading-overlay');
     if (on) {
-      col.classList.add('loading', 'bay-pt-merge-loading');
-      grid.innerHTML = '';
-      if (overlay) {
-        overlay.innerHTML =
-          '<div class="loading-overlay__spinner bay-pt-merge-spinner" aria-hidden="true">' + SPINNER_SVG + '</div>';
-      }
+      col.classList.add('bay-pt-merge-loading');
     } else {
       col.classList.remove('loading', 'bay-pt-merge-loading');
-      if (overlay) overlay.innerHTML = '';
     }
     return col;
   }
@@ -173,7 +173,11 @@
 
   function applyProductTypeNav() {
     var handles = getCheckedHandles();
-    if (handles.length < 2) setPendingMergeShell(false);
+    if (handles.length === 0) {
+      setPendingMergeShell(false);
+    } else if (handles.length === 1 && !stayOnAggregatePage()) {
+      setPendingMergeShell(false);
+    }
     var clearBase = clearUrlFromDom().split('?')[0];
     var sort = sortSuffix();
     var qsBefore = new URLSearchParams(window.location.search);
@@ -193,7 +197,9 @@
     }
 
     if (handles.length === 1) {
-      setPendingMergeShell(false);
+      if (!stayOnAggregatePage()) {
+        setPendingMergeShell(false);
+      }
       if (stayOnAggregatePage()) {
         mergeProductGrids(handles);
         return;
@@ -243,8 +249,8 @@
     var gen = ++mergeGeneration;
     setPtParam(handles);
 
+    setPendingMergeShell(true);
     setGridMergeLoading(true);
-    setPendingMergeShell(false);
 
     var sortBy = new URLSearchParams(window.location.search).get('sort_by');
     var bust = '&_ptcb=' + Date.now();

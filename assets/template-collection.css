@@ -79,18 +79,23 @@
   margin-top: 1rem;
 }
 
-/* Product type 多选合并：加载中仅显示 spinner，不露出旧列表 */
+/* Product type 合并：pending 层盖住商品区（旧列表仍在 DOM 内被隐藏），避免清空 grid 闪烁 */
 #ProductGridContainer.bay-pt-pending-merge {
   position: relative;
-  min-height: 45vh;
+  min-height: 48vh;
 }
 
 #ProductGridContainer.bay-pt-pending-merge .bay-pt-pending-shell {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 45vh;
+  min-height: 48vh;
   width: 100%;
+  box-sizing: border-box;
+  padding: 3rem 1.5rem;
+  background: rgba(255, 255, 255, 0.94);
+  position: relative;
+  z-index: 3;
 }
 
 #ProductGridContainer.bay-pt-pending-merge .bay-pt-pending-shell[hidden] {
