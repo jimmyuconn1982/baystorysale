@@ -6,7 +6,7 @@
   Accepts: mode, section, primary_label_clean, results, category_menu_collections, sort_by
 {%- endcomment -%}
 {%- liquid
-  assign product_type_heading = 'Product type'
+  assign product_type_heading = 'Shop by category'
   assign _pl = primary_label_clean | strip
   assign primary_key = _pl | downcase
   assign primary_token = '||' | append: primary_key | append: '||'

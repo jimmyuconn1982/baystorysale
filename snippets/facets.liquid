@@ -194,7 +194,7 @@
                   assign fpname_skip = filter.param_name | default: ''
                   assign fplabel_skip = filter.label | downcase
                   assign facets_skip_native_sub = false
-                  if fpname_skip contains 'sub_category' or fpname_skip contains 'sub-category' or fpname_skip contains 'product_type' or fplabel_skip contains 'sub category' or fplabel_skip contains 'subcategory' or fplabel_skip contains 'product type'
+                  if fpname_skip contains 'sub_category' or fpname_skip contains 'sub-category' or fplabel_skip contains 'sub category' or fplabel_skip contains 'subcategory'
                     assign facets_skip_native_sub = true
                   endif
                 -%}
@@ -566,7 +566,7 @@
                       assign fpname_skip_m = filter.param_name | default: ''
                       assign fplabel_skip_m = filter.label | downcase
                       assign facets_skip_native_sub_m = false
-                      if fpname_skip_m contains 'sub_category' or fpname_skip_m contains 'sub-category' or fpname_skip_m contains 'product_type' or fplabel_skip_m contains 'sub category' or fplabel_skip_m contains 'subcategory' or fplabel_skip_m contains 'product type'
+                      if fpname_skip_m contains 'sub_category' or fpname_skip_m contains 'sub-category' or fplabel_skip_m contains 'sub category' or fplabel_skip_m contains 'subcategory'
                         assign facets_skip_native_sub_m = true
                       endif
                     -%}

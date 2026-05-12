@@ -32,6 +32,33 @@
     return String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
   }
 
+  /** Shopify 原生筛选（filter.*）与 pt 合并列表互斥：合并 fetch 较慢时不能在 facets 之后覆盖网格 */
+  function hasStorefrontFilters(searchParams) {
+    var sp = searchParams || new URLSearchParams(window.location.search);
+    var found = false;
+    sp.forEach(function (_v, k) {
+      if (k.indexOf('filter.') === 0) found = true;
+    });
+    return found;
+  }
+
+  /** 当前 URL 的 ?pt= 与本次 merge 的 handles 一致（防 facets 已清掉 pt 后陈旧 Promise 仍写入） */
+  function ptParamMatchesMerge(handles) {
+    var raw = new URLSearchParams(window.location.search).get('pt');
+    if (!raw) return false;
+    var norm = function (arr) {
+      return arr
+        .map(function (s) {
+          return String(s).trim();
+        })
+        .filter(Boolean)
+        .slice(0, 8)
+        .sort()
+        .join('|');
+    };
+    return norm(raw.split(',')) === norm(handles);
+  }
+
   /** all-handbags / all-backpacks 等聚合页：单选子类型也应留在本页用 merge 拉子集合商品，勿跳子集合 URL */
   function stayOnAggregatePage() {
     return !!document.querySelector('.product-type-ms-nav[data-stay-on-aggregate="true"]');
@@ -219,14 +246,18 @@
     setGridMergeLoading(true);
     setPendingMergeShell(false);
 
+    var sortBy = new URLSearchParams(window.location.search).get('sort_by');
     var bust = '&_ptcb=' + Date.now();
     var fetchOne = function (h) {
       var u =
         '/collections/' +
         encodeURIComponent(h) +
         '?section_id=' +
-        encodeURIComponent(sectionId) +
-        bust;
+        encodeURIComponent(sectionId);
+      if (sortBy) {
+        u += '&sort_by=' + encodeURIComponent(sortBy);
+      }
+      u += bust;
       return fetch(u, { cache: 'no-store' }).then(function (r) {
         return r.text();
       });
@@ -251,8 +282,11 @@
         });
       }
       if (gen !== mergeGeneration) return;
+      if (hasStorefrontFilters()) return;
+      if (!ptParamMatchesMerge(handles)) return;
 
       grid.innerHTML = chunks.join('');
+      window.__bayPtMergeSortSnapshot = new URLSearchParams(window.location.search).get('sort_by') || '';
       var n = chunks.length;
       var label = n + ' 件商品';
       var c1 = document.getElementById('ProductCount');
@@ -271,6 +305,7 @@
 
   function bootFromUrl() {
     var params = new URLSearchParams(window.location.search);
+    if (hasStorefrontFilters(params)) return;
     var pt = params.get('pt');
     if (!pt) return;
     var hs = pt
@@ -308,6 +343,7 @@
 
   document.addEventListener('bay-pt-merge-reapply', function () {
     var params = new URLSearchParams(window.location.search);
+    if (hasStorefrontFilters(params)) return;
     var pt = params.get('pt');
     if (!pt) return;
     var hs = pt

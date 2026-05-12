@@ -35,11 +35,19 @@ class FacetFiltersForm extends HTMLElement {
     const sections = FacetFiltersForm.getSections();
     const countContainer = document.getElementById('ProductCount');
     const countContainerDesktop = document.getElementById('ProductCountDesktop');
-    document.getElementById('ProductGridContainer').querySelector('.collection').classList.add('loading');
-    if (countContainer){
+    const ptActive = new URLSearchParams(window.location.search).get('pt') || '';
+    const preserveMergedGrid =
+      ptActive && !FacetFiltersForm.facetParamsHasStorefrontFilters(searchParams);
+
+    const pg = document.getElementById('ProductGridContainer');
+    const gridCol = pg ? pg.querySelector('.collection') : null;
+    if (gridCol && !preserveMergedGrid) {
+      gridCol.classList.add('loading');
+    }
+    if (countContainer && !preserveMergedGrid) {
       countContainer.classList.add('loading');
     }
-    if (countContainerDesktop){
+    if (countContainerDesktop && !preserveMergedGrid) {
       countContainerDesktop.classList.add('loading');
     }
 
@@ -48,50 +56,79 @@ class FacetFiltersForm extends HTMLElement {
       const filterDataUrl = element => element.url === url;
 
       FacetFiltersForm.filterData.some(filterDataUrl) ?
-        FacetFiltersForm.renderSectionFromCache(filterDataUrl, event) :
-        FacetFiltersForm.renderSectionFromFetch(url, event);
+        FacetFiltersForm.renderSectionFromCache(filterDataUrl, event, searchParams) :
+        FacetFiltersForm.renderSectionFromFetch(url, event, searchParams);
     });
 
     if (updateURLHash) FacetFiltersForm.updateURLHash(searchParams);
   }
 
-  static renderSectionFromFetch(url, event) {
+  static renderSectionFromFetch(url, event, facetSearchParams) {
     fetch(url)
       .then(response => response.text())
       .then((responseText) => {
         const html = responseText;
         FacetFiltersForm.filterData = [...FacetFiltersForm.filterData, { html, url }];
         FacetFiltersForm.renderFilters(html, event);
-        FacetFiltersForm.renderProductGridContainer(html);
-        FacetFiltersForm.renderProductCount(html);
+        FacetFiltersForm.renderProductGridContainer(html, facetSearchParams);
+        FacetFiltersForm.renderProductCount(html, facetSearchParams);
       });
   }
 
-  static renderSectionFromCache(filterDataUrl, event) {
+  static renderSectionFromCache(filterDataUrl, event, facetSearchParams) {
     const html = FacetFiltersForm.filterData.find(filterDataUrl).html;
     FacetFiltersForm.renderFilters(html, event);
-    FacetFiltersForm.renderProductGridContainer(html);
-    FacetFiltersForm.renderProductCount(html);
+    FacetFiltersForm.renderProductGridContainer(html, facetSearchParams);
+    FacetFiltersForm.renderProductCount(html, facetSearchParams);
   }
 
-  static renderProductGridContainer(html) {
-    const pt = new URLSearchParams(window.location.search).get('pt') || '';
-    const multiPtMerge = pt.indexOf(',') !== -1;
+  /** Shopify 店面筛选（filter.*）；与 ?pt= 子集合合并是两套机制 */
+  static facetParamsHasStorefrontFilters(facetSearchParams) {
+    if (facetSearchParams == null || facetSearchParams === '') return false;
+    const p = new URLSearchParams(facetSearchParams);
+    for (const k of p.keys()) {
+      if (k.indexOf('filter.') === 0) return true;
+    }
+    return false;
+  }
+
+  static renderProductGridContainer(html, facetSearchParams) {
     const container = document.getElementById('ProductGridContainer');
     if (!container) return;
 
-    if (multiPtMerge) {
-      // product-type-ms-nav 已合并子集合 DOM；此处若再整段替换会闪「全量→空→再合并」。
+    const pt = new URLSearchParams(window.location.search).get('pt') || '';
+    const skipDomReplace =
+      pt &&
+      !FacetFiltersForm.facetParamsHasStorefrontFilters(facetSearchParams);
+
+    if (skipDomReplace) {
+      // facet 请求的 section 不含 pt，替换会把合并结果闪成聚合页全量；勿替换。
       const col = container.querySelector('.collection');
       if (col) col.classList.remove('loading');
+      // 仅排序变化时重新合并（带 sort_by 的子集合 section）；避免与当前结果相同 sort 时多余 reapply
+      const sortNow = new URLSearchParams(facetSearchParams).get('sort_by') || '';
+      if (sortNow !== window.__bayPtMergeSortSnapshot) {
+        window.__bayPtMergeSortSnapshot = sortNow;
+        document.dispatchEvent(new CustomEvent('bay-pt-merge-reapply'));
+      }
       return;
     }
 
+    window.__bayPtMergeSortSnapshot = new URLSearchParams(facetSearchParams).get('sort_by') || '';
     container.innerHTML = new DOMParser().parseFromString(html, 'text/html').getElementById('ProductGridContainer').innerHTML;
     document.dispatchEvent(new CustomEvent('bay-pt-merge-reapply'));
   }
 
-  static renderProductCount(html) {
+  static renderProductCount(html, facetSearchParams) {
+    const pt = new URLSearchParams(window.location.search).get('pt') || '';
+    if (pt && !FacetFiltersForm.facetParamsHasStorefrontFilters(facetSearchParams)) {
+      const container = document.getElementById('ProductCount');
+      const containerDesktop = document.getElementById('ProductCountDesktop');
+      if (container) container.classList.remove('loading');
+      if (containerDesktop) containerDesktop.classList.remove('loading');
+      return;
+    }
+
     const parsed = new DOMParser().parseFromString(html, 'text/html');
     const source = parsed.getElementById('ProductCount');
     const container = document.getElementById('ProductCount');
@@ -175,8 +212,10 @@ class FacetFiltersForm extends HTMLElement {
 
   static updateURLHash(searchParams) {
     let q = searchParams;
+    // Shop-by-category（product-type-ms-nav）用 ?pt= 存子集合 handle；不在 FacetFiltersForm 的 FormData 里。
+    // 原先只在 pt 含逗号时保留，单选 mini-bags 会被 pushState 抹掉，导致合并结果与 URL 同时丢失。
     const pt = new URLSearchParams(window.location.search).get('pt');
-    if (pt && pt.indexOf(',') !== -1) {
+    if (pt) {
       q = q ? `${q}&pt=${encodeURIComponent(pt)}` : `pt=${encodeURIComponent(pt)}`;
     }
     history.pushState({ searchParams: q }, '', `${window.location.pathname}${q && '?'.concat(q)}`);
