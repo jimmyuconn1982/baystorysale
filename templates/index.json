@@ -106,14 +106,6 @@
         "padding_bottom": 160
       }
     },
-    "spacer_main": {
-      "type": "section-spacer",
-      "name": "06 · 空白占位",
-      "settings": {
-        "height": 80,
-        "bg_color": "#ffffff"
-      }
-    },
     "feature_series_pet": {
       "type": "feature-series",
       "name": "07 · 特色系列",
@@ -158,7 +150,6 @@
   "order": [
     "custom_slideshow_main",
     "category_grid_main",
-    "spacer_main",
     "feature_series_pet",
     "brand_story_main"
   ]
