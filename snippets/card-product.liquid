@@ -35,21 +35,25 @@
     assign current_color = blank
     assign current_available = true
     if card_product.variants.size > 0
-      assign color_options = card_product.options_with_values | where: "name", "Color" | first
-      if color_options == blank
-        assign color_options = card_product.options_with_values | where: "name", "Colour" | first
-      endif
+      # Color / Colour + strip：与后台选项、变体字符串对齐，避免 is-selected 错位
+      for opt in card_product.options_with_values
+        assign optn = opt.name | downcase | strip
+        if optn == 'color' or optn == 'colour'
+          assign color_options = opt
+          break
+        endif
+      endfor
 
       if color_options
         assign color_position = color_options.position
         assign current_variant = card_product.selected_or_first_available_variant
         assign current_available = current_variant.available
         if color_position == 1
-          assign current_color = current_variant.option1
+          assign current_color = current_variant.option1 | strip
         elsif color_position == 2
-          assign current_color = current_variant.option2
+          assign current_color = current_variant.option2 | strip
         elsif color_position == 3
-          assign current_color = current_variant.option3
+          assign current_color = current_variant.option3 | strip
         endif
       endif
     endif
@@ -180,30 +184,45 @@
     <div class="card__alo-meta">
       <div class="card__alo-swatches{% if color_options == blank %} is-empty{% endif %}" data-selected-color="{{ current_color | escape }}">
         {%- if color_options -%}
+          {%- assign color_value_keys_seen = '' -%}
           {%- for value in color_options.values -%}
             {%- if forloop.index <= 6 -%}
               {%- liquid
-                assign value_label = value.name | default: value
+                assign value_label = value.name | default: value | strip
+                assign value_slug = value_label | downcase
+                assign value_token = '||' | append: value_slug | append: '||'
+              -%}
+              {%- if color_value_keys_seen contains value_token -%}{%- continue -%}{%- endif -%}
+              {%- assign color_value_keys_seen = color_value_keys_seen | append: value_token -%}
+              {%- liquid
                 assign color_available = false
                 assign color_media = blank
+                assign swatch_cmp_label = value_label | downcase
+                assign swatch_cmp_current = current_color | downcase
               -%}
               {%- for v in card_product.variants -%}
-                {%- if color_position == 1 and v.option1 == value_label and v.available -%}
+                {%- assign vo1 = v.option1 | strip -%}
+                {%- assign vo2 = v.option2 | strip -%}
+                {%- assign vo3 = v.option3 | strip -%}
+                {%- if color_position == 1 and vo1 == value_label and v.available -%}
                   {%- assign color_available = true -%}
-                {%- elsif color_position == 2 and v.option2 == value_label and v.available -%}
+                {%- elsif color_position == 2 and vo2 == value_label and v.available -%}
                   {%- assign color_available = true -%}
-                {%- elsif color_position == 3 and v.option3 == value_label and v.available -%}
+                {%- elsif color_position == 3 and vo3 == value_label and v.available -%}
                   {%- assign color_available = true -%}
                 {%- endif -%}
               {%- endfor -%}
 
               {%- for v in card_product.variants -%}
                 {%- if color_media == blank -%}
-                  {%- if color_position == 1 and v.option1 == value_label and v.featured_media -%}
+                  {%- assign vo1 = v.option1 | strip -%}
+                  {%- assign vo2 = v.option2 | strip -%}
+                  {%- assign vo3 = v.option3 | strip -%}
+                  {%- if color_position == 1 and vo1 == value_label and v.featured_media -%}
                     {%- assign color_media = v.featured_media -%}
-                  {%- elsif color_position == 2 and v.option2 == value_label and v.featured_media -%}
+                  {%- elsif color_position == 2 and vo2 == value_label and v.featured_media -%}
                     {%- assign color_media = v.featured_media -%}
-                  {%- elsif color_position == 3 and v.option3 == value_label and v.featured_media -%}
+                  {%- elsif color_position == 3 and vo3 == value_label and v.featured_media -%}
                     {%- assign color_media = v.featured_media -%}
                   {%- endif -%}
                 {%- endif -%}
@@ -214,7 +233,7 @@
 
               <button
                 type="button"
-                class="color-swatch{% if current_color != blank and value_label == current_color %} is-selected{% endif %}{% unless color_available %} is-soldout{% endunless %}"
+                class="color-swatch{% if current_color != blank and value_label != blank and swatch_cmp_label == swatch_cmp_current %} is-selected{% endif %}{% unless color_available %} is-soldout{% endunless %}"
                 style="{% render 'option-value-swatch-style', option_value: value %}"
                 data-color="{{ value_label | escape }}"
                 data-available="{% if color_available %}true{% else %}false{% endif %}"

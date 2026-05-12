@@ -2,12 +2,69 @@
   Inline CSS for one product option value swatch (syncs with Shopify admin / taxonomy swatches).
   Accepts: option_value — item from product_option.values (product_option_value)
 
+  Taxonomy-linked Color 有时返回极亮的 rgb，圆点会像白/浅灰且多色雷同；此时按 option 名称回退。
   See: https://shopify.dev/docs/api/liquid/objects/product_option_value
 {%- endcomment -%}
 {%- if option_value.swatch.image -%}
   background-image: url({{ option_value.swatch.image | image_url: width: 100 }}); background-size: contain; background-position: center; background-repeat: no-repeat; background-color: transparent;
 {%- elsif option_value.swatch.color -%}
-  background-color: rgb({{ option_value.swatch.color.rgb }});
+  {%- liquid
+    assign sc = option_value.swatch.color
+    assign nm = option_value.name | downcase | strip
+    assign r = 0
+    assign g = 0
+    assign b = 0
+    assign has_rgb = false
+    if sc.rgb != blank
+      assign parts = sc.rgb | split: ','
+      if parts.size < 3
+        assign parts = sc.rgb | split: ' '
+      endif
+      if parts.size >= 3
+        assign r = parts[0] | strip | plus: 0
+        assign g = parts[1] | strip | plus: 0
+        assign b = parts[2] | strip | plus: 0
+        assign has_rgb = true
+      endif
+    endif
+    if has_rgb == false and sc.red != nil and sc.green != nil and sc.blue != nil
+      assign r = sc.red
+      assign g = sc.green
+      assign b = sc.blue
+      assign has_rgb = true
+    endif
+    assign light_sw = false
+    if has_rgb and r > 230 and g > 230 and b > 230
+      assign light_sw = true
+    endif
+    assign use_name_fb = false
+    if light_sw
+      unless nm == 'white' or nm == 'off white' or nm == 'off-white' or nm == 'ivory' or nm == 'cream' or nm == 'snow' or nm == 'pearl' or nm == 'beige' or nm == 'light gray' or nm == 'light grey' or nm == 'silver'
+        assign use_name_fb = true
+      endunless
+    endif
+  -%}
+  {%- if use_name_fb -%}
+    {%- capture fb -%}{% render 'option-value-fallback-by-name', color_name: option_value.name %}{%- endcapture -%}
+    {%- if fb != blank -%}
+      {{- fb -}}
+    {%- elsif has_rgb -%}
+      background-color: rgb({{ r }}, {{ g }}, {{ b }});
+    {%- else -%}
+      background-color: rgb({{ sc.rgb }});
+    {%- endif -%}
+  {%- else -%}
+    {%- if has_rgb -%}
+      background-color: rgb({{ r }}, {{ g }}, {{ b }});
+    {%- else -%}
+      background-color: rgb({{ sc.rgb }});
+    {%- endif -%}
+  {%- endif -%}
 {%- else -%}
-  background-color: #e6e6e6;
+  {%- capture fb -%}{% render 'option-value-fallback-by-name', color_name: option_value.name %}{%- endcapture -%}
+  {%- if fb != blank -%}
+    {{- fb -}}
+  {%- else -%}
+    background-color: #e6e6e6;
+  {%- endif -%}
 {%- endif -%}
