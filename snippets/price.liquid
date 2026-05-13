@@ -133,7 +133,7 @@
     </small>
   </div>
   {%- if use_variant and target.inventory_management == 'shopify' and target.inventory_quantity != nil -%}
-    {%- if target.available and target.inventory_quantity > 0 and target.inventory_quantity < 5 -%}
+    {%- if target.available and target.inventory_quantity > 0 and target.inventory_quantity <= 5 -%}
       <span class="price__inventory-note caption" role="status">
         {{ 'products.product.inventory_low_notice' | t: count: target.inventory_quantity }}
       </span>
