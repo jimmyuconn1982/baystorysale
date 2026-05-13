@@ -1514,6 +1514,15 @@
       .template-product .product-form__input .label-with-image img {
         border-radius: 0 !important;
       }
+      .template-product .product-form__input input[type='radio'] + label.label-with-image {
+        padding: 0 !important;
+        margin: 0 !important;
+        align-items: stretch !important;
+      }
+      .template-product .product-form__input input[type='radio']:checked + label.label-with-image {
+        padding: 0 !important;
+        margin: 0 !important;
+      }
 
       /* Cart empty state: remove button "border frame" (::after) */
       .cart__warnings .button::after,

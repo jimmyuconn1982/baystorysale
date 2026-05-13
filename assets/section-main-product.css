@@ -1571,14 +1571,15 @@ a.product__text {
 
 .product-form__input input[type='radio'] + label.label-with-image {
   padding: 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   border: 1px solid rgba(var(--color-foreground), 0.1);
   border-radius: 4px;
   overflow: hidden;
   width: 8.5rem;
-  margin: 0;
+  box-sizing: border-box;
   background: rgb(var(--color-background));
   transition: all 0.2s ease;
   cursor: pointer;
@@ -1593,6 +1594,9 @@ a.product__text {
   height: auto;
   aspect-ratio: 1;
   object-fit: contain;
+  display: block;
+  margin: 0;
+  background-color: #fff;
   border-bottom: 1px solid rgba(var(--color-foreground), 0.05);
 }
 
@@ -1600,6 +1604,10 @@ a.product__text {
   position: relative;
   display: block;
   width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #fff;
+  line-height: 0;
 }
 
 .variant-option__soldout-mask {
@@ -1623,8 +1631,33 @@ a.product__text {
 }
 
 .product-form__input input[type='radio']:checked + label.label-with-image {
-  border: 2px solid #005a5c; /* Use a color similar to your theme or reference */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  /* 与未选中同为 1px 边框宽度，避免 box-sizing 下内区变窄产生「边框与图之间的白边」；
+     用外扩 box-shadow 模拟第二层描边，视觉仍加粗选中感 */
+  border: 1px solid #005a5c;
+  box-shadow:
+    0 0 0 1px #005a5c,
+    0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-form__input input[type='radio']:focus-visible + label.label-with-image {
+  /* 取消 Dawn 药丸式双圈 focus（0.3rem 背景色环），否则选中时会像一圈白 margin */
+  box-shadow: none;
+  outline: 2px solid rgba(0, 90, 92, 0.45);
+  outline-offset: 2px;
+}
+
+.product-form__input input[type='radio'].focused + label.label-with-image {
+  box-shadow: none;
+  outline: 2px solid rgba(0, 90, 92, 0.45);
+  outline-offset: 2px;
+}
+
+.product-form__input input[type='radio']:checked.focused + label.label-with-image,
+.product-form__input input[type='radio']:checked:focus-visible + label.label-with-image {
+  outline: none;
+  box-shadow:
+    0 0 0 1px #005a5c,
+    0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .product-form__input input[type='radio']:checked + label.label-with-image span {
