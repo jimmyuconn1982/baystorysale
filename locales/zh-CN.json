@@ -162,6 +162,7 @@
       "include_taxes": "含税费。",
       "shipping_policy_html": "结账时计算的<a href=\"{{ link }}\">运费</a>。",
       "shipping_at_checkout": "结账时计算运费。",
+      "list_price_tooltip": "划线价为「标价（List price）」：一般指厂商、供应商或其他零售商建议的零售价（常与 MSRP 接近）。您在本店实际支付的价格可能不同。",
       "choose_options": "选择选项",
       "choose_product_options": "选择用于 {{ product_name }} 的选项"
     },

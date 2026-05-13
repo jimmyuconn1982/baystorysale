@@ -163,7 +163,8 @@
       "xr_button_label": "View in your space, loads item in augmented reality window",
       "include_taxes": "Tax included.",
       "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout.",
-      "shipping_at_checkout": "Shipping calculated at checkout."
+      "shipping_at_checkout": "Shipping calculated at checkout.",
+      "list_price_tooltip": "The crossed-out price is the list price: the suggested retail price from a manufacturer, supplier, or another retailer. The price you pay on our store may differ."
     },
     "modal": {
       "label": "Media gallery"
