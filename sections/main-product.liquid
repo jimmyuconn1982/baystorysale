@@ -359,17 +359,31 @@
                         <div class="variant-input-wrapper">
                           {%- for value in option.values -%}
                             {%- liquid
-                              assign variant_image = null
+                              assign variant_image = blank
                               assign option_name_downcase = option.name | downcase
+                              assign value_has_available = false
                               if option_name_downcase contains 'color' or option_name_downcase contains 'colour' or option_name_downcase contains '颜色'
                                 for variant in product.variants
                                   if variant.options contains value
-                                    if variant.featured_media
+                                    if variant.available
+                                      assign value_has_available = true
+                                    endif
+                                    if variant.featured_media and variant_image == blank
                                       assign variant_image = variant.featured_media
-                                      break
                                     endif
                                   endif
                                 endfor
+                              else
+                                for variant in product.variants
+                                  if variant.options contains value and variant.available
+                                    assign value_has_available = true
+                                    break
+                                  endif
+                                endfor
+                              endif
+                              assign value_sold_out_thumb = false
+                              if variant_image and value_has_available == false
+                                assign value_sold_out_thumb = true
                               endif
                             -%}
                             <input type="radio" id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
@@ -378,16 +392,26 @@
                                   form="{{ product_form_id }}"
                                   {% if option.selected_value == value %}checked{% endif %}
                             >
-                            <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}" class="{% if variant_image %}label-with-image{% endif %}">
+                            <label
+                              for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                              class="{% if variant_image %}label-with-image{% endif %}{% if value_sold_out_thumb %} label-with-image--soldout{% endif %}"
+                              {% if value_sold_out_thumb %}aria-label="{{ value | escape }} — {{ 'products.product.sold_out' | t }}"{% endif %}
+                            >
                               {%- if variant_image -%}
-                                {%- assign _viw = 360 -%}
-                                <img
-                                  src="{{ variant_image | image_url: width: _viw }}"
-                                  alt="{{ value | escape }}"
-                                  width="90"
-                                  height="{{ 90 | divided_by: variant_image.aspect_ratio | round }}"
-                                  loading="lazy"
-                                >
+                                <span class="variant-option__thumb">
+                                  {%- assign _viw = 360 -%}
+                                  <img
+                                    src="{{ variant_image | image_url: width: _viw }}"
+                                    alt=""
+                                    width="90"
+                                    height="{{ 90 | divided_by: variant_image.aspect_ratio | round }}"
+                                    loading="lazy"
+                                    role="presentation"
+                                  >
+                                  {%- if value_sold_out_thumb -%}
+                                    <span class="variant-option__soldout-mask" aria-hidden="true"></span>
+                                  {%- endif -%}
+                                </span>
                               {%- endif -%}
                               <span>{{ value }}</span>
                             </label>

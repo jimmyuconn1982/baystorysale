@@ -1596,6 +1596,23 @@ a.product__text {
   border-bottom: 1px solid rgba(var(--color-foreground), 0.05);
 }
 
+.variant-option__thumb {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.variant-option__soldout-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(120, 120, 120, 0.52);
+  pointer-events: none;
+}
+
+.product-form__input input[type='radio'] + label.label-with-image--soldout img {
+  filter: grayscale(0.35);
+}
+
 .product-form__input input[type='radio'] + label.label-with-image span {
   padding: 0.6rem 0.4rem;
   font-size: 1.2rem;

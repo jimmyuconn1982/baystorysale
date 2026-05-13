@@ -151,6 +151,10 @@
       },
       "share": "Share this product",
       "sold_out": "Sold out",
+      "inventory_low_notice": {
+        "one": "Only {{ count }} left — order soon.",
+        "other": "Only {{ count }} left — order soon."
+      },
       "unavailable": "Unavailable",
       "vendor": "Vendor",
       "video_exit_message": "{{ title }} opens full screen video in same window.",

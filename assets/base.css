@@ -2004,6 +2004,18 @@ input[type='checkbox'] {
   flex-grow: 1;
   -webkit-appearance: none;
   appearance: none;
+  /* 数字区不要单独描边/轮廓，避免与两侧 +/- 视觉不一致（浏览器默认 focus ring 会显得很粗） */
+  outline: none;
+  box-shadow: none;
+}
+
+.quantity__input:hover,
+.quantity__input:focus,
+.quantity__input:focus-visible {
+  outline: none;
+  box-shadow: none;
+  border: 0;
+  background-color: transparent;
 }
 
 .quantity__button {
@@ -2033,16 +2045,20 @@ input[type='checkbox'] {
   pointer-events: none;
 }
 
-.quantity__button:focus-visible,
-.quantity__input:focus-visible {
+.quantity__button:focus-visible {
   background-color: rgb(var(--color-background));
   z-index: 2;
 }
 
-.quantity__button:focus,
-.quantity__input:focus {
+.quantity__button:focus {
   background-color: rgb(var(--color-background));
   z-index: 2;
+}
+
+.quantity__input:focus-visible,
+.quantity__input:focus {
+  z-index: 2;
+  background-color: transparent;
 }
 
 .quantity__button:not(:focus-visible):not(.focused),

@@ -12,7 +12,7 @@
 {% endcomment %}
 {%- liquid
   if use_variant
-    assign target = product.selected_or_first_available_variant
+    assign target = product.selected_variant | default: product.selected_or_first_available_variant
   else
     assign target = product
   endif
@@ -132,6 +132,13 @@
       </span>
     </small>
   </div>
+  {%- if use_variant and target.inventory_management == 'shopify' and target.inventory_quantity != nil -%}
+    {%- if target.available and target.inventory_quantity > 0 and target.inventory_quantity < 5 -%}
+      <span class="price__inventory-note caption" role="status">
+        {{ 'products.product.inventory_low_notice' | t: count: target.inventory_quantity }}
+      </span>
+    {%- endif -%}
+  {%- endif -%}
   {%- if show_badges -%}
     <span class="badge price__badge-sale color-{{ settings.sale_badge_color_scheme }}" style="display: none;">
       {{ 'products.product.on_sale' | t }}

@@ -673,23 +673,25 @@
 }
 
 .card-wrapper--split-alo .card__alo-swatches .color-swatch.is-soldout::after {
-  /* "/" stroke from bottom-left to top-right; the swatch has overflow:hidden
-     so the line gets cleanly clipped to the circle edge (no overshoot).
-     Semi-transparent black blends on every swatch colour the same way the
-     reference does (dark dot pattern shows through dark swatches because
-     of the alpha + the natural border ring). */
+  /* 斜线在 -45° 基础上再逆时针 90° → -135°（左上→右下）；白 | 极细黑 | 白（像素断点，避免过粗） */
   content: '';
   position: absolute;
-  left: -8px;
-  right: -8px;
+  left: 50%;
   top: 50%;
-  height: 2px;
-  margin-top: -1px;
-  background: rgba(0, 0, 0, 0.45);
-  transform: rotate(-45deg);
-  transform-origin: center;
-  border-radius: 0;
+  width: 34px;
+  height: 3px;
+  margin-left: -17px;
+  margin-top: -1.5px;
+  transform: rotate(-135deg);
+  transform-origin: center center;
   pointer-events: none;
+  border-radius: 0;
+  background: linear-gradient(
+    to bottom,
+    #ffffff 0 1px,
+    #141414 1px 2px,
+    #ffffff 2px 3px
+  );
 }
 
 .card-wrapper--split-alo .card__alo-swatches .color-swatch:focus-visible {

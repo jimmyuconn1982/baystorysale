@@ -10,6 +10,29 @@
   vertical-align: top;
 }
 
+.price .price__inventory-note {
+  display: inline-block;
+  vertical-align: baseline;
+  margin-left: 2.4rem;
+  padding-left: 0.25rem;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.03rem;
+  line-height: 1.3;
+  color: #b12739;
+  white-space: nowrap;
+}
+
+@media screen and (max-width: 749px) {
+  .price.price--large .price__inventory-note {
+    display: block;
+    margin-left: 0;
+    margin-top: 0.75rem;
+    padding-left: 0;
+    white-space: normal;
+  }
+}
+
 .price.price--unavailable {
   visibility: hidden;
 }
